@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { verifyInvite, markInviteUsed } from '../lib/invites.js'
-import { saveTestResults } from '../lib/supabase.js'
+import { saveTestResults, saveInterviewResults } from '../lib/supabase.js'
 import PythonQuiz from './PythonQuiz.jsx'
 import ArtsTest from './ArtsTest.jsx'
 import BusinessTest from './BusinessTest.jsx'
+import VoiceInterview from './VoiceInterview.jsx'
 import Results from './Results.jsx'
+import ThankYou from './ThankYou.jsx'
 
 // Maps track slug → human label + description
 const TRACK_INFO = {
@@ -30,7 +32,7 @@ const TRACK_INFO = {
 }
 
 export default function InviteTest({ inviteCode, onReset }) {
-  const [phase, setPhase] = useState('verifying') // verifying | welcome | test | results | error
+  const [phase, setPhase] = useState('verifying') // verifying | welcome | test | interview | interview-done | results | error
   const [invite, setInvite] = useState(null)
   const [student, setStudent] = useState(null)
   const [errorMsg, setErrorMsg] = useState('')
@@ -76,6 +78,18 @@ export default function InviteTest({ inviteCode, onReset }) {
     setPhase('results')
   }
 
+  async function handleInterviewComplete(res) {
+    await saveInterviewResults({
+      studentId: student.id,
+      applicationId: invite.application_id ?? null,
+      projectPlan: res.projectPlan,
+      personNote: res.personNote,
+      adminNote: res.adminNote,
+    })
+    await markInviteUsed(inviteCode)
+    setPhase('interview-done')
+  }
+
   const config = student
     ? {
         studentName: `${student.first_name} ${student.last_name}`.trim(),
@@ -83,7 +97,14 @@ export default function InviteTest({ inviteCode, onReset }) {
       }
     : null
 
-  const trackInfo = invite ? TRACK_INFO[invite.track] : null
+  const isInterview = invite?.type === 'voice_interview'
+  const trackInfo = invite && !isInterview ? TRACK_INFO[invite.track] : null
+  const interviewInfo = {
+    label: 'Top 50 Interview',
+    icon: '🎙️',
+    desc: 'A short conversation with Scout — congratulations on reaching the top 50! You\'ll chat about your Challenge project and we\'ll explain scholarships.',
+    color: '#C9963A',
+  }
 
   return (
     <AnimatePresence mode="wait">
@@ -121,8 +142,8 @@ export default function InviteTest({ inviteCode, onReset }) {
         </motion.div>
       )}
 
-      {/* ── Welcome / Intro ────────────────────── */}
-      {phase === 'welcome' && trackInfo && student && (
+      {/* ── Welcome / Intro (TRACK TEST) ────────────────────── */}
+      {phase === 'welcome' && trackInfo && student && !isInterview && (
         <motion.div
           key="welcome"
           initial={{ opacity: 0 }}
@@ -198,8 +219,77 @@ export default function InviteTest({ inviteCode, onReset }) {
         </motion.div>
       )}
 
+      {/* ── Welcome (INTERVIEW) ────────────────── */}
+      {phase === 'welcome' && isInterview && student && (
+        <motion.div
+          key="welcome-interview"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.6 }}
+          style={styles.page}
+        >
+          <div style={{ ...styles.glow, background: `radial-gradient(circle, ${interviewInfo.color}15 0%, transparent 70%)` }} />
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            style={styles.card}
+          >
+            <div style={{ ...styles.badge, borderColor: `${interviewInfo.color}30`, color: interviewInfo.color, background: `${interviewInfo.color}10` }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: interviewInfo.color, display: 'inline-block' }} />
+              You're in the top 50
+            </div>
+            <div style={styles.iconLarge}>{interviewInfo.icon}</div>
+            <h1 style={styles.title}>Congratulations, {student.first_name}!</h1>
+            <p style={styles.subtitle}>
+              Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.
+            </p>
+            <div style={{ ...styles.infoBox, borderColor: `${interviewInfo.color}20`, background: `${interviewInfo.color}08` }}>
+              <p style={styles.infoText}>{interviewInfo.desc}</p>
+            </div>
+            <div style={styles.rules}>
+              <div style={styles.rule}><span style={styles.ruleDot} />About 10 minutes, voice only</div>
+              <div style={styles.rule}><span style={styles.ruleDot} />Scout will ask about your Challenge project idea</div>
+              <div style={styles.rule}><span style={styles.ruleDot} />We'll also explain how scholarships work</div>
+              <div style={styles.rule}><span style={styles.ruleDot} />Speak freely — no wrong answers</div>
+            </div>
+            <button
+              onClick={() => setPhase('interview')}
+              style={{ ...styles.startBtn, background: interviewInfo.color, color: '#0D0F12' }}
+            >
+              Start Interview →
+            </button>
+            <p style={styles.footerNote}>fizzmind — Summer 2026 · {student.email}</p>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* ── Interview (Voice #2) ───────────────── */}
+      {phase === 'interview' && invite && config && (
+        <motion.div key="interview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <VoiceInterview
+            config={{
+              ...config,
+              track: invite.track,
+              apiKey: import.meta.env.VITE_GEMINI_API_KEY,
+            }}
+            onComplete={handleInterviewComplete}
+          />
+        </motion.div>
+      )}
+
+      {/* ── Interview Done ─────────────────────── */}
+      {phase === 'interview-done' && student && (
+        <ThankYou
+          studentName={`${student.first_name} ${student.last_name}`.trim()}
+          customMessage="Thanks for the chat! Keep an eye on your email — your Challenge brief will arrive soon with all the details. You'll have about a week to work on it."
+          onReset={onReset}
+        />
+      )}
+
       {/* ── Test ───────────────────────────────── */}
-      {phase === 'test' && invite && (
+      {phase === 'test' && invite && !isInterview && (
         <motion.div key="test" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
           {invite.track === 'stem' && (
             <PythonQuiz config={config} onComplete={handleTestComplete} />

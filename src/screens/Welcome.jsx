@@ -178,9 +178,9 @@ function Welcome({ onStart }) {
           style={styles.stats}
         >
           {[
-            { num: '9', label: 'Countries' },
+            { num: '6', label: 'Countries' },
             { num: '20', label: 'Per Cohort' },
-            { num: '5', label: 'Tracks' },
+            { num: '3', label: 'Tracks' },
             { num: '100%', label: 'Scholarships' },
           ].map((s, i) => (
             <div key={s.label} style={styles.statGroup}>

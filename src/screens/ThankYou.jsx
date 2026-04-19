@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 
-export default function ThankYou({ studentName, onReset }) {
+export default function ThankYou({ studentName, onReset, customMessage, title }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -63,26 +63,38 @@ export default function ThankYou({ studentName, onReset }) {
           marginBottom: '16px',
           letterSpacing: '-0.02em',
         }}>
-          Thank you, {studentName}!
+          {title ?? `Thank you, ${studentName}!`}
         </h1>
 
-        <p style={{
-          fontSize: '16px',
-          lineHeight: 1.7,
-          color: 'rgba(255,255,255,0.7)',
-          marginBottom: '12px',
-        }}>
-          Scout loved talking to you. Your assessment has been recorded and our team will personally review your conversation.
-        </p>
-
-        <p style={{
-          fontSize: '14px',
-          lineHeight: 1.6,
-          color: 'rgba(255,255,255,0.45)',
-          marginBottom: '40px',
-        }}>
-          If you're a good fit, we'll reach out with the next step — a fun challenge tailored to your interests. Keep an eye on your email!
-        </p>
+        {customMessage ? (
+          <p style={{
+            fontSize: '16px',
+            lineHeight: 1.7,
+            color: 'rgba(255,255,255,0.7)',
+            marginBottom: '40px',
+          }}>
+            {customMessage}
+          </p>
+        ) : (
+          <>
+            <p style={{
+              fontSize: '16px',
+              lineHeight: 1.7,
+              color: 'rgba(255,255,255,0.7)',
+              marginBottom: '12px',
+            }}>
+              Scout loved talking to you. Your assessment has been recorded and our team will personally review your conversation.
+            </p>
+            <p style={{
+              fontSize: '14px',
+              lineHeight: 1.6,
+              color: 'rgba(255,255,255,0.45)',
+              marginBottom: '40px',
+            }}>
+              If you're a good fit, we'll reach out with the next step — a fun challenge tailored to your interests. Keep an eye on your email!
+            </p>
+          </>
+        )}
 
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
           <a

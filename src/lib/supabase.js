@@ -98,6 +98,34 @@ export async function saveAssessmentResults({ studentName, email, assessmentStat
 }
 
 /**
+ * Save Voice #2 (Top 50 interview) results.
+ */
+export async function saveInterviewResults({ studentId, applicationId, projectPlan, personNote, adminNote }) {
+  if (!supabaseUrl || !supabaseAnonKey) return { error: 'Supabase not configured' }
+
+  try {
+    const row = {
+      student_id: studentId,
+      application_id: applicationId,
+      type: 'voice_interview',
+      completed_at: new Date().toISOString(),
+      summary: personNote ?? null,
+      dimensions: { project_plan: projectPlan, person_note: personNote, admin_note: adminNote },
+    }
+
+    const { error } = await supabase.from('assessments').insert(row)
+    if (error) console.error('Interview save error:', error)
+
+    await supabase.from('students').update({ assessment_status: 'voice_interview_completed' }).eq('id', studentId)
+
+    return { ok: true }
+  } catch (err) {
+    console.error('saveInterviewResults error:', err)
+    return { error: err.message }
+  }
+}
+
+/**
  * Save track-specific test results.
  */
 export async function saveTestResults({ studentId, applicationId, testType, results }) {
