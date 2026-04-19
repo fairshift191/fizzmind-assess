@@ -98,6 +98,7 @@ export default function VoiceInterview({ config, onComplete }) {
           studentName: config.studentName,
           track: config.track,
           campName: config.campName,
+          studentContext: config.studentContext,
         })
 
         const greetingMessage = `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`

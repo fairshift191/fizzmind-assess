@@ -273,6 +273,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               ...config,
               track: invite.track,
               apiKey: import.meta.env.VITE_GEMINI_API_KEY,
+              studentContext: invite.metadata?.student_context ?? null,
             }}
             onComplete={handleInterviewComplete}
           />

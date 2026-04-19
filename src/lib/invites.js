@@ -9,7 +9,7 @@ export async function verifyInvite(code) {
   const { data: invite, error } = await supabase
     .from('invites')
     .select(`
-      id, type, track, code, status, expires_at,
+      id, type, track, code, status, expires_at, metadata,
       students:student_id(id, first_name, last_name, email)
     `)
     .eq('code', code.trim())
@@ -26,6 +26,7 @@ export async function verifyInvite(code) {
       type: invite.type,
       track: invite.track,
       code: invite.code,
+      metadata: invite.metadata ?? {},
     },
     student: invite.students,
   }
