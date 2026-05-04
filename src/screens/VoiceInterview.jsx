@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { GeminiLiveAdapter } from '../voice/GeminiLiveAdapter.js'
 import { BlobRenderer } from '../renderer/BlobRenderer.js'
 import { buildInterviewPrompt, INTERVIEW_TOOL_DECLARATIONS } from '../assessment/interview-prompt.js'
+import { buildCodeInterviewPrompt, CODE_INTERVIEW_TOOL_DECLARATIONS } from '../assessment/code-interview-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -91,22 +92,37 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: args.person_note,
               adminNote: args.admin_note,
             })
+          } else if (tool === 'complete_code_interview') {
+            setInterviewResult({
+              projectPlan: args.bot_summary,
+              personNote: `Comprehension: ${args.comprehension}. Experimented: ${args.experimented ? 'yes' : 'no'}.`,
+              adminNote: args.admin_note,
+            })
           }
         })
 
-        const systemPrompt = buildInterviewPrompt({
-          studentName: config.studentName,
-          track: config.track,
-          campName: config.campName,
-          studentContext: config.studentContext,
-        })
+        const isCodeInterview = config.interviewType === 'code_interview'
 
-        const greetingMessage = `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
+        const systemPrompt = isCodeInterview
+          ? buildCodeInterviewPrompt({
+              studentName: config.studentName,
+              studentContext: config.studentContext,
+            })
+          : buildInterviewPrompt({
+              studentName: config.studentName,
+              track: config.track,
+              campName: config.campName,
+              studentContext: config.studentContext,
+            })
+
+        const greetingMessage = isCodeInterview
+          ? `The student ${config.studentName} has joined for their final-round code interpretation chat. This is a SHORT call (3-5 minutes total). Greet them warmly by name and begin the conversation as directed in the system prompt. Do NOT announce any selection decision.`
+          : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
         await adapter.connect({
           apiKey: config.apiKey,
           systemPrompt,
-          tools: INTERVIEW_TOOL_DECLARATIONS,
+          tools: isCodeInterview ? CODE_INTERVIEW_TOOL_DECLARATIONS : INTERVIEW_TOOL_DECLARATIONS,
           voiceName: 'Charon',
           language: 'en',
           greetingMessage,

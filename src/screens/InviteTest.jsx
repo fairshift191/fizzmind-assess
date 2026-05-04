@@ -97,14 +97,23 @@ export default function InviteTest({ inviteCode, onReset }) {
       }
     : null
 
-  const isInterview = invite?.type === 'voice_interview'
+  const isVoiceInterview = invite?.type === 'voice_interview'
+  const isCodeInterview = invite?.type === 'code_interview'
+  const isInterview = isVoiceInterview || isCodeInterview
   const trackInfo = invite && !isInterview ? TRACK_INFO[invite.track] : null
-  const interviewInfo = {
-    label: 'Top 50 Interview',
-    icon: '🎙️',
-    desc: 'A short conversation with Scout — congratulations on reaching the top 50! You\'ll chat about your Challenge project and we\'ll explain scholarships.',
-    color: '#C9963A',
-  }
+  const interviewInfo = isCodeInterview
+    ? {
+        label: 'Code Interpretation',
+        icon: '💬',
+        desc: 'A short chat with Scout about the chatbot you built. Just a few minutes — walk her through what you made and how it works.',
+        color: '#C9963A',
+      }
+    : {
+        label: 'Top 50 Interview',
+        icon: '🎙️',
+        desc: 'A short conversation with Scout — congratulations on reaching the top 50! You\'ll chat about your Challenge project and we\'ll explain scholarships.',
+        color: '#C9963A',
+      }
 
   return (
     <AnimatePresence mode="wait">
@@ -238,27 +247,41 @@ export default function InviteTest({ inviteCode, onReset }) {
           >
             <div style={{ ...styles.badge, borderColor: `${interviewInfo.color}30`, color: interviewInfo.color, background: `${interviewInfo.color}10` }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: interviewInfo.color, display: 'inline-block' }} />
-              You're in the top 50
+              {isCodeInterview ? 'Final Round' : "You're in the top 50"}
             </div>
             <div style={styles.iconLarge}>{interviewInfo.icon}</div>
-            <h1 style={styles.title}>Congratulations, {student.first_name}!</h1>
+            <h1 style={styles.title}>
+              {isCodeInterview ? `Hey ${student.first_name}!` : `Congratulations, ${student.first_name}!`}
+            </h1>
             <p style={styles.subtitle}>
-              Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.
+              {isCodeInterview
+                ? <>Scout would love to hear about the chatbot you built. Just a quick chat <strong style={{ color: interviewInfo.color }}>3 to 5 minutes</strong>.</>
+                : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
             </p>
             <div style={{ ...styles.infoBox, borderColor: `${interviewInfo.color}20`, background: `${interviewInfo.color}08` }}>
               <p style={styles.infoText}>{interviewInfo.desc}</p>
             </div>
             <div style={styles.rules}>
-              <div style={styles.rule}><span style={styles.ruleDot} />About 10 minutes, voice only</div>
-              <div style={styles.rule}><span style={styles.ruleDot} />Scout will ask about your Challenge project idea</div>
-              <div style={styles.rule}><span style={styles.ruleDot} />We'll also explain how scholarships work</div>
-              <div style={styles.rule}><span style={styles.ruleDot} />Speak freely — no wrong answers</div>
+              {isCodeInterview ? (
+                <>
+                  <div style={styles.rule}><span style={styles.ruleDot} />About 3 to 5 minutes, voice only</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Walk Scout through your bot and how it works</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Speak freely — no wrong answers</div>
+                </>
+              ) : (
+                <>
+                  <div style={styles.rule}><span style={styles.ruleDot} />About 10 minutes, voice only</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Scout will ask about your Challenge project idea</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />We'll also explain how scholarships work</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Speak freely — no wrong answers</div>
+                </>
+              )}
             </div>
             <button
               onClick={() => setPhase('interview')}
               style={{ ...styles.startBtn, background: interviewInfo.color, color: '#0D0F12' }}
             >
-              Start Interview →
+              {isCodeInterview ? 'Start Chat →' : 'Start Interview →'}
             </button>
             <p style={styles.footerNote}>fizzmind — Summer 2026 · {student.email}</p>
           </motion.div>
@@ -274,6 +297,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               track: invite.track,
               apiKey: import.meta.env.VITE_GEMINI_API_KEY,
               studentContext: invite.metadata?.student_context ?? null,
+              interviewType: invite.type,
             }}
             onComplete={handleInterviewComplete}
           />
@@ -284,7 +308,9 @@ export default function InviteTest({ inviteCode, onReset }) {
       {phase === 'interview-done' && student && (
         <ThankYou
           studentName={`${student.first_name} ${student.last_name}`.trim()}
-          customMessage="Thanks for the chat! Keep an eye on your email — your Challenge brief will arrive soon with all the details. You'll have about a week to work on it."
+          customMessage={isCodeInterview
+            ? "Thanks for the chat! The team will be in touch by email within a day or two with everything you need to know."
+            : "Thanks for the chat! Keep an eye on your email — your Challenge brief will arrive soon with all the details. You'll have about a week to work on it."}
           onReset={onReset}
         />
       )}
