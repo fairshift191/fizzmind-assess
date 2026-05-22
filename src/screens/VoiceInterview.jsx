@@ -102,6 +102,7 @@ export default function VoiceInterview({ config, onComplete }) {
         })
 
         const isCodeInterview = config.interviewType === 'code_interview'
+        const isPostAdmission = config.inviteVariant === 'post_admission'
 
         const systemPrompt = isCodeInterview
           ? buildCodeInterviewPrompt({
@@ -117,7 +118,9 @@ export default function VoiceInterview({ config, onComplete }) {
 
         const greetingMessage = isCodeInterview
           ? `The student ${config.studentName} has joined for their final-round code interpretation chat. This is a SHORT call (3-5 minutes total). Greet them warmly by name and begin the conversation as directed in the system prompt. Do NOT announce any selection decision.`
-          : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
+          : isPostAdmission
+            ? `The student ${config.studentName} has joined for a post-admission catch-up call. They are ALREADY ADMITTED and ALREADY a Wild Minds Fellow. Do NOT congratulate them on the top 50 — that is past. Do NOT discuss the Challenge brief or scholarships. Greet them warmly by name and follow the specific instructions in the system prompt: warm catch-up, explain Wild Minds, then deliver the enrollment-form-before-coach-call message.`
+            : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
         await adapter.connect({
           apiKey: config.apiKey,

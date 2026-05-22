@@ -100,6 +100,8 @@ export default function InviteTest({ inviteCode, onReset }) {
   const isVoiceInterview = invite?.type === 'voice_interview'
   const isCodeInterview = invite?.type === 'code_interview'
   const isInterview = isVoiceInterview || isCodeInterview
+  const inviteVariant = invite?.metadata?.invite_variant ?? null
+  const isPostAdmission = isVoiceInterview && inviteVariant === 'post_admission'
   const trackInfo = invite && !isInterview ? TRACK_INFO[invite.track] : null
   const interviewInfo = isCodeInterview
     ? {
@@ -108,12 +110,19 @@ export default function InviteTest({ inviteCode, onReset }) {
         desc: 'A short chat with Scout about the chatbot you built. Just a few minutes — walk her through what you made and how it works.',
         color: '#C9963A',
       }
-    : {
-        label: 'Top 50 Interview',
-        icon: '🎙️',
-        desc: 'A short conversation with Scout — congratulations on reaching the top 50! You\'ll chat about your Challenge project and we\'ll explain scholarships.',
-        color: '#C9963A',
-      }
+    : isPostAdmission
+      ? {
+          label: 'Wild Minds Fellowship · Welcome chat',
+          icon: '🎙️',
+          desc: 'A short catch-up with Scout — about what you\'ve been up to, what Wild Minds means for you, and the next step before you meet your personal coach.',
+          color: '#C9963A',
+        }
+      : {
+          label: 'Top 50 Interview',
+          icon: '🎙️',
+          desc: 'A short conversation with Scout — congratulations on reaching the top 50! You\'ll chat about your Challenge project and we\'ll explain scholarships.',
+          color: '#C9963A',
+        }
 
   return (
     <AnimatePresence mode="wait">
@@ -247,7 +256,7 @@ export default function InviteTest({ inviteCode, onReset }) {
           >
             <div style={{ ...styles.badge, borderColor: `${interviewInfo.color}30`, color: interviewInfo.color, background: `${interviewInfo.color}10` }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: interviewInfo.color, display: 'inline-block' }} />
-              {isCodeInterview ? 'Final Round' : "You're in the top 50"}
+              {isCodeInterview ? 'Final Round' : isPostAdmission ? "You're a Wild Minds Fellow" : "You're in the top 50"}
             </div>
             <div style={styles.iconLarge}>{interviewInfo.icon}</div>
             <h1 style={styles.title}>
@@ -256,7 +265,9 @@ export default function InviteTest({ inviteCode, onReset }) {
             <p style={styles.subtitle}>
               {isCodeInterview
                 ? <>Scout would love to hear about the chatbot you built. Just a quick chat <strong style={{ color: interviewInfo.color }}>3 to 5 minutes</strong>.</>
-                : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
+                : isPostAdmission
+                  ? <>You've been selected for the <strong style={{ color: interviewInfo.color }}>Wild Minds Fellowship</strong>. Scout has a short catch-up planned — and one important next step to share with you.</>
+                  : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
             </p>
             <div style={{ ...styles.infoBox, borderColor: `${interviewInfo.color}20`, background: `${interviewInfo.color}08` }}>
               <p style={styles.infoText}>{interviewInfo.desc}</p>
@@ -267,6 +278,13 @@ export default function InviteTest({ inviteCode, onReset }) {
                   <div style={styles.rule}><span style={styles.ruleDot} />About 3 to 5 minutes, voice only</div>
                   <div style={styles.rule}><span style={styles.ruleDot} />Walk Scout through your bot and how it works</div>
                   <div style={styles.rule}><span style={styles.ruleDot} />Speak freely — no wrong answers</div>
+                </>
+              ) : isPostAdmission ? (
+                <>
+                  <div style={styles.rule}><span style={styles.ruleDot} />5 to 10 minutes, voice only</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Scout will explain what Wild Minds means for you</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />She'll share the next step before you meet your personal coach</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Speak freely — this is just a catch-up</div>
                 </>
               ) : (
                 <>
@@ -281,7 +299,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               onClick={() => setPhase('interview')}
               style={{ ...styles.startBtn, background: interviewInfo.color, color: '#0D0F12' }}
             >
-              {isCodeInterview ? 'Start Chat →' : 'Start Interview →'}
+              {isCodeInterview ? 'Start Chat →' : isPostAdmission ? 'Start Chat with Scout →' : 'Start Interview →'}
             </button>
             <p style={styles.footerNote}>fizzmind — Summer 2026 · {student.email}</p>
           </motion.div>
@@ -298,6 +316,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               apiKey: import.meta.env.VITE_GEMINI_API_KEY,
               studentContext: invite.metadata?.student_context ?? null,
               interviewType: invite.type,
+              inviteVariant: invite.metadata?.invite_variant ?? null,
             }}
             onComplete={handleInterviewComplete}
           />
@@ -310,7 +329,9 @@ export default function InviteTest({ inviteCode, onReset }) {
           studentName={`${student.first_name} ${student.last_name}`.trim()}
           customMessage={isCodeInterview
             ? "Thanks for the chat! The team will be in touch by email within a day or two with everything you need to know."
-            : "Thanks for the chat! Keep an eye on your email — your Challenge brief will arrive soon with all the details. You'll have about a week to work on it."}
+            : isPostAdmission
+              ? "Thanks for the chat! Now talk to your parents — once they submit the enrollment form, we'll get your personal coach call scheduled."
+              : "Thanks for the chat! Keep an eye on your email — your Challenge brief will arrive soon with all the details. You'll have about a week to work on it."}
           onReset={onReset}
         />
       )}
