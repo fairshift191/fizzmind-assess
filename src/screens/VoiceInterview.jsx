@@ -30,7 +30,7 @@ export default function VoiceInterview({ config, onComplete }) {
 
   const isPostAdmission = config.inviteVariant === 'post_admission'
   const isCodeInterview = config.interviewType === 'code_interview'
-  const characterName = isPostAdmission ? 'Michelle' : 'Scout'
+  const characterName = isPostAdmission ? 'Sophie' : 'Scout'
   const sessionLabel = isPostAdmission
     ? 'Counsellor Session'
     : isCodeInterview
@@ -139,7 +139,7 @@ export default function VoiceInterview({ config, onComplete }) {
         const greetingMessage = isCodeInterview
           ? `The student ${config.studentName} has joined for their final-round code interpretation chat. This is a SHORT call (3-5 minutes total). Greet them warmly by name and begin the conversation as directed in the system prompt. Do NOT announce any selection decision.`
           : isPostAdmission
-            ? `The student ${config.studentName} has joined for a 30-minute counsellor session with Michelle. You are MICHELLE the counsellor, NOT Scout. Introduce yourself as Michelle. Do NOT say you are Scout. Follow the counsellor system prompt: warm intro, then walk through expectations, group fit, worries, life outside academics, and what success looks like.`
+            ? `The student ${config.studentName} has joined for their counsellor session with Sophie. You are SOPHIE the counsellor, NOT Scout. Introduce yourself as Sophie. Do NOT say you are Scout. This is a longer call (around 45 minutes). Follow the counsellor system prompt: walk through all ten themes in order (family, friends, groups, normal weekend, hobbies, school, what excites about camp, what worries about camp, new places + people, success), spending around 5 minutes on each. Dig in with follow-ups when answers are short. Do NOT call complete_counsellor_session before covering all ten themes.`
             : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
         const tools = isCodeInterview
@@ -152,7 +152,7 @@ export default function VoiceInterview({ config, onComplete }) {
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: 'Kore',
+          voiceName: 'Zephyr',
           language: 'en',
           greetingMessage,
         })

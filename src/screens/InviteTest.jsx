@@ -112,9 +112,9 @@ export default function InviteTest({ inviteCode, onReset }) {
       }
     : isPostAdmission
       ? {
-          label: 'Counsellor Session · with Michelle',
+          label: 'Counsellor Session · with Sophie',
           icon: '🎙️',
-          desc: 'A 30-minute chat with Michelle, one of our counsellors. She wants to hear what you hope to get from camp so we can pick the right one for you.',
+          desc: 'A longer chat (around 45 minutes) with Sophie, one of our counsellors. She wants to get to know you properly so we can pick the right camp for you.',
           color: '#C9963A',
         }
       : {
@@ -263,14 +263,14 @@ export default function InviteTest({ inviteCode, onReset }) {
               {isCodeInterview
                 ? `Hey ${student.first_name}!`
                 : isPostAdmission
-                  ? `Hi ${student.first_name}, meet Michelle.`
+                  ? `Hi ${student.first_name}, meet Sophie.`
                   : `Congratulations, ${student.first_name}!`}
             </h1>
             <p style={styles.subtitle}>
               {isCodeInterview
                 ? <>Scout would love to hear about the chatbot you built. Just a quick chat <strong style={{ color: interviewInfo.color }}>3 to 5 minutes</strong>.</>
                 : isPostAdmission
-                  ? <>Michelle is one of our counsellors. She wants to spend <strong style={{ color: interviewInfo.color }}>about 30 minutes</strong> getting to know you, so we can pick the right camp for you.</>
+                  ? <>Sophie is one of our counsellors. She wants to spend <strong style={{ color: interviewInfo.color }}>around 45 minutes</strong> getting to know you properly, so we can pick the right camp for you.</>
                   : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
             </p>
             <div style={{ ...styles.infoBox, borderColor: `${interviewInfo.color}20`, background: `${interviewInfo.color}08` }}>
@@ -285,8 +285,8 @@ export default function InviteTest({ inviteCode, onReset }) {
                 </>
               ) : isPostAdmission ? (
                 <>
-                  <div style={styles.rule}><span style={styles.ruleDot} />About 30 minutes, voice only</div>
-                  <div style={styles.rule}><span style={styles.ruleDot} />Michelle will ask what you hope to get from camp</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />About 45 minutes, voice only</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Sophie will ask what you hope to get from camp</div>
                   <div style={styles.rule}><span style={styles.ruleDot} />What kind of group setting works best for you</div>
                   <div style={styles.rule}><span style={styles.ruleDot} />Speak freely, this is just a chat</div>
                 </>
@@ -303,7 +303,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               onClick={() => setPhase('interview')}
               style={{ ...styles.startBtn, background: interviewInfo.color, color: '#0D0F12' }}
             >
-              {isCodeInterview ? 'Start Chat →' : isPostAdmission ? 'Start Session with Michelle →' : 'Start Interview →'}
+              {isCodeInterview ? 'Start Chat →' : isPostAdmission ? 'Start Session with Sophie →' : 'Start Interview →'}
             </button>
             <p style={styles.footerNote}>fizzmind — Summer 2026 · {student.email}</p>
           </motion.div>
@@ -334,7 +334,7 @@ export default function InviteTest({ inviteCode, onReset }) {
           customMessage={isCodeInterview
             ? "Thanks for the chat! The team will be in touch by email within a day or two with everything you need to know."
             : isPostAdmission
-              ? "Thanks for chatting with Michelle! She will share what you talked about with the team picking your camp. We will get back to your family soon with the next step."
+              ? "Thanks for chatting with Sophie! She will share what you talked about with the team picking your camp. We will get back to your family soon with the next step."
               : "Thanks for the chat! Keep an eye on your email — your Challenge brief will arrive soon with all the details. You'll have about a week to work on it."}
           onReset={onReset}
         />

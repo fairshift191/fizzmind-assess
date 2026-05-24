@@ -138,7 +138,7 @@ function Assessment({ config, onComplete }) {
           apiKey: config.apiKey,
           systemPrompt,
           tools: TOOL_DECLARATIONS,
-          voiceName: 'Kore',
+          voiceName: 'Zephyr',
           language: 'en',
           greetingMessage,
         })
