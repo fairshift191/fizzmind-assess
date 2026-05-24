@@ -136,9 +136,9 @@ function Assessment({ config, onComplete }) {
         // Connect
         await adapter.connect({
           apiKey: config.apiKey,
-          systemPrompt: `VOICE STYLE: Speak English with a warm Arabic-region accent (Levantine or Gulf flavour). Carry over Arabic-region speech patterns: gentle pacing, occasional softening of vowels, a slight musicality on key words. Do NOT speak in Arabic, the conversation is in English. The accent should feel natural and familiar, not exaggerated or performed.\n\n${systemPrompt}`,
+          systemPrompt,
           tools: TOOL_DECLARATIONS,
-          voiceName: 'Leda',
+          voiceName: 'Zephyr',
           language: 'en',
           greetingMessage,
         })

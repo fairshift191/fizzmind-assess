@@ -4,6 +4,7 @@ import { GeminiLiveAdapter } from '../voice/GeminiLiveAdapter.js'
 import { BlobRenderer } from '../renderer/BlobRenderer.js'
 import { buildInterviewPrompt, INTERVIEW_TOOL_DECLARATIONS } from '../assessment/interview-prompt.js'
 import { buildCodeInterviewPrompt, CODE_INTERVIEW_TOOL_DECLARATIONS } from '../assessment/code-interview-prompt.js'
+import { buildCounsellorPrompt, COUNSELLOR_TOOL_DECLARATIONS } from '../assessment/counsellor-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -25,6 +26,15 @@ export default function VoiceInterview({ config, onComplete }) {
 
   const [interviewResult, setInterviewResult] = useState(null)
   const completedRef = useRef(false)
+
+  const isPostAdmission = config.inviteVariant === 'post_admission'
+  const isCodeInterview = config.interviewType === 'code_interview'
+  const characterName = isPostAdmission ? 'Michelle' : 'Scout'
+  const sessionLabel = isPostAdmission
+    ? 'Counsellor Session'
+    : isCodeInterview
+      ? 'Code Interpretation'
+      : 'Top 50 Interview'
 
   const handleComplete = useCallback(() => {
     if (completedRef.current) return
@@ -98,35 +108,49 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Comprehension: ${args.comprehension}. Experimented: ${args.experimented ? 'yes' : 'no'}.`,
               adminNote: args.admin_note,
             })
+          } else if (tool === 'complete_counsellor_session') {
+            setInterviewResult({
+              projectPlan: `Camp fit: ${args.camp_fit_notes}. Expectations: ${args.expectations}.`,
+              personNote: args.person_note,
+              adminNote: `Worries/flags: ${args.worries_or_flags}. Staff brief: ${args.staff_brief}.`,
+            })
           }
         })
-
-        const isCodeInterview = config.interviewType === 'code_interview'
-        const isPostAdmission = config.inviteVariant === 'post_admission'
 
         const systemPrompt = isCodeInterview
           ? buildCodeInterviewPrompt({
               studentName: config.studentName,
               studentContext: config.studentContext,
             })
-          : buildInterviewPrompt({
-              studentName: config.studentName,
-              track: config.track,
-              campName: config.campName,
-              studentContext: config.studentContext,
-            })
+          : isPostAdmission
+            ? buildCounsellorPrompt({
+                studentName: config.studentName,
+                studentContext: config.studentContext,
+              })
+            : buildInterviewPrompt({
+                studentName: config.studentName,
+                track: config.track,
+                campName: config.campName,
+                studentContext: config.studentContext,
+              })
 
         const greetingMessage = isCodeInterview
           ? `The student ${config.studentName} has joined for their final-round code interpretation chat. This is a SHORT call (3-5 minutes total). Greet them warmly by name and begin the conversation as directed in the system prompt. Do NOT announce any selection decision.`
           : isPostAdmission
-            ? `The student ${config.studentName} has joined for a post-admission catch-up call. They are ALREADY ADMITTED and ALREADY a Wild Minds Fellow. Do NOT congratulate them on the top 50 — that is past. Do NOT discuss the Challenge brief or scholarships. Greet them warmly by name and follow the specific instructions in the system prompt: warm catch-up, explain Wild Minds, then deliver the enrollment-form-before-coach-call message.`
+            ? `The student ${config.studentName} has joined for a 30-minute counsellor session with Michelle. You are MICHELLE the counsellor, NOT Scout. Introduce yourself as Michelle. Do NOT say you are Scout. Follow the counsellor system prompt: warm intro, then walk through expectations, group fit, worries, life outside academics, and what success looks like.`
             : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
+
+        const tools = isCodeInterview
+          ? CODE_INTERVIEW_TOOL_DECLARATIONS
+          : isPostAdmission
+            ? COUNSELLOR_TOOL_DECLARATIONS
+            : INTERVIEW_TOOL_DECLARATIONS
 
         await adapter.connect({
           apiKey: config.apiKey,
-          systemPrompt: `VOICE STYLE: Speak English with a warm Arabic-region accent (Levantine or Gulf flavour). Carry over Arabic-region speech patterns: gentle pacing, occasional softening of vowels, a slight musicality on key words. Do NOT speak in Arabic, the conversation is in English. The accent should feel natural and familiar, not exaggerated or performed.\n\n${systemPrompt}`,
-          tools: isCodeInterview ? CODE_INTERVIEW_TOOL_DECLARATIONS : INTERVIEW_TOOL_DECLARATIONS,
-          voiceName: 'Leda',
+          systemPrompt,
+          tools,
+          voiceName: 'Zephyr',
           language: 'en',
           greetingMessage,
         })
@@ -184,18 +208,18 @@ export default function VoiceInterview({ config, onComplete }) {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }} style={styles.container}>
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.5 }} style={styles.nameTag}>
-        {config.studentName} · Top 50 Interview
+        {config.studentName} · {sessionLabel}
       </motion.div>
 
       <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} onClick={handleEndEarly} style={styles.endButton}>
-        End Interview
+        {isPostAdmission ? 'End Session' : 'End Interview'}
       </motion.button>
 
       <div ref={rendererContainerRef} style={styles.rendererContainer} />
 
       {!ready && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={styles.loadingOverlay}>
-          <div style={styles.loadingText}>Connecting to Scout...</div>
+          <div style={styles.loadingText}>Connecting to {characterName}...</div>
           <div style={styles.loadingHint}>Please allow microphone access when prompted</div>
         </motion.div>
       )}
@@ -205,7 +229,7 @@ export default function VoiceInterview({ config, onComplete }) {
       <div style={styles.statusBar}>
         {isSpeaking && (
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} style={styles.statusPill}>
-            Scout is speaking...
+            {characterName} is speaking...
           </motion.div>
         )}
         {isListening && !isSpeaking && (

@@ -112,9 +112,9 @@ export default function InviteTest({ inviteCode, onReset }) {
       }
     : isPostAdmission
       ? {
-          label: 'Wild Minds Fellowship · Welcome chat',
+          label: 'Counsellor Session · with Michelle',
           icon: '🎙️',
-          desc: 'A short catch-up with Scout — about what you\'ve been up to, what Wild Minds means for you, and the next step before you meet your personal coach.',
+          desc: 'A 30-minute chat with Michelle, one of our counsellors. She wants to hear what you hope to get from camp so we can pick the right one for you.',
           color: '#C9963A',
         }
       : {
@@ -256,17 +256,21 @@ export default function InviteTest({ inviteCode, onReset }) {
           >
             <div style={{ ...styles.badge, borderColor: `${interviewInfo.color}30`, color: interviewInfo.color, background: `${interviewInfo.color}10` }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: interviewInfo.color, display: 'inline-block' }} />
-              {isCodeInterview ? 'Final Round' : isPostAdmission ? "You're a Wild Minds Fellow" : "You're in the top 50"}
+              {isCodeInterview ? 'Final Round' : isPostAdmission ? 'Counsellor Session' : "You're in the top 50"}
             </div>
             <div style={styles.iconLarge}>{interviewInfo.icon}</div>
             <h1 style={styles.title}>
-              {isCodeInterview ? `Hey ${student.first_name}!` : `Congratulations, ${student.first_name}!`}
+              {isCodeInterview
+                ? `Hey ${student.first_name}!`
+                : isPostAdmission
+                  ? `Hi ${student.first_name}, meet Michelle.`
+                  : `Congratulations, ${student.first_name}!`}
             </h1>
             <p style={styles.subtitle}>
               {isCodeInterview
                 ? <>Scout would love to hear about the chatbot you built. Just a quick chat <strong style={{ color: interviewInfo.color }}>3 to 5 minutes</strong>.</>
                 : isPostAdmission
-                  ? <>You've been selected for the <strong style={{ color: interviewInfo.color }}>Wild Minds Fellowship</strong>. Scout has a short catch-up planned — and one important next step to share with you.</>
+                  ? <>Michelle is one of our counsellors. She wants to spend <strong style={{ color: interviewInfo.color }}>about 30 minutes</strong> getting to know you, so we can pick the right camp for you.</>
                   : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
             </p>
             <div style={{ ...styles.infoBox, borderColor: `${interviewInfo.color}20`, background: `${interviewInfo.color}08` }}>
@@ -277,14 +281,14 @@ export default function InviteTest({ inviteCode, onReset }) {
                 <>
                   <div style={styles.rule}><span style={styles.ruleDot} />About 3 to 5 minutes, voice only</div>
                   <div style={styles.rule}><span style={styles.ruleDot} />Walk Scout through your bot and how it works</div>
-                  <div style={styles.rule}><span style={styles.ruleDot} />Speak freely — no wrong answers</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Speak freely, no wrong answers</div>
                 </>
               ) : isPostAdmission ? (
                 <>
-                  <div style={styles.rule}><span style={styles.ruleDot} />5 to 10 minutes, voice only</div>
-                  <div style={styles.rule}><span style={styles.ruleDot} />Scout will explain what Wild Minds means for you</div>
-                  <div style={styles.rule}><span style={styles.ruleDot} />She'll share the next step before you meet your personal coach</div>
-                  <div style={styles.rule}><span style={styles.ruleDot} />Speak freely — this is just a catch-up</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />About 30 minutes, voice only</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Michelle will ask what you hope to get from camp</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />What kind of group setting works best for you</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Speak freely, this is just a chat</div>
                 </>
               ) : (
                 <>
@@ -299,7 +303,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               onClick={() => setPhase('interview')}
               style={{ ...styles.startBtn, background: interviewInfo.color, color: '#0D0F12' }}
             >
-              {isCodeInterview ? 'Start Chat →' : isPostAdmission ? 'Start Chat with Scout →' : 'Start Interview →'}
+              {isCodeInterview ? 'Start Chat →' : isPostAdmission ? 'Start Session with Michelle →' : 'Start Interview →'}
             </button>
             <p style={styles.footerNote}>fizzmind — Summer 2026 · {student.email}</p>
           </motion.div>
@@ -330,7 +334,7 @@ export default function InviteTest({ inviteCode, onReset }) {
           customMessage={isCodeInterview
             ? "Thanks for the chat! The team will be in touch by email within a day or two with everything you need to know."
             : isPostAdmission
-              ? "Thanks for the chat! Now talk to your parents — once they submit the enrollment form, we'll get your personal coach call scheduled."
+              ? "Thanks for chatting with Michelle! She will share what you talked about with the team picking your camp. We will get back to your family soon with the next step."
               : "Thanks for the chat! Keep an eye on your email — your Challenge brief will arrive soon with all the details. You'll have about a week to work on it."}
           onReset={onReset}
         />
