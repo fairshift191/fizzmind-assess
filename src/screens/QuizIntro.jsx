@@ -86,11 +86,11 @@ function QuizIntro({ config, onStart, onBack }) {
 
         await adapter.connect({
           apiKey: config.apiKey,
-          systemPrompt: QUIZ_INTRO_PROMPT,
+          systemPrompt: `VOICE STYLE: Speak English with a warm Arabic-region accent (Levantine or Gulf flavour). Carry over Arabic-region speech patterns: gentle pacing, occasional softening of vowels, a slight musicality on key words. Do NOT speak in Arabic, the conversation is in English. The accent should feel natural and familiar, not exaggerated or performed.\n\n${QUIZ_INTRO_PROMPT}`,
           tools: [],
-          voiceName: 'Charon',
+          voiceName: 'Leda',
           language: 'en',
-          greetingMessage: `A student named ${config.studentName} is about to take the Python assessment test. Greet them warmly by name and briefly explain what the test is — 30 questions, 10 minutes, no pressure.`,
+          greetingMessage: `A student named ${config.studentName} is about to take the Python assessment test. Greet them warmly by name and briefly explain what the test is. 30 questions, 10 minutes, no pressure.`,
         })
 
         if (destroyed) return
