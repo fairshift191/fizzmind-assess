@@ -88,7 +88,7 @@ function QuizIntro({ config, onStart, onBack }) {
           apiKey: config.apiKey,
           systemPrompt: QUIZ_INTRO_PROMPT,
           tools: [],
-          voiceName: 'Zephyr',
+          voiceName: 'Kore',
           language: 'en',
           greetingMessage: `A student named ${config.studentName} is about to take the Python assessment test. Greet them warmly by name and briefly explain what the test is. 30 questions, 10 minutes, no pressure.`,
         })

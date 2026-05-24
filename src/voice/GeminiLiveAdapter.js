@@ -33,6 +33,14 @@ export class GeminiLiveAdapter {
     this._onToolCall = null
     this._onSpeakingChange = null
     this._onListeningChange = null
+    this._onConnectionState = null
+
+    // Reconnect state
+    this._voiceName = null
+    this._reconnectAttempt = 0
+    this._reconnectTimer = null
+    this._maxReconnectAttempts = 5
+    this._userInitiatedClose = false
 
     // Audio
     this._audioContext = null
@@ -65,15 +73,16 @@ export class GeminiLiveAdapter {
     this._language = language || 'en'
     this._tools = tools || []
     this._greetingMessage = greetingMessage || 'A visitor has just approached. Greet them warmly and ask how you can help.'
+    this._voiceName = voiceName || 'Puck'
 
     if (!this.apiKey) {
-      console.error('[GeminiLive] No API key — voice disabled')
+      console.error('[GeminiLive] No API key, voice disabled')
       return
     }
 
     // Guard against double-connect (React StrictMode mounts twice in dev)
     if (this.ws) {
-      console.warn('[GeminiLive] Already connected — ignoring duplicate connect()')
+      console.warn('[GeminiLive] Already connected, ignoring duplicate connect()')
       return
     }
 
@@ -82,25 +91,46 @@ export class GeminiLiveAdapter {
     this._outputAudioCtx.resume()
     this._nextPlayTime = 0
 
-    // Master gain — AI audio flows through this to speakers.
+    // Master gain. AI audio flows through this to speakers.
     this._masterGain = this._outputAudioCtx.createGain()
     this._masterGain.gain.value = 1
     this._masterGain.connect(this._outputAudioCtx.destination)
 
-    console.log('[GeminiLive] Connecting, model:', this.model)
+    this._openWebSocket({ isReconnect: false })
+
+    // Start microphone
+    await this._startMic()
+
+    // Start Web Speech for visitor transcription
+    this._startWebSpeech()
+  }
+
+  _openWebSocket({ isReconnect }) {
+    if (this._destroyed) return
+    if (isReconnect) {
+      // On reconnect we are re-establishing setup. Block mic and greeting until setupComplete arrives.
+      this._setupReady = false
+      console.log(`[GeminiLive] Reconnecting (attempt ${this._reconnectAttempt}/${this._maxReconnectAttempts}), model:`, this.model)
+      this._onConnectionState?.({ state: 'reconnecting', attempt: this._reconnectAttempt, max: this._maxReconnectAttempts })
+    } else {
+      console.log('[GeminiLive] Connecting, model:', this.model)
+      this._onConnectionState?.({ state: 'connecting' })
+    }
 
     const url = `${GEMINI_WS_BASE}?key=${this.apiKey}`
-    this.ws = new WebSocket(url)
+    const ws = new WebSocket(url)
+    this.ws = ws
 
-    this.ws.onopen = () => {
-      console.log('[GeminiLive] WebSocket opened — sending setup')
+    ws.onopen = () => {
+      if (this.ws !== ws || this._destroyed) return
+      console.log('[GeminiLive] WebSocket opened, sending setup')
       const setupMsg = {
         setup: {
           model: `models/${this.model}`,
           generationConfig: {
             responseModalities: ['AUDIO'],
             speechConfig: {
-              voiceConfig: { prebuiltVoiceConfig: { voiceName: voiceName || 'Puck' } },
+              voiceConfig: { prebuiltVoiceConfig: { voiceName: this._voiceName } },
             },
           },
           systemInstruction: {
@@ -111,28 +141,58 @@ export class GeminiLiveAdapter {
       if (this._tools.length > 0) {
         setupMsg.setup.tools = [{ functionDeclarations: this._tools }]
       }
-      this.ws.send(JSON.stringify(setupMsg))
+      ws.send(JSON.stringify(setupMsg))
     }
 
-    this.ws.onmessage = (event) => this._handleMessage(event)
+    ws.onmessage = (event) => {
+      // Any successful message confirms the connection is healthy. Reset the reconnect counter.
+      if (this._reconnectAttempt > 0) {
+        console.log('[GeminiLive] Connection recovered')
+        this._reconnectAttempt = 0
+        this._onConnectionState?.({ state: 'connected' })
+      }
+      this._handleMessage(event)
+    }
 
-    this.ws.onerror = (err) => {
+    ws.onerror = (err) => {
       console.error('[GeminiLive] WebSocket error:', err)
     }
 
-    this.ws.onclose = (ev) => {
-      console.warn('[GeminiLive] WebSocket closed — code:', ev.code, 'reason:', ev.reason)
+    ws.onclose = (ev) => {
+      console.warn('[GeminiLive] WebSocket closed, code:', ev.code, 'reason:', ev.reason)
+      if (this.ws !== ws) return // a newer ws replaced this one, ignore
+      this.ws = null
+
+      if (this._destroyed || this._userInitiatedClose) {
+        this._onConnectionState?.({ state: 'closed' })
+        return
+      }
+
+      // Unexpected close mid-conversation. Try to reconnect.
+      if (this._reconnectAttempt >= this._maxReconnectAttempts) {
+        console.error('[GeminiLive] Max reconnect attempts reached, giving up')
+        this._onConnectionState?.({ state: 'failed' })
+        return
+      }
+
+      this._reconnectAttempt += 1
+      const delayMs = Math.min(1000 * Math.pow(2, this._reconnectAttempt - 1), 16000)
+      console.log(`[GeminiLive] Scheduling reconnect in ${delayMs}ms (attempt ${this._reconnectAttempt}/${this._maxReconnectAttempts})`)
+      this._onConnectionState?.({ state: 'reconnect_pending', attempt: this._reconnectAttempt, max: this._maxReconnectAttempts, delayMs })
+
+      clearTimeout(this._reconnectTimer)
+      this._reconnectTimer = setTimeout(() => {
+        if (this._destroyed) return
+        this._openWebSocket({ isReconnect: true })
+      }, delayMs)
     }
-
-    // Start microphone
-    await this._startMic()
-
-    // Start Web Speech for visitor transcription
-    this._startWebSpeech()
   }
 
   disconnect() {
     this._destroyed = true
+    this._userInitiatedClose = true
+    clearTimeout(this._reconnectTimer)
+    this._reconnectTimer = null
     if (this.ws) {
       this.ws.onmessage = null
       this.ws.onclose = null
@@ -149,6 +209,7 @@ export class GeminiLiveAdapter {
     this._onSpeakingChange = null
     this._onListeningChange = null
     this._onToolCall = null
+    this._onConnectionState = null
   }
 
   // ─── Greeting ─────────────────────────────────────────────────────────
@@ -203,8 +264,9 @@ export class GeminiLiveAdapter {
 
     // Setup complete
     if (msg.setupComplete) {
-      console.log('[GeminiLive] setupComplete — auto-triggering greeting')
+      console.log('[GeminiLive] setupComplete')
       this._setupReady = true
+      this._onConnectionState?.({ state: 'connected' })
       if (!this._greetingTriggered) {
         this._greetingTriggered = true
         this._sendGreetingTrigger()
@@ -398,6 +460,7 @@ export class GeminiLiveAdapter {
   onSpeakingChange(cb) { this._onSpeakingChange = cb }
   onListeningChange(cb) { this._onListeningChange = cb }
   onToolCall(cb) { this._onToolCall = cb }
+  onConnectionState(cb) { this._onConnectionState = cb }
 }
 
 export default GeminiLiveAdapter

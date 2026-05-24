@@ -23,6 +23,7 @@ export default function VoiceInterview({ config, onComplete }) {
   const [isListening, setIsListening] = useState(false)
   const [ready, setReady] = useState(false)
   const [error, setError] = useState(null)
+  const [connectionState, setConnectionState] = useState(null) // { state, attempt?, max?, delayMs? }
 
   const [interviewResult, setInterviewResult] = useState(null)
   const completedRef = useRef(false)
@@ -93,6 +94,7 @@ export default function VoiceInterview({ config, onComplete }) {
 
         adapter.onSpeakingChange((s) => { setIsSpeaking(s); renderer.setSpeaking(s) })
         adapter.onListeningChange((l) => { setIsListening(l); renderer.setListening(l) })
+        adapter.onConnectionState((s) => setConnectionState(s))
 
         adapter.onToolCall(({ tool, args }) => {
           console.log('[VoiceInterview] Tool call:', tool, args)
@@ -150,7 +152,7 @@ export default function VoiceInterview({ config, onComplete }) {
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: 'Zephyr',
+          voiceName: 'Kore',
           language: 'en',
           greetingMessage,
         })
@@ -227,12 +229,22 @@ export default function VoiceInterview({ config, onComplete }) {
       <SubtitleBar text={subtitleText} secondaryText={visitorText ? `You: ${visitorText}` : null} visible={!!(subtitleText || visitorText)} position="bottom" />
 
       <div style={styles.statusBar}>
-        {isSpeaking && (
+        {(connectionState?.state === 'reconnect_pending' || connectionState?.state === 'reconnecting') && (
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} style={{ ...styles.statusPill, background: 'rgba(255, 180, 60, 0.15)', color: '#ffb43c' }}>
+            Reconnecting{connectionState.attempt ? ` (${connectionState.attempt}/${connectionState.max})` : ''}...
+          </motion.div>
+        )}
+        {connectionState?.state === 'failed' && (
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} style={{ ...styles.statusPill, background: 'rgba(255, 80, 80, 0.18)', color: '#ff5050' }}>
+            Connection lost. Please refresh and reopen the invite.
+          </motion.div>
+        )}
+        {connectionState?.state !== 'reconnect_pending' && connectionState?.state !== 'reconnecting' && connectionState?.state !== 'failed' && isSpeaking && (
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} style={styles.statusPill}>
             {characterName} is speaking...
           </motion.div>
         )}
-        {isListening && !isSpeaking && (
+        {connectionState?.state !== 'reconnect_pending' && connectionState?.state !== 'reconnecting' && connectionState?.state !== 'failed' && isListening && !isSpeaking && (
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} style={{ ...styles.statusPill, background: 'rgba(var(--brand-secondary-rgb), 0.15)', color: 'var(--brand-secondary)' }}>
             Listening...
           </motion.div>
