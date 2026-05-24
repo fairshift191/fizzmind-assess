@@ -5,6 +5,7 @@ import { BlobRenderer } from '../renderer/BlobRenderer.js'
 import { buildInterviewPrompt, INTERVIEW_TOOL_DECLARATIONS } from '../assessment/interview-prompt.js'
 import { buildCodeInterviewPrompt, CODE_INTERVIEW_TOOL_DECLARATIONS } from '../assessment/code-interview-prompt.js'
 import { buildCounsellorPrompt, COUNSELLOR_TOOL_DECLARATIONS } from '../assessment/counsellor-prompt.js'
+import { buildCoordinatorPrompt, COORDINATOR_TOOL_DECLARATIONS } from '../assessment/coordinator-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -29,13 +30,20 @@ export default function VoiceInterview({ config, onComplete }) {
   const completedRef = useRef(false)
 
   const isPostAdmission = config.inviteVariant === 'post_admission'
+  const isPostCounsellor = config.inviteVariant === 'post_counsellor'
   const isCodeInterview = config.interviewType === 'code_interview'
-  const characterName = isPostAdmission ? 'Sophie' : 'Scout'
-  const sessionLabel = isPostAdmission
-    ? 'Counsellor Session'
-    : isCodeInterview
-      ? 'Code Interpretation'
-      : 'Top 50 Interview'
+  const characterName = isPostCounsellor
+    ? 'Beverly'
+    : isPostAdmission
+      ? 'Sophie'
+      : 'Scout'
+  const sessionLabel = isPostCounsellor
+    ? 'Wrap-up Call'
+    : isPostAdmission
+      ? 'Counsellor Session'
+      : isCodeInterview
+        ? 'Code Interpretation'
+        : 'Top 50 Interview'
 
   const handleComplete = useCallback(() => {
     if (completedRef.current) return
@@ -116,6 +124,12 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: args.person_note,
               adminNote: `Worries/flags: ${args.worries_or_flags}. Staff brief: ${args.staff_brief}.`,
             })
+          } else if (tool === 'complete_coordinator_session') {
+            setInterviewResult({
+              projectPlan: `Counsellor feedback: ${args.counsellor_feedback}`,
+              personNote: `Mood: ${args.mood_going_forward}`,
+              adminNote: `Questions raised: ${args.questions_raised}`,
+            })
           }
         })
 
@@ -124,29 +138,38 @@ export default function VoiceInterview({ config, onComplete }) {
               studentName: config.studentName,
               studentContext: config.studentContext,
             })
-          : isPostAdmission
-            ? buildCounsellorPrompt({
+          : isPostCounsellor
+            ? buildCoordinatorPrompt({
                 studentName: config.studentName,
                 studentContext: config.studentContext,
               })
-            : buildInterviewPrompt({
-                studentName: config.studentName,
-                track: config.track,
-                campName: config.campName,
-                studentContext: config.studentContext,
-              })
+            : isPostAdmission
+              ? buildCounsellorPrompt({
+                  studentName: config.studentName,
+                  studentContext: config.studentContext,
+                })
+              : buildInterviewPrompt({
+                  studentName: config.studentName,
+                  track: config.track,
+                  campName: config.campName,
+                  studentContext: config.studentContext,
+                })
 
         const greetingMessage = isCodeInterview
           ? `The student ${config.studentName} has joined for their final-round code interpretation chat. This is a SHORT call (3-5 minutes total). Greet them warmly by name and begin the conversation as directed in the system prompt. Do NOT announce any selection decision.`
-          : isPostAdmission
-            ? `The student ${config.studentName} has joined for their counsellor session with Sophie. You are SOPHIE the counsellor, NOT Scout. Introduce yourself as Sophie. Do NOT say you are Scout. This is a longer call (around 45 minutes). Follow the counsellor system prompt: walk through all ten themes in order (family, friends, groups, normal weekend, hobbies, school, what excites about camp, what worries about camp, new places + people, success), spending around 5 minutes on each. Dig in with follow-ups when answers are short. Do NOT call complete_counsellor_session before covering all ten themes.`
-            : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
+          : isPostCounsellor
+            ? `The student ${config.studentName} has joined for their short wrap-up call with Beverly. You are BEVERLY the camp coordinator, NOT Scout, NOT Sophie. Introduce yourself as Beverly. This is a SHORT call (about 7 minutes). Follow the coordinator system prompt: ask how the counsellor call with Sophie felt, tell them the team will share camp details soon so the family can book flights, tell them a pre-camp prep list is on the way, then warm send-off about looking forward to meeting them at camp for the ultimate fun time.`
+            : isPostAdmission
+              ? `The student ${config.studentName} has joined for their counsellor session with Sophie. You are SOPHIE the counsellor, NOT Scout. Introduce yourself as Sophie. Do NOT say you are Scout. This is a longer call (around 45 minutes). Follow the counsellor system prompt: walk through all ten themes in order (family, friends, groups, normal weekend, hobbies, school, what excites about camp, what worries about camp, new places + people, success), spending around 5 minutes on each. Dig in with follow-ups when answers are short. Do NOT call complete_counsellor_session before covering all ten themes.`
+              : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
         const tools = isCodeInterview
           ? CODE_INTERVIEW_TOOL_DECLARATIONS
-          : isPostAdmission
-            ? COUNSELLOR_TOOL_DECLARATIONS
-            : INTERVIEW_TOOL_DECLARATIONS
+          : isPostCounsellor
+            ? COORDINATOR_TOOL_DECLARATIONS
+            : isPostAdmission
+              ? COUNSELLOR_TOOL_DECLARATIONS
+              : INTERVIEW_TOOL_DECLARATIONS
 
         await adapter.connect({
           apiKey: config.apiKey,
@@ -214,7 +237,7 @@ export default function VoiceInterview({ config, onComplete }) {
       </motion.div>
 
       <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} onClick={handleEndEarly} style={styles.endButton}>
-        {isPostAdmission ? 'End Session' : 'End Interview'}
+        {isPostCounsellor ? 'End Call' : isPostAdmission ? 'End Session' : 'End Interview'}
       </motion.button>
 
       <div ref={rendererContainerRef} style={styles.rendererContainer} />

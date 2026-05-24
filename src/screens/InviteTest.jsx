@@ -102,6 +102,7 @@ export default function InviteTest({ inviteCode, onReset }) {
   const isInterview = isVoiceInterview || isCodeInterview
   const inviteVariant = invite?.metadata?.invite_variant ?? null
   const isPostAdmission = isVoiceInterview && inviteVariant === 'post_admission'
+  const isPostCounsellor = isVoiceInterview && inviteVariant === 'post_counsellor'
   const trackInfo = invite && !isInterview ? TRACK_INFO[invite.track] : null
   const interviewInfo = isCodeInterview
     ? {
@@ -110,19 +111,26 @@ export default function InviteTest({ inviteCode, onReset }) {
         desc: 'A short chat with Scout about the chatbot you built. Just a few minutes — walk her through what you made and how it works.',
         color: '#C9963A',
       }
-    : isPostAdmission
+    : isPostCounsellor
       ? {
-          label: 'Counsellor Session · with Sophie',
+          label: 'Wrap-up Call · with Beverly',
           icon: '🎙️',
-          desc: 'A longer chat (around 45 minutes) with Sophie, one of our counsellors. She wants to get to know you properly so we can pick the right camp for you.',
+          desc: 'A short call (about 7 minutes) with Beverly, one of our camp coordinators. She has a quick update for you and wants to hear how things have been.',
           color: '#C9963A',
         }
-      : {
-          label: 'Top 50 Interview',
-          icon: '🎙️',
-          desc: 'A short conversation with Scout — congratulations on reaching the top 50! You\'ll chat about your Challenge project and we\'ll explain scholarships.',
-          color: '#C9963A',
-        }
+      : isPostAdmission
+        ? {
+            label: 'Counsellor Session · with Sophie',
+            icon: '🎙️',
+            desc: 'A longer chat (around 45 minutes) with Sophie, one of our counsellors. She wants to get to know you properly so we can pick the right camp for you.',
+            color: '#C9963A',
+          }
+        : {
+            label: 'Top 50 Interview',
+            icon: '🎙️',
+            desc: 'A short conversation with Scout — congratulations on reaching the top 50! You\'ll chat about your Challenge project and we\'ll explain scholarships.',
+            color: '#C9963A',
+          }
 
   return (
     <AnimatePresence mode="wait">
@@ -256,22 +264,26 @@ export default function InviteTest({ inviteCode, onReset }) {
           >
             <div style={{ ...styles.badge, borderColor: `${interviewInfo.color}30`, color: interviewInfo.color, background: `${interviewInfo.color}10` }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: interviewInfo.color, display: 'inline-block' }} />
-              {isCodeInterview ? 'Final Round' : isPostAdmission ? 'Counsellor Session' : "You're in the top 50"}
+              {isCodeInterview ? 'Final Round' : isPostCounsellor ? 'Wrap-up Call' : isPostAdmission ? 'Counsellor Session' : "You're in the top 50"}
             </div>
             <div style={styles.iconLarge}>{interviewInfo.icon}</div>
             <h1 style={styles.title}>
               {isCodeInterview
                 ? `Hey ${student.first_name}!`
-                : isPostAdmission
-                  ? `Hi ${student.first_name}, meet Sophie.`
-                  : `Congratulations, ${student.first_name}!`}
+                : isPostCounsellor
+                  ? `Hi ${student.first_name}, meet Beverly.`
+                  : isPostAdmission
+                    ? `Hi ${student.first_name}, meet Sophie.`
+                    : `Congratulations, ${student.first_name}!`}
             </h1>
             <p style={styles.subtitle}>
               {isCodeInterview
                 ? <>Scout would love to hear about the chatbot you built. Just a quick chat <strong style={{ color: interviewInfo.color }}>3 to 5 minutes</strong>.</>
-                : isPostAdmission
-                  ? <>Sophie is one of our counsellors. She wants to spend <strong style={{ color: interviewInfo.color }}>around 45 minutes</strong> getting to know you properly, so we can pick the right camp for you.</>
-                  : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
+                : isPostCounsellor
+                  ? <>Beverly is one of our camp coordinators. She has a quick <strong style={{ color: interviewInfo.color }}>7 minute call</strong> with you, an update on what is coming next.</>
+                  : isPostAdmission
+                    ? <>Sophie is one of our counsellors. She wants to spend <strong style={{ color: interviewInfo.color }}>around 45 minutes</strong> getting to know you properly, so we can pick the right camp for you.</>
+                    : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
             </p>
             <div style={{ ...styles.infoBox, borderColor: `${interviewInfo.color}20`, background: `${interviewInfo.color}08` }}>
               <p style={styles.infoText}>{interviewInfo.desc}</p>
@@ -282,6 +294,13 @@ export default function InviteTest({ inviteCode, onReset }) {
                   <div style={styles.rule}><span style={styles.ruleDot} />About 3 to 5 minutes, voice only</div>
                   <div style={styles.rule}><span style={styles.ruleDot} />Walk Scout through your bot and how it works</div>
                   <div style={styles.rule}><span style={styles.ruleDot} />Speak freely, no wrong answers</div>
+                </>
+              ) : isPostCounsellor ? (
+                <>
+                  <div style={styles.rule}><span style={styles.ruleDot} />About 7 minutes, voice only</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Beverly will ask how your call with Sophie felt</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Then share what is coming next from our side</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Quick and easy</div>
                 </>
               ) : isPostAdmission ? (
                 <>
@@ -303,7 +322,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               onClick={() => setPhase('interview')}
               style={{ ...styles.startBtn, background: interviewInfo.color, color: '#0D0F12' }}
             >
-              {isCodeInterview ? 'Start Chat →' : isPostAdmission ? 'Start Session with Sophie →' : 'Start Interview →'}
+              {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : 'Start Interview →'}
             </button>
             <p style={styles.footerNote}>fizzmind — Summer 2026 · {student.email}</p>
           </motion.div>
@@ -333,9 +352,11 @@ export default function InviteTest({ inviteCode, onReset }) {
           studentName={`${student.first_name} ${student.last_name}`.trim()}
           customMessage={isCodeInterview
             ? "Thanks for the chat! The team will be in touch by email within a day or two with everything you need to know."
-            : isPostAdmission
-              ? "Thanks for chatting with Sophie! She will share what you talked about with the team picking your camp. We will get back to your family soon with the next step."
-              : "Thanks for the chat! Keep an eye on your email — your Challenge brief will arrive soon with all the details. You'll have about a week to work on it."}
+            : isPostCounsellor
+              ? "Thanks for the call! Watch out for the email from us. It will have the camp details and the full prep list so your family can book flights and get you set."
+              : isPostAdmission
+                ? "Thanks for chatting with Sophie! She will share what you talked about with the team picking your camp. We will get back to your family soon with the next step."
+                : "Thanks for the chat! Keep an eye on your email — your Challenge brief will arrive soon with all the details. You'll have about a week to work on it."}
           onReset={onReset}
         />
       )}
