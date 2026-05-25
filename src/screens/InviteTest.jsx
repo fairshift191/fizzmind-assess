@@ -113,9 +113,9 @@ export default function InviteTest({ inviteCode, onReset }) {
       }
     : isPostCounsellor
       ? {
-          label: 'Wrap-up Call · with Beverly',
+          label: 'Parent Call · with Beverly',
           icon: '🎙️',
-          desc: 'A longer call (about 15 to 20 minutes) with Beverly, one of our camp coordinators. She will walk you through what the Wild Minds Fellowship actually is, the dates, and an important choice for your family.',
+          desc: 'A 15 to 20 minute call with Beverly, one of our coordinators, intended for the parents. Beverly will walk you through what the Wild Minds Fellowship actually is, the dates, and an important choice for your family.',
           color: '#C9963A',
         }
       : isPostAdmission
@@ -271,7 +271,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               {isCodeInterview
                 ? `Hey ${student.first_name}!`
                 : isPostCounsellor
-                  ? `Hi ${student.first_name}, meet Beverly.`
+                  ? `A call for ${student.first_name}'s parents.`
                   : isPostAdmission
                     ? `Hi ${student.first_name}, meet Sophie.`
                     : `Congratulations, ${student.first_name}!`}
@@ -280,7 +280,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               {isCodeInterview
                 ? <>Scout would love to hear about the chatbot you built. Just a quick chat <strong style={{ color: interviewInfo.color }}>3 to 5 minutes</strong>.</>
                 : isPostCounsellor
-                  ? <>Beverly is one of our camp coordinators. She has a <strong style={{ color: interviewInfo.color }}>15 to 20 minute call</strong> with you, to make sure you actually understand what you have been picked for.</>
+                  ? <>Beverly is one of our coordinators. She has a <strong style={{ color: interviewInfo.color }}>15 to 20 minute call</strong> for the parents, to make sure you understand what {student.first_name} has been picked for and to walk through a decision the family needs to make.</>
                   : isPostAdmission
                     ? <>Sophie is one of our counsellors. She wants to spend <strong style={{ color: interviewInfo.color }}>around 45 minutes</strong> getting to know you properly, so we can pick the right camp for you.</>
                     : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
