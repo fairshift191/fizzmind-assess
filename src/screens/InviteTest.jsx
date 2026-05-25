@@ -115,7 +115,7 @@ export default function InviteTest({ inviteCode, onReset }) {
       ? {
           label: 'Wrap-up Call · with Beverly',
           icon: '🎙️',
-          desc: 'A short call (about 7 minutes) with Beverly, one of our camp coordinators. She has a quick update for you and wants to hear how things have been.',
+          desc: 'A longer call (about 15 to 20 minutes) with Beverly, one of our camp coordinators. She will walk you through what the Wild Minds Fellowship actually is, the dates, and an important choice for your family.',
           color: '#C9963A',
         }
       : isPostAdmission
@@ -280,7 +280,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               {isCodeInterview
                 ? <>Scout would love to hear about the chatbot you built. Just a quick chat <strong style={{ color: interviewInfo.color }}>3 to 5 minutes</strong>.</>
                 : isPostCounsellor
-                  ? <>Beverly is one of our camp coordinators. She has a quick <strong style={{ color: interviewInfo.color }}>7 minute call</strong> with you, an update on what is coming next.</>
+                  ? <>Beverly is one of our camp coordinators. She has a <strong style={{ color: interviewInfo.color }}>15 to 20 minute call</strong> with you, to make sure you actually understand what you have been picked for.</>
                   : isPostAdmission
                     ? <>Sophie is one of our counsellors. She wants to spend <strong style={{ color: interviewInfo.color }}>around 45 minutes</strong> getting to know you properly, so we can pick the right camp for you.</>
                     : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
@@ -297,10 +297,10 @@ export default function InviteTest({ inviteCode, onReset }) {
                 </>
               ) : isPostCounsellor ? (
                 <>
-                  <div style={styles.rule}><span style={styles.ruleDot} />About 7 minutes, voice only</div>
-                  <div style={styles.rule}><span style={styles.ruleDot} />Beverly will ask how your call with Sophie felt</div>
-                  <div style={styles.rule}><span style={styles.ruleDot} />Then share what is coming next from our side</div>
-                  <div style={styles.rule}><span style={styles.ruleDot} />Quick and easy</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />About 15 to 20 minutes, voice only</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Beverly will explain what Wild Minds actually is</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />The dates, and an important choice for your family</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Listen, react, ask questions, no pressure</div>
                 </>
               ) : isPostAdmission ? (
                 <>
