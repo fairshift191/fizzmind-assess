@@ -6,6 +6,7 @@ import { buildInterviewPrompt, INTERVIEW_TOOL_DECLARATIONS } from '../assessment
 import { buildCodeInterviewPrompt, CODE_INTERVIEW_TOOL_DECLARATIONS } from '../assessment/code-interview-prompt.js'
 import { buildCounsellorPrompt, COUNSELLOR_TOOL_DECLARATIONS } from '../assessment/counsellor-prompt.js'
 import { buildCoordinatorPrompt, COORDINATOR_TOOL_DECLARATIONS } from '../assessment/coordinator-prompt.js'
+import { buildDayOneCheckinPrompt, DAY_ONE_CHECKIN_TOOL_DECLARATIONS } from '../assessment/day-one-checkin-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -31,6 +32,7 @@ export default function VoiceInterview({ config, onComplete }) {
 
   const isPostAdmission = config.inviteVariant === 'post_admission'
   const isPostCounsellor = config.inviteVariant === 'post_counsellor'
+  const isDayOneCheckin = config.inviteVariant === 'post_day_one'
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor
     ? 'Beverly'
@@ -41,9 +43,11 @@ export default function VoiceInterview({ config, onComplete }) {
     ? 'Wrap-up Call'
     : isPostAdmission
       ? 'Counsellor Session'
-      : isCodeInterview
-        ? 'Code Interpretation'
-        : 'Top 50 Interview'
+      : isDayOneCheckin
+        ? 'Day 1 Check-in'
+        : isCodeInterview
+          ? 'Code Interpretation'
+          : 'Top 50 Interview'
 
   const handleComplete = useCallback(() => {
     if (completedRef.current) return
@@ -130,6 +134,12 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood_going_forward}`,
               adminNote: `Questions raised: ${args.questions_raised}`,
             })
+          } else if (tool === 'complete_day_one_checkin') {
+            setInterviewResult({
+              projectPlan: `Day 1: ${args.day_one_summary} Robot understanding: ${args.robot_understanding}`,
+              personNote: `Mood: ${args.mood}. Teaching satisfaction: ${args.teaching_satisfaction}`,
+              adminNote: `Requests/concerns: ${args.requests_or_concerns}`,
+            })
           }
         })
 
@@ -148,12 +158,17 @@ export default function VoiceInterview({ config, onComplete }) {
                   studentName: config.studentName,
                   studentContext: config.studentContext,
                 })
-              : buildInterviewPrompt({
-                  studentName: config.studentName,
-                  track: config.track,
-                  campName: config.campName,
-                  studentContext: config.studentContext,
-                })
+              : isDayOneCheckin
+                ? buildDayOneCheckinPrompt({
+                    studentName: config.studentName,
+                    studentContext: config.studentContext,
+                  })
+                : buildInterviewPrompt({
+                    studentName: config.studentName,
+                    track: config.track,
+                    campName: config.campName,
+                    studentContext: config.studentContext,
+                  })
 
         const greetingMessage = isCodeInterview
           ? `The student ${config.studentName} has joined for their final-round code interpretation chat. This is a SHORT call (3-5 minutes total). Greet them warmly by name and begin the conversation as directed in the system prompt. Do NOT announce any selection decision.`
@@ -161,7 +176,9 @@ export default function VoiceInterview({ config, onComplete }) {
             ? `The PARENTS of ${config.studentName} have joined for their Wild Minds explainer call with Beverly. The audience is the PARENTS, not the student. Adult register. The student may be in the room but the substantive conversation is with the parents. You are BEVERLY the camp coordinator, NOT Scout, NOT Sophie. Introduce yourself as Beverly. Open by asking who is on the call (mother, father, both). This is a longer call (about 15 to 20 minutes). The core job is to make sure the parents truly understand that Wild Minds Fellowship is NOT a camp, it is fundamentally different (real projects, real coaches building alongside ${config.studentName}, leaders being forged, one project goes to the AI summit, the other two continue with their teams). Follow the coordinator system prompt: brief Sophie feedback, then dwell on what Wild Minds actually is, then the geopolitical context, then the locked dates (1 to 10 June 2026, please book flights) and the opt-out (give up the Fellowship place for a flexible-date camp seat, irreversible), then the prep list and warm close.`
             : isPostAdmission
               ? `The student ${config.studentName} has joined for their counsellor session with Sophie. You are SOPHIE the counsellor, NOT Scout. Introduce yourself as Sophie. Do NOT say you are Scout. This is a longer call (around 45 minutes). Follow the counsellor system prompt: walk through all ten themes in order (family, friends, groups, normal weekend, hobbies, school, what excites about camp, what worries about camp, new places + people, success), spending around 5 minutes on each. Dig in with follow-ups when answers are short. Do NOT call complete_counsellor_session before covering all ten themes.`
-              : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
+              : isDayOneCheckin
+                ? `The student ${config.studentName} has joined for their post Day 1 check-in call with you, Scout. You already know them well from earlier calls. This is a SHORT call (7 to 10 min). Greet them warmly by name, ask how their first day went, and then work through the system prompt's checklist conversationally. SPEAK IN SHORT SENTENCES ONLY. One or two sentences per turn, never more. One question at a time, then STOP and wait for them to answer. Do not deliver paragraphs. Do not rush.`
+                : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
         const tools = isCodeInterview
           ? CODE_INTERVIEW_TOOL_DECLARATIONS
@@ -169,7 +186,9 @@ export default function VoiceInterview({ config, onComplete }) {
             ? COORDINATOR_TOOL_DECLARATIONS
             : isPostAdmission
               ? COUNSELLOR_TOOL_DECLARATIONS
-              : INTERVIEW_TOOL_DECLARATIONS
+              : isDayOneCheckin
+                ? DAY_ONE_CHECKIN_TOOL_DECLARATIONS
+                : INTERVIEW_TOOL_DECLARATIONS
 
         await adapter.connect({
           apiKey: config.apiKey,

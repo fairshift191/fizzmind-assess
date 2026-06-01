@@ -103,6 +103,7 @@ export default function InviteTest({ inviteCode, onReset }) {
   const inviteVariant = invite?.metadata?.invite_variant ?? null
   const isPostAdmission = isVoiceInterview && inviteVariant === 'post_admission'
   const isPostCounsellor = isVoiceInterview && inviteVariant === 'post_counsellor'
+  const isDayOneCheckin = isVoiceInterview && inviteVariant === 'post_day_one'
   const trackInfo = invite && !isInterview ? TRACK_INFO[invite.track] : null
   const interviewInfo = isCodeInterview
     ? {
@@ -118,19 +119,26 @@ export default function InviteTest({ inviteCode, onReset }) {
           desc: 'A 15 to 20 minute call with Beverly, one of our coordinators, intended for the parents. Beverly will walk you through what the Wild Minds Fellowship actually is, the dates, and an important choice for your family.',
           color: '#C9963A',
         }
-      : isPostAdmission
+      : isDayOneCheckin
         ? {
-            label: 'Counsellor Session · with Sophie',
+            label: 'Day 1 Check-in · with Scout',
             icon: '🎙️',
-            desc: 'A longer chat (around 45 minutes) with Sophie, one of our counsellors. She wants to get to know you properly so we can pick the right camp for you.',
+            desc: 'A short, friendly catch-up with Scout after your first day of the Fellowship. Just a few minutes — she wants to hear how it went.',
             color: '#C9963A',
           }
-        : {
-            label: 'Top 50 Interview',
-            icon: '🎙️',
-            desc: 'A short conversation with Scout — congratulations on reaching the top 50! You\'ll chat about your Challenge project and we\'ll explain scholarships.',
-            color: '#C9963A',
-          }
+        : isPostAdmission
+          ? {
+              label: 'Counsellor Session · with Sophie',
+              icon: '🎙️',
+              desc: 'A longer chat (around 45 minutes) with Sophie, one of our counsellors. She wants to get to know you properly so we can pick the right camp for you.',
+              color: '#C9963A',
+            }
+          : {
+              label: 'Top 50 Interview',
+              icon: '🎙️',
+              desc: 'A short conversation with Scout — congratulations on reaching the top 50! You\'ll chat about your Challenge project and we\'ll explain scholarships.',
+              color: '#C9963A',
+            }
 
   return (
     <AnimatePresence mode="wait">
