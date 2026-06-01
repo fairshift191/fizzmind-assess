@@ -136,7 +136,7 @@ export default function VoiceInterview({ config, onComplete }) {
             })
           } else if (tool === 'complete_day_one_checkin') {
             setInterviewResult({
-              projectPlan: `Day 1: ${args.day_one_summary} Robot understanding: ${args.robot_understanding}`,
+              projectPlan: `PROJECT WALK-THROUGH (in student's words): ${args.project_walkthrough}\n\nDay 1: ${args.day_one_summary}\nRobot understanding: ${args.robot_understanding}`,
               personNote: `Mood: ${args.mood}. Teaching satisfaction: ${args.teaching_satisfaction}`,
               adminNote: `Requests/concerns: ${args.requests_or_concerns}`,
             })
@@ -177,7 +177,7 @@ export default function VoiceInterview({ config, onComplete }) {
             : isPostAdmission
               ? `The student ${config.studentName} has joined for their counsellor session with Sophie. You are SOPHIE the counsellor, NOT Scout. Introduce yourself as Sophie. Do NOT say you are Scout. This is a longer call (around 45 minutes). Follow the counsellor system prompt: walk through all ten themes in order (family, friends, groups, normal weekend, hobbies, school, what excites about camp, what worries about camp, new places + people, success), spending around 5 minutes on each. Dig in with follow-ups when answers are short. Do NOT call complete_counsellor_session before covering all ten themes.`
               : isDayOneCheckin
-                ? `The student ${config.studentName} has joined for their post Day 1 check-in call with you, Scout. You already know them well from earlier calls. This is a SHORT call (7 to 10 min). Greet them warmly by name, ask how their first day went, and then work through the system prompt's checklist conversationally. SPEAK IN SHORT SENTENCES ONLY. One or two sentences per turn, never more. One question at a time, then STOP and wait for them to answer. Do not deliver paragraphs. Do not rush.`
+                ? `The student ${config.studentName} has joined for their post Day 1 check-in call with you, Scout. You already know them well from earlier calls. This is a LONG, REAL conversation (around 25 to 30 minutes), NOT a quick check-in. HOLD THE CONVERSATION. Do NOT call complete_day_one_checkin early. The most important part of this call is Part B — a full 15-minute project walk-through where ${config.studentName} explains, step by step, in their own words, how they would turn the robot they used this morning into their study companion robot. You ASK and LISTEN. Do not lecture. Greet them warmly, do the Day 1 check-in (Part A), then transition into the 15-min walk-through (Part B), then wrap with the cohort context and concerns (Part C). SPEAK IN SHORT SENTENCES ONLY. One or two sentences per turn, never more. One question at a time, then STOP and wait for them to answer. Do not deliver paragraphs. Do not rush.`
                 : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
         const tools = isCodeInterview
