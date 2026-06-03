@@ -280,7 +280,7 @@ export default function InviteTest({ inviteCode, onReset }) {
           >
             <div style={{ ...styles.badge, borderColor: `${interviewInfo.color}30`, color: interviewInfo.color, background: `${interviewInfo.color}10` }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: interviewInfo.color, display: 'inline-block' }} />
-              {isCodeInterview ? 'Final Round' : isPostCounsellor ? 'Wrap-up Call' : isPostAdmission ? 'Counsellor Session' : "You're in the top 50"}
+              {isCodeInterview ? 'Final Round' : isPostCounsellor ? 'Wrap-up Call' : isPostAdmission ? 'Counsellor Session' : isDayOneCheckin ? 'Day 1 Check-in' : isDayTwoCheckin ? 'Day 2 + 3 Review' : "You're in the top 50"}
             </div>
             <div style={styles.iconLarge}>{interviewInfo.icon}</div>
             <h1 style={styles.title}>
@@ -290,7 +290,11 @@ export default function InviteTest({ inviteCode, onReset }) {
                   ? `A call for ${student.first_name}'s parents.`
                   : isPostAdmission
                     ? `Hi ${student.first_name}, meet Sophie.`
-                    : `Congratulations, ${student.first_name}!`}
+                    : isDayOneCheckin
+                      ? `Hey ${student.first_name}, how was Day 1?`
+                      : isDayTwoCheckin
+                        ? `Hey ${student.first_name}, time to catch up.`
+                        : `Congratulations, ${student.first_name}!`}
             </h1>
             <p style={styles.subtitle}>
               {isCodeInterview
@@ -299,7 +303,11 @@ export default function InviteTest({ inviteCode, onReset }) {
                   ? <>Beverly is one of our coordinators. She has a <strong style={{ color: interviewInfo.color }}>15 to 20 minute call</strong> for the parents, to make sure you understand what {student.first_name} has been picked for and to walk through a decision the family needs to make.</>
                   : isPostAdmission
                     ? <>Sophie is one of our counsellors. She wants to spend <strong style={{ color: interviewInfo.color }}>around 45 minutes</strong> getting to know you properly, so we can pick the right camp for you.</>
-                    : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
+                    : isDayOneCheckin
+                      ? <>Scout wants to have a quick catch-up with you after your first day. Around <strong style={{ color: interviewInfo.color }}>25 to 30 minutes</strong>. She wants to hear what you learnt and how you are thinking about your project.</>
+                      : isDayTwoCheckin
+                        ? <>A proper review with Scout after Days 2 and 3. Around <strong style={{ color: interviewInfo.color }}>30 to 40 minutes</strong>. Your coaches will be listening in. Find a quiet spot.</>
+                        : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
             </p>
             <div style={{ ...styles.infoBox, borderColor: `${interviewInfo.color}20`, background: `${interviewInfo.color}08` }}>
               <p style={styles.infoText}>{interviewInfo.desc}</p>
@@ -325,6 +333,20 @@ export default function InviteTest({ inviteCode, onReset }) {
                   <div style={styles.rule}><span style={styles.ruleDot} />What kind of group setting works best for you</div>
                   <div style={styles.rule}><span style={styles.ruleDot} />Speak freely, this is just a chat</div>
                 </>
+              ) : isDayOneCheckin ? (
+                <>
+                  <div style={styles.rule}><span style={styles.ruleDot} />About 25 to 30 minutes, voice only</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Scout will ask how Day 1 went</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />You'll walk her through your project plan</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Speak freely, take your time</div>
+                </>
+              ) : isDayTwoCheckin ? (
+                <>
+                  <div style={styles.rule}><span style={styles.ruleDot} />About 30 to 40 minutes, voice only</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Your coaches will be listening in</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Walk Scout through Day 2 and Day 3 in detail</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Speak freely, take your time</div>
+                </>
               ) : (
                 <>
                   <div style={styles.rule}><span style={styles.ruleDot} />About 10 minutes, voice only</div>
@@ -338,7 +360,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               onClick={() => setPhase('interview')}
               style={{ ...styles.startBtn, background: interviewInfo.color, color: '#0D0F12' }}
             >
-              {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : 'Start Interview →'}
+              {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : isDayOneCheckin ? 'Start Check-in with Scout →' : isDayTwoCheckin ? 'Start Review with Scout →' : 'Start Interview →'}
             </button>
             <p style={styles.footerNote}>fizzmind — Summer 2026 · {student.email}</p>
           </motion.div>
