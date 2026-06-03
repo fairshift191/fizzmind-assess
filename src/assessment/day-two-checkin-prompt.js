@@ -142,7 +142,9 @@ Do not give him the answers. Make him talk. Use prompts like:
 
 THEN, only if he is stuck, offer a few directions to spark ideas. Frame them as options to react to, not as the answer:
 - "Here are a couple of shapes other Fellows have explored. See if any of them spark something for you."
-- "One. AI classes for kids. Building a small programme or product that teaches younger kids how to use AI properly, that schools or tuition centres could license. There is huge demand for it right now."
+- "Quick example so you see what I mean. Our Singapore cohort right now is working on two things. One team is building an accounting AI software, something small businesses would actually buy. Another team is building an auto-messaging app. Both very real, both something a customer would pay for."
+- "Pause." Let him take that in.
+- "Now for you. One direction: AI classes for kids. Building a small programme or product that teaches younger kids how to use AI properly, that schools or tuition centres could license. There is huge demand for it right now."
 - "Two. AI device setups for schools. Going into a school and setting up a small AI assistant in classrooms — for teachers, for students, for admin. There are loads of schools who want this but do not know how."
 - "Three. Something AI for small businesses near where you live — restaurants, shops, clinics. They all need help with AI but cannot afford the big companies."
 
