@@ -129,9 +129,9 @@ export default function InviteTest({ inviteCode, onReset }) {
           }
         : isDayTwoCheckin
           ? {
-              label: 'Day 2 + 3 Review · with Scout',
+              label: 'Day 2 + 3 Review · with Coach Nova',
               icon: '🎙️',
-              desc: 'A proper review chat with Scout after Days 2 and 3. Around 30 to 40 minutes. Your coaches will be listening in. Find a quiet spot.',
+              desc: 'A proper review chat with Coach Nova after Days 2 and 3. Around 30 to 40 minutes. Your coaches will be listening in. Find a quiet spot.',
               color: '#C9963A',
             }
           : isPostAdmission
@@ -293,7 +293,7 @@ export default function InviteTest({ inviteCode, onReset }) {
                     : isDayOneCheckin
                       ? `Hey ${student.first_name}, how was Day 1?`
                       : isDayTwoCheckin
-                        ? `Hey ${student.first_name}, time to catch up.`
+                        ? `Hi ${student.first_name}, meet Coach Nova.`
                         : `Congratulations, ${student.first_name}!`}
             </h1>
             <p style={styles.subtitle}>
@@ -306,7 +306,7 @@ export default function InviteTest({ inviteCode, onReset }) {
                     : isDayOneCheckin
                       ? <>Scout wants to have a quick catch-up with you after your first day. Around <strong style={{ color: interviewInfo.color }}>25 to 30 minutes</strong>. She wants to hear what you learnt and how you are thinking about your project.</>
                       : isDayTwoCheckin
-                        ? <>A proper review with Scout after Days 2 and 3. Around <strong style={{ color: interviewInfo.color }}>30 to 40 minutes</strong>. Your coaches will be listening in. Find a quiet spot.</>
+                        ? <>Coach Nova is picking up your project journey from here. A proper review after Days 2 and 3. Around <strong style={{ color: interviewInfo.color }}>30 to 40 minutes</strong>. Your coaches will be listening in. Find a quiet spot.</>
                         : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
             </p>
             <div style={{ ...styles.infoBox, borderColor: `${interviewInfo.color}20`, background: `${interviewInfo.color}08` }}>
@@ -344,7 +344,7 @@ export default function InviteTest({ inviteCode, onReset }) {
                 <>
                   <div style={styles.rule}><span style={styles.ruleDot} />About 30 to 40 minutes, voice only</div>
                   <div style={styles.rule}><span style={styles.ruleDot} />Your coaches will be listening in</div>
-                  <div style={styles.rule}><span style={styles.ruleDot} />Walk Scout through Day 2 and Day 3 in detail</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Walk Coach Nova through Day 2 and Day 3 in detail</div>
                   <div style={styles.rule}><span style={styles.ruleDot} />Speak freely, take your time</div>
                 </>
               ) : (
@@ -360,7 +360,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               onClick={() => setPhase('interview')}
               style={{ ...styles.startBtn, background: interviewInfo.color, color: '#0D0F12' }}
             >
-              {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : isDayOneCheckin ? 'Start Check-in with Scout →' : isDayTwoCheckin ? 'Start Review with Scout →' : 'Start Interview →'}
+              {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : isDayOneCheckin ? 'Start Check-in with Scout →' : isDayTwoCheckin ? 'Start Review with Coach Nova →' : 'Start Interview →'}
             </button>
             <p style={styles.footerNote}>fizzmind — Summer 2026 · {student.email}</p>
           </motion.div>
