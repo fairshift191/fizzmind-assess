@@ -104,6 +104,7 @@ export default function InviteTest({ inviteCode, onReset }) {
   const isPostAdmission = isVoiceInterview && inviteVariant === 'post_admission'
   const isPostCounsellor = isVoiceInterview && inviteVariant === 'post_counsellor'
   const isDayOneCheckin = isVoiceInterview && inviteVariant === 'post_day_one'
+  const isDayTwoCheckin = isVoiceInterview && inviteVariant === 'post_day_two'
   const trackInfo = invite && !isInterview ? TRACK_INFO[invite.track] : null
   const interviewInfo = isCodeInterview
     ? {
@@ -126,7 +127,14 @@ export default function InviteTest({ inviteCode, onReset }) {
             desc: 'A short, friendly catch-up with Scout after your first day of the Fellowship. Just a few minutes — she wants to hear how it went.',
             color: '#C9963A',
           }
-        : isPostAdmission
+        : isDayTwoCheckin
+          ? {
+              label: 'Day 2 + 3 Review · with Scout',
+              icon: '🎙️',
+              desc: 'A proper review chat with Scout after Days 2 and 3. Around 30 to 40 minutes. Your coaches will be listening in. Find a quiet spot.',
+              color: '#C9963A',
+            }
+          : isPostAdmission
           ? {
               label: 'Counsellor Session · with Sophie',
               icon: '🎙️',

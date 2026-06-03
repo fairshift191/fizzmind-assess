@@ -7,6 +7,7 @@ import { buildCodeInterviewPrompt, CODE_INTERVIEW_TOOL_DECLARATIONS } from '../a
 import { buildCounsellorPrompt, COUNSELLOR_TOOL_DECLARATIONS } from '../assessment/counsellor-prompt.js'
 import { buildCoordinatorPrompt, COORDINATOR_TOOL_DECLARATIONS } from '../assessment/coordinator-prompt.js'
 import { buildDayOneCheckinPrompt, DAY_ONE_CHECKIN_TOOL_DECLARATIONS } from '../assessment/day-one-checkin-prompt.js'
+import { buildDayTwoCheckinPrompt, DAY_TWO_CHECKIN_TOOL_DECLARATIONS } from '../assessment/day-two-checkin-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -33,6 +34,7 @@ export default function VoiceInterview({ config, onComplete }) {
   const isPostAdmission = config.inviteVariant === 'post_admission'
   const isPostCounsellor = config.inviteVariant === 'post_counsellor'
   const isDayOneCheckin = config.inviteVariant === 'post_day_one'
+  const isDayTwoCheckin = config.inviteVariant === 'post_day_two'
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor
     ? 'Beverly'
@@ -45,7 +47,9 @@ export default function VoiceInterview({ config, onComplete }) {
       ? 'Counsellor Session'
       : isDayOneCheckin
         ? 'Day 1 Check-in'
-        : isCodeInterview
+        : isDayTwoCheckin
+          ? 'Day 2 + 3 Review'
+          : isCodeInterview
           ? 'Code Interpretation'
           : 'Top 50 Interview'
 
@@ -140,6 +144,12 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}. Teaching satisfaction: ${args.teaching_satisfaction}`,
               adminNote: `Requests/concerns: ${args.requests_or_concerns}`,
             })
+          } else if (tool === 'complete_day_two_checkin') {
+            setInterviewResult({
+              projectPlan: `NEW PROJECT DIRECTION: ${args.new_project_direction}\n\nDay 2+3 review: ${args.two_day_summary}\nRobot news response: ${args.robot_news_response}`,
+              personNote: `Mood: ${args.mood}`,
+              adminNote: `Requests/concerns: ${args.requests_or_concerns}`,
+            })
           }
         })
 
@@ -163,7 +173,12 @@ export default function VoiceInterview({ config, onComplete }) {
                     studentName: config.studentName,
                     studentContext: config.studentContext,
                   })
-                : buildInterviewPrompt({
+                : isDayTwoCheckin
+                  ? buildDayTwoCheckinPrompt({
+                      studentName: config.studentName,
+                      studentContext: config.studentContext,
+                    })
+                  : buildInterviewPrompt({
                     studentName: config.studentName,
                     track: config.track,
                     campName: config.campName,
@@ -178,7 +193,9 @@ export default function VoiceInterview({ config, onComplete }) {
               ? `The student ${config.studentName} has joined for their counsellor session with Sophie. You are SOPHIE the counsellor, NOT Scout. Introduce yourself as Sophie. Do NOT say you are Scout. This is a longer call (around 45 minutes). Follow the counsellor system prompt: walk through all ten themes in order (family, friends, groups, normal weekend, hobbies, school, what excites about camp, what worries about camp, new places + people, success), spending around 5 minutes on each. Dig in with follow-ups when answers are short. Do NOT call complete_counsellor_session before covering all ten themes.`
               : isDayOneCheckin
                 ? `The student ${config.studentName} has joined for their post Day 1 check-in call with you, Scout. You already know them well from earlier calls. This is a LONG, REAL conversation (around 25 to 30 minutes), NOT a quick check-in. HOLD THE CONVERSATION. Do NOT call complete_day_one_checkin early. The most important part of this call is Part B — a full 15-minute project walk-through where ${config.studentName} explains, step by step, in their own words, how they would turn the robot they used this morning into their study companion robot. You ASK and LISTEN. Do not lecture. Greet them warmly, do the Day 1 check-in (Part A), then transition into the 15-min walk-through (Part B), then wrap with the cohort context and concerns (Part C). SPEAK IN SHORT SENTENCES ONLY. One or two sentences per turn, never more. One question at a time, then STOP and wait for them to answer. Do not deliver paragraphs. Do not rush.`
-                : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
+                : isDayTwoCheckin
+                  ? `The student ${config.studentName} has joined for his Day 2 + Day 3 review call with you, Scout. Day 1 was already covered in the previous call — do NOT re-cover it. This is a VERY LONG, REAL conversation (at least 30 minutes, ideally 35 to 40). HOLD THE CONVERSATION. Do NOT call complete_day_two_checkin early. Near the start, tell him warmly that all his coaches are listening in on the session. Five parts: (A) Day 2 + 3 deep dive in extreme detail, (B) operational updates — peer classes scheduled due to flight disruption, and Coach Nova starting with him after the cohort ends, (C) the HARD conversation that the study companion robot is not commercially viable (licensing + IP + production), and can only be a pet project, (D) brainstorm a NEW commercially viable project together (AI classes for kids, AI device setups for schools, AI for small businesses) — make him think out loud, probe, discuss in detail, (E) ask him to talk to his father before locking anything in, then warm wrap. SPEAK IN SHORT SENTENCES ONLY. One or two sentences per turn, never more. One question at a time, then STOP and wait. Especially in Part C, break the hard news into short turns with pauses. Do not lecture. Do not rush.`
+                  : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
         const tools = isCodeInterview
           ? CODE_INTERVIEW_TOOL_DECLARATIONS
@@ -188,7 +205,9 @@ export default function VoiceInterview({ config, onComplete }) {
               ? COUNSELLOR_TOOL_DECLARATIONS
               : isDayOneCheckin
                 ? DAY_ONE_CHECKIN_TOOL_DECLARATIONS
-                : INTERVIEW_TOOL_DECLARATIONS
+                : isDayTwoCheckin
+                  ? DAY_TWO_CHECKIN_TOOL_DECLARATIONS
+                  : INTERVIEW_TOOL_DECLARATIONS
 
         await adapter.connect({
           apiKey: config.apiKey,
