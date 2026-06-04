@@ -8,6 +8,7 @@ import { buildCounsellorPrompt, COUNSELLOR_TOOL_DECLARATIONS } from '../assessme
 import { buildCoordinatorPrompt, COORDINATOR_TOOL_DECLARATIONS } from '../assessment/coordinator-prompt.js'
 import { buildDayOneCheckinPrompt, DAY_ONE_CHECKIN_TOOL_DECLARATIONS } from '../assessment/day-one-checkin-prompt.js'
 import { buildDayTwoCheckinPrompt, DAY_TWO_CHECKIN_TOOL_DECLARATIONS } from '../assessment/day-two-checkin-prompt.js'
+import { buildDayThreeFollowupPrompt, DAY_THREE_FOLLOWUP_TOOL_DECLARATIONS } from '../assessment/day-three-followup-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -35,12 +36,13 @@ export default function VoiceInterview({ config, onComplete }) {
   const isPostCounsellor = config.inviteVariant === 'post_counsellor'
   const isDayOneCheckin = config.inviteVariant === 'post_day_one'
   const isDayTwoCheckin = config.inviteVariant === 'post_day_two'
+  const isDayThreeFollowup = config.inviteVariant === 'post_day_three'
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor
     ? 'Beverly'
     : isPostAdmission
       ? 'Sophie'
-      : isDayTwoCheckin
+      : isDayTwoCheckin || isDayThreeFollowup
         ? 'Coach Nova'
         : 'Scout'
   const sessionLabel = isPostCounsellor
@@ -51,7 +53,9 @@ export default function VoiceInterview({ config, onComplete }) {
         ? 'Day 1 Check-in'
         : isDayTwoCheckin
           ? 'Day 2 + 3 Review'
-          : isCodeInterview
+          : isDayThreeFollowup
+            ? 'Coach Nova Follow-up'
+            : isCodeInterview
           ? 'Code Interpretation'
           : 'Top 50 Interview'
 
@@ -152,6 +156,12 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}`,
               adminNote: `Requests/concerns: ${args.requests_or_concerns}`,
             })
+          } else if (tool === 'complete_day_three_followup') {
+            setInterviewResult({
+              projectPlan: `Today: ${args.today_summary}\n\nIdea status: ${args.idea_status}\n\nPost-camp response: ${args.post_camp_response}`,
+              personNote: `Mood: ${args.mood}`,
+              adminNote: `WEEKEND PLAN INTEL (for uncle): ${args.weekend_intel}`,
+            })
           }
         })
 
@@ -180,7 +190,12 @@ export default function VoiceInterview({ config, onComplete }) {
                       studentName: config.studentName,
                       studentContext: config.studentContext,
                     })
-                  : buildInterviewPrompt({
+                  : isDayThreeFollowup
+                    ? buildDayThreeFollowupPrompt({
+                        studentName: config.studentName,
+                        studentContext: config.studentContext,
+                      })
+                    : buildInterviewPrompt({
                     studentName: config.studentName,
                     track: config.track,
                     campName: config.campName,
@@ -197,7 +212,9 @@ export default function VoiceInterview({ config, onComplete }) {
                 ? `The student ${config.studentName} has joined for their post Day 1 check-in call with you, Scout. You already know them well from earlier calls. This is a LONG, REAL conversation (around 25 to 30 minutes), NOT a quick check-in. HOLD THE CONVERSATION. Do NOT call complete_day_one_checkin early. The most important part of this call is Part B — a full 15-minute project walk-through where ${config.studentName} explains, step by step, in their own words, how they would turn the robot they used this morning into their study companion robot. You ASK and LISTEN. Do not lecture. Greet them warmly, do the Day 1 check-in (Part A), then transition into the 15-min walk-through (Part B), then wrap with the cohort context and concerns (Part C). SPEAK IN SHORT SENTENCES ONLY. One or two sentences per turn, never more. One question at a time, then STOP and wait for them to answer. Do not deliver paragraphs. Do not rush.`
                 : isDayTwoCheckin
                   ? `The student ${config.studentName} has joined for his Day 2 + Day 3 review call. YOU ARE COACH NOVA, NOT Scout. Introduce yourself as Coach Nova at the start. This is your first direct call with him — he has heard about you because the team told him Coach Nova would start working with him after the cohort. Day 1 was already covered in the previous Scout call — do NOT re-cover it. This is a VERY LONG, REAL conversation (at least 30 minutes, ideally 35 to 40). HOLD THE CONVERSATION. Do NOT call complete_day_two_checkin early. Near the start, tell him warmly that all his coaches are listening in on the session. Five parts: (A) Day 2 + 3 deep dive in extreme detail, (B) operational updates — peer classes scheduled due to flight disruption, and YOUR own introduction (you are Coach Nova, you are picking up his journey from here through the AI summit), (C) the HARD conversation that the study companion robot is not commercially viable (licensing + IP + production), and can only be a pet project, (D) brainstorm a NEW commercially viable project together (concrete sibling example: Singapore cohort is building an accounting AI and an auto-messaging app; offer directions like AI classes for kids, AI device setups for schools, AI for small businesses) — make him think out loud, probe, discuss in detail, (E) ask him to talk to his father before locking anything in, then warm wrap. SPEAK IN SHORT SENTENCES ONLY. One or two sentences per turn, never more. One question at a time, then STOP and wait. Especially in Part C, break the hard news into short turns with pauses. Do not lecture. Do not rush.`
-                  : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
+                  : isDayThreeFollowup
+                    ? `The student ${config.studentName} has joined for a follow-up call with you, Coach Nova. YOU ARE COACH NOVA. You spoke to him a couple of days ago (Day 2+3 review). You were NOT in today's cohort session because you were coordinating with another cohort — apologise warmly for that at the start. This is an EXTREMELY LONG call (60 to 90 minutes target). HOLD THE CONVERSATION. Do NOT call complete_day_three_followup early. Early in the call (right after the apology), tell him gently that you want LONG answers from him tonight, not short ones — short answers are fine for friends, but you want the full story. Five parts: (A) apology, (B) today's progress in extreme detail, (C) the new project idea + did he speak to his dad + what does he still need from his dad to lock it in, (D) the post-camp plan — you and he will properly begin once camp ends, you walk him through to the AI summit, (E) the LONG deep-dive (25-30 min) on what he loves — aquariums, parks, ocean, broader hobbies, his perfect day — because you are quietly framing a weekend for him and family can join, with the actual details lined up directly with his uncle. SPEAK IN SHORT SENTENCES ONLY. One short question at a time, then STOP and wait. Whenever he gives a short answer, do NOT accept and move on — gently push for the long version ("give me the long version", "say more", "walk me through it"). Do not lecture. Do not rush.`
+                    : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
         const tools = isCodeInterview
           ? CODE_INTERVIEW_TOOL_DECLARATIONS
@@ -209,7 +226,9 @@ export default function VoiceInterview({ config, onComplete }) {
                 ? DAY_ONE_CHECKIN_TOOL_DECLARATIONS
                 : isDayTwoCheckin
                   ? DAY_TWO_CHECKIN_TOOL_DECLARATIONS
-                  : INTERVIEW_TOOL_DECLARATIONS
+                  : isDayThreeFollowup
+                    ? DAY_THREE_FOLLOWUP_TOOL_DECLARATIONS
+                    : INTERVIEW_TOOL_DECLARATIONS
 
         await adapter.connect({
           apiKey: config.apiKey,
