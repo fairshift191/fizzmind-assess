@@ -139,7 +139,7 @@ export default function InviteTest({ inviteCode, onReset }) {
             ? {
                 label: 'Follow-up Call · with Coach Nova',
                 icon: '🎙️',
-                desc: 'A long catch-up with Coach Nova. Around 60 to 90 minutes. She wants the full picture of your day, your project thinking, and a proper chat about what you love. Find a really quiet spot and settle in.',
+                desc: 'A long catch-up with Coach Nova. Around 60 to 90 minutes. He wants the full picture of your day, your project thinking, and a proper chat about what you love. Find a really quiet spot and settle in.',
                 color: '#C9963A',
               }
             : isPostAdmission
@@ -318,7 +318,7 @@ export default function InviteTest({ inviteCode, onReset }) {
                       : isDayTwoCheckin
                         ? <>Coach Nova is picking up your project journey from here. A proper review after Days 2 and 3. Around <strong style={{ color: interviewInfo.color }}>30 to 40 minutes</strong>. Your coaches will be listening in. Find a quiet spot.</>
                         : isDayThreeFollowup
-                          ? <>Coach Nova wants to catch up properly tonight. This will be a long one, <strong style={{ color: interviewInfo.color }}>60 to 90 minutes</strong>. Go long with your answers — she wants the full story.</>
+                          ? <>Coach Nova wants to catch up properly tonight. This will be a long one, <strong style={{ color: interviewInfo.color }}>60 to 90 minutes</strong>. Go long with your answers — he wants the full story.</>
                           : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
             </p>
             <div style={{ ...styles.infoBox, borderColor: `${interviewInfo.color}20`, background: `${interviewInfo.color}08` }}>

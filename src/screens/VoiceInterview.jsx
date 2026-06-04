@@ -234,7 +234,7 @@ export default function VoiceInterview({ config, onComplete }) {
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: 'Zephyr',
+          voiceName: (isDayTwoCheckin || isDayThreeFollowup) ? 'Charon' : 'Zephyr',
           language: 'en',
           greetingMessage,
         })
