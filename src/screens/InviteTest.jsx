@@ -107,6 +107,7 @@ export default function InviteTest({ inviteCode, onReset }) {
   const isDayTwoCheckin = isVoiceInterview && inviteVariant === 'post_day_two'
   const isDayThreeFollowup = isVoiceInterview && inviteVariant === 'post_day_three'
   const isWeekendPlan = isVoiceInterview && inviteVariant === 'weekend_plan'
+  const isPostCampPushback = isVoiceInterview && inviteVariant === 'post_camp_pushback'
   const trackInfo = invite && !isInterview ? TRACK_INFO[invite.track] : null
   const interviewInfo = isCodeInterview
     ? {
@@ -150,7 +151,14 @@ export default function InviteTest({ inviteCode, onReset }) {
                   desc: 'A long chat with Beverly to plan your weekend in Kuala Lumpur. Around 45 to 60 minutes. She wants to know what would actually make this weekend yours.',
                   color: '#C9963A',
                 }
-              : isPostAdmission
+              : isPostCampPushback
+                ? {
+                    label: 'Post-Camp Call · with Coach Nova',
+                    icon: '🎙️',
+                    desc: 'A serious call with Coach Nova. The camp was fun. The work starts now. 35 to 50 minutes. Find a quiet spot and be ready to be straight.',
+                    color: '#C9963A',
+                  }
+                : isPostAdmission
           ? {
               label: 'Counsellor Session · with Sophie',
               icon: '🎙️',
@@ -296,7 +304,7 @@ export default function InviteTest({ inviteCode, onReset }) {
           >
             <div style={{ ...styles.badge, borderColor: `${interviewInfo.color}30`, color: interviewInfo.color, background: `${interviewInfo.color}10` }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: interviewInfo.color, display: 'inline-block' }} />
-              {isCodeInterview ? 'Final Round' : isPostCounsellor ? 'Wrap-up Call' : isPostAdmission ? 'Counsellor Session' : isDayOneCheckin ? 'Day 1 Check-in' : isDayTwoCheckin ? 'Day 2 + 3 Review' : isDayThreeFollowup ? 'Follow-up Call' : isWeekendPlan ? 'Weekend Plan' : "You're in the top 50"}
+              {isCodeInterview ? 'Final Round' : isPostCounsellor ? 'Wrap-up Call' : isPostAdmission ? 'Counsellor Session' : isDayOneCheckin ? 'Day 1 Check-in' : isDayTwoCheckin ? 'Day 2 + 3 Review' : isDayThreeFollowup ? 'Follow-up Call' : isWeekendPlan ? 'Weekend Plan' : isPostCampPushback ? 'Post-Camp Call' : "You're in the top 50"}
             </div>
             <div style={styles.iconLarge}>{interviewInfo.icon}</div>
             <h1 style={styles.title}>
@@ -314,7 +322,9 @@ export default function InviteTest({ inviteCode, onReset }) {
                           ? `Hey ${student.first_name}, settle in.`
                           : isWeekendPlan
                             ? `Hey ${student.first_name}, let's plan your weekend.`
-                            : `Congratulations, ${student.first_name}!`}
+                            : isPostCampPushback
+                              ? `${student.first_name}, we need to talk.`
+                              : `Congratulations, ${student.first_name}!`}
             </h1>
             <p style={styles.subtitle}>
               {isCodeInterview
@@ -331,7 +341,9 @@ export default function InviteTest({ inviteCode, onReset }) {
                           ? <>Coach Nova wants to catch up properly tonight. This will be a long one, <strong style={{ color: interviewInfo.color }}>60 to 90 minutes</strong>. Go long with your answers — he wants the full story.</>
                           : isWeekendPlan
                             ? <>Beverly is putting your Kuala Lumpur weekend together. Around <strong style={{ color: interviewInfo.color }}>45 to 60 minutes</strong>. She'll walk you through the city and find out what would actually be fun for you.</>
-                            : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
+                            : isPostCampPushback
+                              ? <>Coach Nova has a serious call to make with you. Around <strong style={{ color: interviewInfo.color }}>35 to 50 minutes</strong>. The camp was fun. The work starts now.</>
+                              : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
             </p>
             <div style={{ ...styles.infoBox, borderColor: `${interviewInfo.color}20`, background: `${interviewInfo.color}08` }}>
               <p style={styles.infoText}>{interviewInfo.desc}</p>
@@ -385,6 +397,13 @@ export default function InviteTest({ inviteCode, onReset }) {
                   <div style={styles.rule}><span style={styles.ruleDot} />Tell her what would actually be fun for you</div>
                   <div style={styles.rule}><span style={styles.ruleDot} />Go long — short answers will not do tonight</div>
                 </>
+              ) : isPostCampPushback ? (
+                <>
+                  <div style={styles.rule}><span style={styles.ruleDot} />About 35 to 50 minutes, voice only</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Coach Nova is going to be straight with you</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />He has a real project to put on the table</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Go long — and be honest</div>
+                </>
               ) : (
                 <>
                   <div style={styles.rule}><span style={styles.ruleDot} />About 10 minutes, voice only</div>
@@ -398,7 +417,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               onClick={() => setPhase('interview')}
               style={{ ...styles.startBtn, background: interviewInfo.color, color: '#0D0F12' }}
             >
-              {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : isDayOneCheckin ? 'Start Check-in with Scout →' : isDayTwoCheckin ? 'Start Review with Coach Nova →' : isDayThreeFollowup ? 'Start Call with Coach Nova →' : isWeekendPlan ? 'Start Weekend Plan with Beverly →' : 'Start Interview →'}
+              {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : isDayOneCheckin ? 'Start Check-in with Scout →' : isDayTwoCheckin ? 'Start Review with Coach Nova →' : isDayThreeFollowup ? 'Start Call with Coach Nova →' : isWeekendPlan ? 'Start Weekend Plan with Beverly →' : isPostCampPushback ? 'Start Call with Coach Nova →' : 'Start Interview →'}
             </button>
             <p style={styles.footerNote}>fizzmind — Summer 2026 · {student.email}</p>
           </motion.div>
