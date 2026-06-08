@@ -11,6 +11,7 @@ import { buildDayTwoCheckinPrompt, DAY_TWO_CHECKIN_TOOL_DECLARATIONS } from '../
 import { buildDayThreeFollowupPrompt, DAY_THREE_FOLLOWUP_TOOL_DECLARATIONS } from '../assessment/day-three-followup-prompt.js'
 import { buildWeekendPlanPrompt, WEEKEND_PLAN_TOOL_DECLARATIONS } from '../assessment/weekend-plan-prompt.js'
 import { buildPostCampPushbackPrompt, POST_CAMP_PUSHBACK_TOOL_DECLARATIONS } from '../assessment/post-camp-pushback-prompt.js'
+import { buildPostCampWrapPrompt, POST_CAMP_WRAP_TOOL_DECLARATIONS } from '../assessment/post-camp-wrap-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -41,12 +42,13 @@ export default function VoiceInterview({ config, onComplete }) {
   const isDayThreeFollowup = config.inviteVariant === 'post_day_three'
   const isWeekendPlan = config.inviteVariant === 'weekend_plan'
   const isPostCampPushback = config.inviteVariant === 'post_camp_pushback'
+  const isPostCampWrap = config.inviteVariant === 'post_camp_wrap'
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor || isWeekendPlan
     ? 'Beverly'
     : isPostAdmission
       ? 'Sophie'
-      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback
+      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap
         ? 'Coach Nova'
         : 'Scout'
   const sessionLabel = isPostCounsellor
@@ -63,7 +65,9 @@ export default function VoiceInterview({ config, onComplete }) {
               ? 'Weekend Plan'
               : isPostCampPushback
                 ? 'Post-Camp Call'
-                : isCodeInterview
+                : isPostCampWrap
+                  ? 'Post-Camp Wrap'
+                  : isCodeInterview
           ? 'Code Interpretation'
           : 'Top 50 Interview'
 
@@ -182,6 +186,12 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}. Father excuse: ${args.father_excuse}`,
               adminNote: `FATHER COMMITMENT: ${args.father_commitment}`,
             })
+          } else if (tool === 'complete_post_camp_wrap') {
+            setInterviewResult({
+              projectPlan: `Camp reflection: ${args.camp_reflection}\n\nIdea progress: ${args.idea_progress}\n\nBuild session response: ${args.build_session_response}`,
+              personNote: `Mood: ${args.mood}. Vanya assignments: ${args.vanya_assignments}`,
+              adminNote: `LAPTOP: ${args.laptop_status}\n\nKIT SHIPPING: ${args.kit_shipping}`,
+            })
           }
         })
 
@@ -225,7 +235,12 @@ export default function VoiceInterview({ config, onComplete }) {
                             studentName: config.studentName,
                             studentContext: config.studentContext,
                           })
-                        : buildInterviewPrompt({
+                        : isPostCampWrap
+                          ? buildPostCampWrapPrompt({
+                              studentName: config.studentName,
+                              studentContext: config.studentContext,
+                            })
+                          : buildInterviewPrompt({
                     studentName: config.studentName,
                     track: config.track,
                     campName: config.campName,
@@ -248,7 +263,9 @@ export default function VoiceInterview({ config, onComplete }) {
                       ? `The student ${config.studentName} has joined for a weekend-planning call with you, Beverly. YOU ARE BEVERLY (the same coordinator who earlier spoke to his parents), but this call is with HIM directly — warm up your tone for a smart 11-year-old. Introduce yourself as Beverly. This is a LONG call (45 to 60 minutes target). HOLD THE CONVERSATION. Do NOT call complete_weekend_plan early. Frame the weekend up front and tell him you want LONG answers. Four parts: (A) open and frame the weekend (family can join, you will line up details with his uncle Shivacharan Konda), (B) walk him through KL attractions one at a time and gauge what excites him (Aquaria KLCC, KL Bird Park, Petronas / KL Tower, Sunway Lagoon, Batu Caves, Genting Highlands, KL Forest Eco Park canopy walk, Islamic Arts Museum / Science Centre, Jalan Alor night food, Central Market) — short pitch then ask then probe, (C) his pace, company, food, perfect Saturday, things he has always wanted to try, his 'no' list, (D) warm wrap with a recap and the uncle handover frame. SPEAK IN SHORT SENTENCES ONLY. One short question at a time, then STOP and wait. Whenever he gives a short answer, do NOT accept and move on — gently push for the long version. Warm, curious, a little playful. Do not talk down. Do not lecture. Do not rush.`
                       : isPostCampPushback
                         ? `The student ${config.studentName} has joined for a post-camp call with you, Coach Nova. YOU ARE COACH NOVA. This is the THIRD call he has had with you. This call is DIFFERENT — your tone is firm, you are actually scolding him. You have asked him for FOUR DAYS to talk to his father about his project, and he still has not done it. The camp was fun. The seriousness starts now. Long call (35 to 50 min target). HOLD THE CONVERSATION. Do NOT call complete_post_camp_pushback early. Five parts: (A) open + tell him the tone has changed + ask for long answers, (B) THE SCOLDING — you have asked him for 4 days, he has not followed up with his father, use the line "Look, you either want to do this or you don't. We have been asking you for days now and you are still not following up with your father. This is not done." — then push him on why, tell him the other 3 groups have submitted and are already working, (C) lay out the school AI project (AI for schools that helps parents call or login to get answers about syllabus, marks, homework, school policies — recurring revenue, every school needs it), (D) the three options: (1) do the school AI project, (2) bring a real alternative proposal NOW with detail, (3) take one more week but ONLY if a real sit-down with dad happens, (E) wrap — non-negotiable father conversation must happen, end with belief in him. SPEAK IN SHORT SENTENCES ONLY. One short question at a time, then STOP and wait. Break the scolding into short sharp turns with pauses. Don't yell. Don't lecture. Be straight. Don't rush.`
-                        : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
+                        : isPostCampWrap
+                          ? `The student ${config.studentName} has joined for the post-camp wrap call with you, Coach Nova. YOU ARE COACH NOVA. This is your FOURTH call with him. Tone is WARMER than last time — the camp is wrapping, you are on the same side. NOT scolding. 25 to 35 min target. HOLD THE CONVERSATION. Do NOT call complete_post_camp_wrap early. Five parts: (A) hear about the camp experience properly, (B) check on Vanya's personality development assignments — if he says yes he did them, probe WHEN he wrote them, and if he admits he did them all today/at the last minute, GET ANNOYED (sharp not cruel) and make him commit to not cramming again, (C) check on the project idea and dad conversation, set "come back in a few days with the locked direction", (D) tell him the daily build sessions start once direction is locked, (E) the laptop setup — high-powered Windows laptop, COMPLETELY clean (fresh install, no games, no clutter, no school stuff, no other activities on it EVER — build machine only). Mention that on Windows we can have AI control the entire PC (open apps, install, manage files, run builds), Mac comes later just for day-to-day. Also tell him the Wild Minds kit ships from Singapore to his address — ask for the address and any accessories he wants (headphones, mouse, notebook). SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Push back on every short answer.`
+                          : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
         const tools = isCodeInterview
           ? CODE_INTERVIEW_TOOL_DECLARATIONS
@@ -266,13 +283,15 @@ export default function VoiceInterview({ config, onComplete }) {
                       ? WEEKEND_PLAN_TOOL_DECLARATIONS
                       : isPostCampPushback
                         ? POST_CAMP_PUSHBACK_TOOL_DECLARATIONS
-                        : INTERVIEW_TOOL_DECLARATIONS
+                        : isPostCampWrap
+                          ? POST_CAMP_WRAP_TOOL_DECLARATIONS
+                          : INTERVIEW_TOOL_DECLARATIONS
 
         await adapter.connect({
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback) ? 'Charon' : 'Zephyr',
+          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap) ? 'Charon' : 'Zephyr',
           language: 'en',
           greetingMessage,
         })
