@@ -12,6 +12,7 @@ import { buildDayThreeFollowupPrompt, DAY_THREE_FOLLOWUP_TOOL_DECLARATIONS } fro
 import { buildWeekendPlanPrompt, WEEKEND_PLAN_TOOL_DECLARATIONS } from '../assessment/weekend-plan-prompt.js'
 import { buildPostCampPushbackPrompt, POST_CAMP_PUSHBACK_TOOL_DECLARATIONS } from '../assessment/post-camp-pushback-prompt.js'
 import { buildPostCampWrapPrompt, POST_CAMP_WRAP_TOOL_DECLARATIONS } from '../assessment/post-camp-wrap-prompt.js'
+import { buildScopeCallPrompt, SCOPE_CALL_TOOL_DECLARATIONS } from '../assessment/scope-call-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -43,12 +44,13 @@ export default function VoiceInterview({ config, onComplete }) {
   const isWeekendPlan = config.inviteVariant === 'weekend_plan'
   const isPostCampPushback = config.inviteVariant === 'post_camp_pushback'
   const isPostCampWrap = config.inviteVariant === 'post_camp_wrap'
+  const isScopeCall = config.inviteVariant === 'scope_call'
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor || isWeekendPlan
     ? 'Beverly'
     : isPostAdmission
       ? 'Sophie'
-      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap
+      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall
         ? 'Coach Nova'
         : 'Scout'
   const sessionLabel = isPostCounsellor
@@ -67,7 +69,9 @@ export default function VoiceInterview({ config, onComplete }) {
                 ? 'Post-Camp Call'
                 : isPostCampWrap
                   ? 'Post-Camp Wrap'
-                  : isCodeInterview
+                  : isScopeCall
+                    ? 'Scope Call'
+                    : isCodeInterview
           ? 'Code Interpretation'
           : 'Top 50 Interview'
 
@@ -192,6 +196,12 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}. Vanya assignments: ${args.vanya_assignments}`,
               adminNote: `LAPTOP: ${args.laptop_status}\n\nKIT SHIPPING: ${args.kit_shipping}`,
             })
+          } else if (tool === 'complete_scope_call') {
+            setInterviewResult({
+              projectPlan: `SCOPE THINKING: ${args.scope_thinking}\n\nUncle news response: ${args.uncle_news_response}`,
+              personNote: `Mood: ${args.mood}`,
+              adminNote: `LAPTOP COMMIT: ${args.laptop_commit}\n\nCONTINGENT: ${args.contingent_notes}`,
+            })
           }
         })
 
@@ -240,7 +250,12 @@ export default function VoiceInterview({ config, onComplete }) {
                               studentName: config.studentName,
                               studentContext: config.studentContext,
                             })
-                          : buildInterviewPrompt({
+                          : isScopeCall
+                            ? buildScopeCallPrompt({
+                                studentName: config.studentName,
+                                studentContext: config.studentContext,
+                              })
+                            : buildInterviewPrompt({
                     studentName: config.studentName,
                     track: config.track,
                     campName: config.campName,
@@ -265,7 +280,9 @@ export default function VoiceInterview({ config, onComplete }) {
                         ? `The student ${config.studentName} has joined for a post-camp call with you, Coach Nova. YOU ARE COACH NOVA. This is the THIRD call he has had with you. This call is DIFFERENT — your tone is firm, you are actually scolding him. You have asked him for FOUR DAYS to talk to his father about his project, and he still has not done it. The camp was fun. The seriousness starts now. Long call (35 to 50 min target). HOLD THE CONVERSATION. Do NOT call complete_post_camp_pushback early. Five parts: (A) open + tell him the tone has changed + ask for long answers, (B) THE SCOLDING — you have asked him for 4 days, he has not followed up with his father, use the line "Look, you either want to do this or you don't. We have been asking you for days now and you are still not following up with your father. This is not done." — then push him on why, tell him the other 3 groups have submitted and are already working, (C) lay out the school AI project (AI for schools that helps parents call or login to get answers about syllabus, marks, homework, school policies — recurring revenue, every school needs it), (D) the three options: (1) do the school AI project, (2) bring a real alternative proposal NOW with detail, (3) take one more week but ONLY if a real sit-down with dad happens, (E) wrap — non-negotiable father conversation must happen, end with belief in him. SPEAK IN SHORT SENTENCES ONLY. One short question at a time, then STOP and wait. Break the scolding into short sharp turns with pauses. Don't yell. Don't lecture. Be straight. Don't rush.`
                         : isPostCampWrap
                           ? `The student ${config.studentName} has joined for the post-camp wrap call with you, Coach Nova. YOU ARE COACH NOVA. This is your FOURTH call with him. Tone is WARMER than last time — the camp is wrapping, you are on the same side. NOT scolding. 25 to 35 min target. HOLD THE CONVERSATION. Do NOT call complete_post_camp_wrap early. Five parts: (A) hear about the camp experience properly, (B) check on Vanya's personality development assignments — if he says yes he did them, probe WHEN he wrote them, and if he admits he did them all today/at the last minute, GET ANNOYED (sharp not cruel) and make him commit to not cramming again, (C) check on the project idea and dad conversation, set "come back in a few days with the locked direction", (D) tell him the daily build sessions start once direction is locked, (E) the laptop setup — high-powered Windows laptop, COMPLETELY clean (fresh install, no games, no clutter, no school stuff, no other activities on it EVER — build machine only). Mention that on Windows we can have AI control the entire PC (open apps, install, manage files, run builds), Mac comes later just for day-to-day. Also tell him the Wild Minds kit ships from Singapore to his address — ask for the address and any accessories he wants (headphones, mouse, notebook). SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Push back on every short answer.`
-                          : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
+                          : isScopeCall
+                            ? `The student ${config.studentName} has joined for the project scope call with you, Coach Nova. YOU ARE COACH NOVA. This is your FIFTH call with him. IMPORTANT OPENING: do NOT ask how the camp went — he already told you that on the last call (it was easy, he made a little friends) but the connection was bad and the call cut off. Open by acknowledging the connectivity issues and saying you will continue from what you already know. Then move into the call. BIG NEWS UP FRONT: his uncle called, the family wants to proceed with the school AI project. Lead with that. Then the bulk: 15-20 min scope-of-project conversation where YOU push HIM to think — customer, problem, basics, features, what is out of scope, the first thing to ship. Do NOT give him the scope. Push the thinking to him. Ask for the homework: take 2 days, identify the scope yourself, you will send basics in parallel, meet again in 2 days. Laptop: his MSI is fine spec-wise, use it for the first month — but wipe clean, build-machine only, set up partitions for applications and testing. Windows first because AI can control the entire PC and partitions are cleaner. After the initial month, transition to his Mac (he has one at home). Contingent beats — handle ONLY if he raises them: (1) lost converter — cleaning lady found it, gave to Coach Kiwi, you returned it to his uncle when uncle gave the pocket money cash back, ask his uncle; (2) Dash robot — out of scope, probably cannot be sent, but you will check with management; (3) how do you know I am on an MSI — we have access because he loaded the Fizzmind software on it, basic system info, nothing creepy. SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Push back on every short answer. 30-40 min target. Do NOT close early.`
+                            : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
         const tools = isCodeInterview
           ? CODE_INTERVIEW_TOOL_DECLARATIONS
@@ -285,13 +302,15 @@ export default function VoiceInterview({ config, onComplete }) {
                         ? POST_CAMP_PUSHBACK_TOOL_DECLARATIONS
                         : isPostCampWrap
                           ? POST_CAMP_WRAP_TOOL_DECLARATIONS
-                          : INTERVIEW_TOOL_DECLARATIONS
+                          : isScopeCall
+                            ? SCOPE_CALL_TOOL_DECLARATIONS
+                            : INTERVIEW_TOOL_DECLARATIONS
 
         await adapter.connect({
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap) ? 'Charon' : 'Zephyr',
+          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall) ? 'Charon' : 'Zephyr',
           language: 'en',
           greetingMessage,
         })

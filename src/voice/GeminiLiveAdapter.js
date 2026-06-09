@@ -136,6 +136,14 @@ export class GeminiLiveAdapter {
           systemInstruction: {
             parts: [{ text: this.systemPrompt }],
           },
+          realtimeInputConfig: {
+            automaticActivityDetection: {
+              startOfSpeechSensitivity: 'START_SENSITIVITY_LOW',
+              endOfSpeechSensitivity: 'END_SENSITIVITY_LOW',
+              prefixPaddingMs: 200,
+              silenceDurationMs: 1500,
+            },
+          },
         },
       }
       if (this._tools.length > 0) {
