@@ -110,6 +110,7 @@ export default function InviteTest({ inviteCode, onReset }) {
   const isPostCampPushback = isVoiceInterview && inviteVariant === 'post_camp_pushback'
   const isPostCampWrap = isVoiceInterview && inviteVariant === 'post_camp_wrap'
   const isScopeCall = isVoiceInterview && inviteVariant === 'scope_call'
+  const isIdeaCheckin = isVoiceInterview && inviteVariant === 'idea_checkin'
   const trackInfo = invite && !isInterview ? TRACK_INFO[invite.track] : null
   const interviewInfo = isCodeInterview
     ? {
@@ -172,6 +173,13 @@ export default function InviteTest({ inviteCode, onReset }) {
                         label: 'Scope Call · with Coach Nova',
                         icon: '🎙️',
                         desc: 'A working call with Coach Nova. The school AI is a go. Time to start scoping the project. 30 to 40 minutes.',
+                        color: '#C9963A',
+                      }
+                    : isIdeaCheckin
+                    ? {
+                        label: 'Idea Check-in · with Coach Nova',
+                        icon: '🎙️',
+                        desc: 'A relaxed call with Coach Nova. He wants to hear how you like the project idea, any suggestions you have, and to set your next step. About 15 to 20 minutes.',
                         color: '#C9963A',
                       }
                     : isPostAdmission

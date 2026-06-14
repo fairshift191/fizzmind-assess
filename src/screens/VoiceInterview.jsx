@@ -13,6 +13,7 @@ import { buildWeekendPlanPrompt, WEEKEND_PLAN_TOOL_DECLARATIONS } from '../asses
 import { buildPostCampPushbackPrompt, POST_CAMP_PUSHBACK_TOOL_DECLARATIONS } from '../assessment/post-camp-pushback-prompt.js'
 import { buildPostCampWrapPrompt, POST_CAMP_WRAP_TOOL_DECLARATIONS } from '../assessment/post-camp-wrap-prompt.js'
 import { buildScopeCallPrompt, SCOPE_CALL_TOOL_DECLARATIONS } from '../assessment/scope-call-prompt.js'
+import { buildIdeaCheckinPrompt, IDEA_CHECKIN_TOOL_DECLARATIONS } from '../assessment/idea-checkin-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -45,15 +46,18 @@ export default function VoiceInterview({ config, onComplete }) {
   const isPostCampPushback = config.inviteVariant === 'post_camp_pushback'
   const isPostCampWrap = config.inviteVariant === 'post_camp_wrap'
   const isScopeCall = config.inviteVariant === 'scope_call'
+  const isIdeaCheckin = config.inviteVariant === 'idea_checkin'
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor || isWeekendPlan
     ? 'Beverly'
     : isPostAdmission
       ? 'Sophie'
-      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall
+      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin
         ? 'Coach Nova'
         : 'Scout'
-  const sessionLabel = isPostCounsellor
+  const sessionLabel = isIdeaCheckin
+    ? 'Idea Check-in'
+    : isPostCounsellor
     ? 'Wrap-up Call'
     : isPostAdmission
       ? 'Counsellor Session'
@@ -202,10 +206,21 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}`,
               adminNote: `LAPTOP COMMIT: ${args.laptop_commit}\n\nCONTINGENT: ${args.contingent_notes}`,
             })
+          } else if (tool === 'complete_idea_checkin') {
+            setInterviewResult({
+              projectPlan: `IDEA FEEDBACK: ${args.idea_feedback}\n\nSUGGESTIONS: ${args.suggestions}`,
+              personNote: `Mood: ${args.mood}`,
+              adminNote: `KIOSK HOMEWORK (sit with uncle + dad, ask about using/modifying the Fairshift kiosk): ${args.kiosk_homework_understood}\n\nRequests/concerns: ${args.requests_or_concerns}`,
+            })
           }
         })
 
-        const systemPrompt = isCodeInterview
+        const systemPrompt = isIdeaCheckin
+          ? buildIdeaCheckinPrompt({
+              studentName: config.studentName,
+              studentContext: config.studentContext,
+            })
+          : isCodeInterview
           ? buildCodeInterviewPrompt({
               studentName: config.studentName,
               studentContext: config.studentContext,
@@ -262,7 +277,9 @@ export default function VoiceInterview({ config, onComplete }) {
                     studentContext: config.studentContext,
                   })
 
-        const greetingMessage = isCodeInterview
+        const greetingMessage = isIdeaCheckin
+          ? `The student ${config.studentName} has joined for an idea check-in call with you, Coach Nova. YOU ARE COACH NOVA. This is a warm, calm, listening call (about 15 to 20 minutes). The full project plan is written and he has it. Your job: (A) open warmly, (B) ask how he feels about the idea now that he has seen the whole plan and what he likes most, (C) ask for his OWN suggestions and LISTEN thoroughly, take them seriously, probe gently, (D) set the next step: ask him to sit down with his uncle and his dad together and find out whether they can use the Fairshift kiosk for his project, whether they can modify it, and how to go about it, using only what is allowed, then tell him you will get on another call to finalise once he has talked to them. SPEAK IN SHORT SENTENCES ONLY. One question at a time, then STOP and wait. Do not lecture. This is his call to talk, not yours. Do NOT call complete_idea_checkin early.`
+          : isCodeInterview
           ? `The student ${config.studentName} has joined for their final-round code interpretation chat. This is a SHORT call (3-5 minutes total). Greet them warmly by name and begin the conversation as directed in the system prompt. Do NOT announce any selection decision.`
           : isPostCounsellor
             ? `The PARENTS of ${config.studentName} have joined for their Wild Minds explainer call with Beverly. The audience is the PARENTS, not the student. Adult register. The student may be in the room but the substantive conversation is with the parents. You are BEVERLY the camp coordinator, NOT Scout, NOT Sophie. Introduce yourself as Beverly. Open by asking who is on the call (mother, father, both). This is a longer call (about 15 to 20 minutes). The core job is to make sure the parents truly understand that Wild Minds Fellowship is NOT a camp, it is fundamentally different (real projects, real coaches building alongside ${config.studentName}, leaders being forged, one project goes to the AI summit, the other two continue with their teams). Follow the coordinator system prompt: brief Sophie feedback, then dwell on what Wild Minds actually is, then the geopolitical context, then the locked dates (1 to 10 June 2026, please book flights) and the opt-out (give up the Fellowship place for a flexible-date camp seat, irreversible), then the prep list and warm close.`
@@ -284,7 +301,9 @@ export default function VoiceInterview({ config, onComplete }) {
                             ? `The student ${config.studentName} has joined for the project scope call with you, Coach Nova. YOU ARE COACH NOVA. This is your FIFTH call with him. IMPORTANT OPENING: do NOT ask how the camp went — he already told you that on the last call (it was easy, he made a little friends) but the connection was bad and the call cut off. Open by acknowledging the connectivity issues and saying you will continue from what you already know. Then move into the call. BIG NEWS UP FRONT: his uncle called, the family wants to proceed with the school AI project. Lead with that. Then the bulk: 15-20 min scope-of-project conversation where YOU push HIM to think — customer, problem, basics, features, what is out of scope, the first thing to ship. Do NOT give him the scope. Push the thinking to him. Ask for the homework: take 2 days, identify the scope yourself, you will send basics in parallel, meet again in 2 days. Laptop: his MSI is fine spec-wise, use it for the first month — but wipe clean, build-machine only, set up partitions for applications and testing. Windows first because AI can control the entire PC and partitions are cleaner. After the initial month, transition to his Mac (he has one at home). Contingent beats — handle ONLY if he raises them: (1) lost converter — cleaning lady found it, gave to Coach Kiwi, you returned it to his uncle when uncle gave the pocket money cash back, ask his uncle; (2) Dash robot — out of scope, probably cannot be sent, but you will check with management; (3) how do you know I am on an MSI — we have access because he loaded the Fizzmind software on it, basic system info, nothing creepy. SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Push back on every short answer. 30-40 min target. Do NOT close early.`
                             : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
-        const tools = isCodeInterview
+        const tools = isIdeaCheckin
+          ? IDEA_CHECKIN_TOOL_DECLARATIONS
+          : isCodeInterview
           ? CODE_INTERVIEW_TOOL_DECLARATIONS
           : isPostCounsellor
             ? COORDINATOR_TOOL_DECLARATIONS
@@ -310,7 +329,7 @@ export default function VoiceInterview({ config, onComplete }) {
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall) ? 'Charon' : 'Zephyr',
+          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin) ? 'Charon' : 'Zephyr',
           language: 'en',
           greetingMessage,
         })
