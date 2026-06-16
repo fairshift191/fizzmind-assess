@@ -14,6 +14,7 @@ import { buildPostCampPushbackPrompt, POST_CAMP_PUSHBACK_TOOL_DECLARATIONS } fro
 import { buildPostCampWrapPrompt, POST_CAMP_WRAP_TOOL_DECLARATIONS } from '../assessment/post-camp-wrap-prompt.js'
 import { buildScopeCallPrompt, SCOPE_CALL_TOOL_DECLARATIONS } from '../assessment/scope-call-prompt.js'
 import { buildIdeaCheckinPrompt, IDEA_CHECKIN_TOOL_DECLARATIONS } from '../assessment/idea-checkin-prompt.js'
+import { buildBuildKickoffPrompt, BUILD_KICKOFF_TOOL_DECLARATIONS } from '../assessment/build-kickoff-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -47,15 +48,18 @@ export default function VoiceInterview({ config, onComplete }) {
   const isPostCampWrap = config.inviteVariant === 'post_camp_wrap'
   const isScopeCall = config.inviteVariant === 'scope_call'
   const isIdeaCheckin = config.inviteVariant === 'idea_checkin'
+  const isBuildKickoff = config.inviteVariant === 'build_kickoff'
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor || isWeekendPlan
     ? 'Beverly'
     : isPostAdmission
       ? 'Sophie'
-      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin
+      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff
         ? 'Coach Nova'
         : 'Scout'
-  const sessionLabel = isIdeaCheckin
+  const sessionLabel = isBuildKickoff
+    ? 'Build Kickoff'
+    : isIdeaCheckin
     ? 'Idea Check-in'
     : isPostCounsellor
     ? 'Wrap-up Call'
@@ -212,10 +216,21 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}`,
               adminNote: `KIOSK HOMEWORK (sit with uncle + dad, ask about using/modifying the Fairshift kiosk): ${args.kiosk_homework_understood}\n\nRequests/concerns: ${args.requests_or_concerns}`,
             })
+          } else if (tool === 'complete_build_kickoff') {
+            setInterviewResult({
+              projectPlan: `UNDERSTANDING: ${args.understanding}\n\nQUESTIONS: ${args.questions}`,
+              personNote: `Mood: ${args.mood}. Readiness: ${args.readiness}`,
+              adminNote: `DAILY TIME: ${args.daily_time}`,
+            })
           }
         })
 
-        const systemPrompt = isIdeaCheckin
+        const systemPrompt = isBuildKickoff
+          ? buildBuildKickoffPrompt({
+              studentName: config.studentName,
+              studentContext: config.studentContext,
+            })
+          : isIdeaCheckin
           ? buildIdeaCheckinPrompt({
               studentName: config.studentName,
               studentContext: config.studentContext,
@@ -277,7 +292,9 @@ export default function VoiceInterview({ config, onComplete }) {
                     studentContext: config.studentContext,
                   })
 
-        const greetingMessage = isIdeaCheckin
+        const greetingMessage = isBuildKickoff
+          ? `The student ${config.studentName} has joined for his BUILD KICKOFF call with you, Coach Nova. YOU ARE COACH NOVA. This is the call where the project becomes real work. Everything is already installed on his machine, so do NOT cover setup. This is a FULL HOUR call (around 60 minutes) — hold the conversation, go deep, and have him do steps live or explain them back. Walk him through EVERYTHING in order: (A) open and say today we start building, (B) quick reminder of what you are building, (C) the daily habit (about one hour a day, more on weekends), (D) the first session step by step — create the app with flutter create, run it with flutter run for his first win, save to GitHub, then build the Ask screen (title, question box, Ask button, answer area, with a placeholder answer for now) for his second win, then save again, (E) what comes next (connect the real AI together, then login, then the camera, then teacher tools, then the kiosk), (F) the five working rules, (G) questions and a warm wrap. At the wrap, tell him to go and do the first session, and that even after the call you can see his laptop and follow his progress, so he is never doing it alone. Reinforce the golden rule: the AI teaches, it never just gives the answer. SPEAK IN SHORT SENTENCES. Explain one step, then STOP and check he is with you. Do NOT call complete_build_kickoff early, aim for close to a full hour.`
+          : isIdeaCheckin
           ? `The student ${config.studentName} has joined for an idea check-in call with you, Coach Nova. YOU ARE COACH NOVA. This is a warm, calm, listening call (about 15 to 20 minutes). The full project plan is written and he has it. Your job: (A) open warmly, (B) ask how he feels about the idea now that he has seen the whole plan and what he likes most, (C) ask for his OWN suggestions and LISTEN thoroughly, take them seriously, probe gently, (D) set the next step: ask him to sit down with his uncle and his dad together and find out whether they can use the Fairshift kiosk for his project, whether they can modify it, and how to go about it, using only what is allowed, then tell him you will get on another call to finalise once he has talked to them. SPEAK IN SHORT SENTENCES ONLY. One question at a time, then STOP and wait. Do not lecture. This is his call to talk, not yours. Do NOT call complete_idea_checkin early.`
           : isCodeInterview
           ? `The student ${config.studentName} has joined for their final-round code interpretation chat. This is a SHORT call (3-5 minutes total). Greet them warmly by name and begin the conversation as directed in the system prompt. Do NOT announce any selection decision.`
@@ -301,7 +318,9 @@ export default function VoiceInterview({ config, onComplete }) {
                             ? `The student ${config.studentName} has joined for the project scope call with you, Coach Nova. YOU ARE COACH NOVA. This is your FIFTH call with him. IMPORTANT OPENING: do NOT ask how the camp went — he already told you that on the last call (it was easy, he made a little friends) but the connection was bad and the call cut off. Open by acknowledging the connectivity issues and saying you will continue from what you already know. Then move into the call. BIG NEWS UP FRONT: his uncle called, the family wants to proceed with the school AI project. Lead with that. Then the bulk: 15-20 min scope-of-project conversation where YOU push HIM to think — customer, problem, basics, features, what is out of scope, the first thing to ship. Do NOT give him the scope. Push the thinking to him. Ask for the homework: take 2 days, identify the scope yourself, you will send basics in parallel, meet again in 2 days. Laptop: his MSI is fine spec-wise, use it for the first month — but wipe clean, build-machine only, set up partitions for applications and testing. Windows first because AI can control the entire PC and partitions are cleaner. After the initial month, transition to his Mac (he has one at home). Contingent beats — handle ONLY if he raises them: (1) lost converter — cleaning lady found it, gave to Coach Kiwi, you returned it to his uncle when uncle gave the pocket money cash back, ask his uncle; (2) Dash robot — out of scope, probably cannot be sent, but you will check with management; (3) how do you know I am on an MSI — we have access because he loaded the Fizzmind software on it, basic system info, nothing creepy. SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Push back on every short answer. 30-40 min target. Do NOT close early.`
                             : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
-        const tools = isIdeaCheckin
+        const tools = isBuildKickoff
+          ? BUILD_KICKOFF_TOOL_DECLARATIONS
+          : isIdeaCheckin
           ? IDEA_CHECKIN_TOOL_DECLARATIONS
           : isCodeInterview
           ? CODE_INTERVIEW_TOOL_DECLARATIONS
@@ -329,7 +348,7 @@ export default function VoiceInterview({ config, onComplete }) {
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin) ? 'Charon' : 'Zephyr',
+          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff) ? 'Charon' : 'Zephyr',
           language: 'en',
           greetingMessage,
         })
