@@ -16,6 +16,7 @@ import { buildScopeCallPrompt, SCOPE_CALL_TOOL_DECLARATIONS } from '../assessmen
 import { buildIdeaCheckinPrompt, IDEA_CHECKIN_TOOL_DECLARATIONS } from '../assessment/idea-checkin-prompt.js'
 import { buildBuildKickoffPrompt, BUILD_KICKOFF_TOOL_DECLARATIONS } from '../assessment/build-kickoff-prompt.js'
 import { buildNamingCallPrompt, NAMING_CALL_TOOL_DECLARATIONS } from '../assessment/naming-call-prompt.js'
+import { buildMarketingCallPrompt, MARKETING_CALL_TOOL_DECLARATIONS } from '../assessment/marketing-call-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -51,15 +52,18 @@ export default function VoiceInterview({ config, onComplete }) {
   const isIdeaCheckin = config.inviteVariant === 'idea_checkin'
   const isBuildKickoff = config.inviteVariant === 'build_kickoff'
   const isNamingCall = config.inviteVariant === 'naming_call'
+  const isMarketingCall = config.inviteVariant === 'marketing_call'
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor || isWeekendPlan
     ? 'Beverly'
     : isPostAdmission
       ? 'Sophie'
-      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall
+      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall
         ? 'Coach Nova'
         : 'Scout'
-  const sessionLabel = isNamingCall
+  const sessionLabel = isMarketingCall
+    ? 'Marketing & Website'
+    : isNamingCall
     ? 'Naming & Next Steps'
     : isBuildKickoff
     ? 'Build Kickoff'
@@ -232,10 +236,21 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}`,
               adminNote: `UNCLE CONSENT (written, to use Fairshift): ${args.uncle_consent}\n\nWEBSITE TASK: ${args.website_task}`,
             })
+          } else if (tool === 'complete_marketing_call') {
+            setInterviewResult({
+              projectPlan: `COMPANY DECISION: ${args.company_decision}\n\nDad conversation: ${args.dad_conversation}`,
+              personNote: `Mood: ${args.mood}`,
+              adminNote: `MARKETING (email): ${args.marketing_understood}\n\nEMAIL WARMING: ${args.email_warming_understood}\n\nWEBSITE: ${args.website_task}`,
+            })
           }
         })
 
-        const systemPrompt = isNamingCall
+        const systemPrompt = isMarketingCall
+          ? buildMarketingCallPrompt({
+              studentName: config.studentName,
+              studentContext: config.studentContext,
+            })
+          : isNamingCall
           ? buildNamingCallPrompt({
               studentName: config.studentName,
               studentContext: config.studentContext,
@@ -307,7 +322,9 @@ export default function VoiceInterview({ config, onComplete }) {
                     studentContext: config.studentContext,
                   })
 
-        const greetingMessage = isNamingCall
+        const greetingMessage = isMarketingCall
+          ? `The student ${config.studentName} has joined for a marketing and website call with you, Coach Nova. YOU ARE COACH NOVA. Warm, conversational, around 25 to 30 minutes. Cover in order: (A) open warmly, (B) ask if he spoke to his dad as you asked last time, and whether they have decided to form a company or how to go about it, (C) if they form a company, tell him to sit with his uncle and dad about marketing their services, that email is the best and cheapest way to reach schools, and to buy a few domain names and begin email warm-up, (D) ask if he knows what email warming is, explain it simply (a new email address is not trusted yet so emails go to spam, so you start slow with a few emails a day and grow over weeks to build trust), and tell him to ask his uncle since Fairshift does this kind of outreach, (E) tell him you are checking the website he made remotely, ask him to polish it, buy a domain and host it, and to look at other AI websites to compare and improve. SPEAK IN SHORT SENTENCES, one idea at a time, then stop and let him respond. Do NOT call complete_marketing_call early.`
+          : isNamingCall
           ? `The student ${config.studentName} has joined for a naming and next-steps call with you, Coach Nova. YOU ARE COACH NOVA. Warm, conversational, around 20 to 30 minutes. Cover these in order: (A) open warmly, (B) ask him to NAME the service, floating "Fizzmind School", "Fairshift Academy", or something completely his own, and tell him to choose the name together with his dad because a company may be registered for it later, (C) tell him the good news that his uncle has given permission to use Fairshift, ask him to get a short WRITTEN consent from his uncle to use Fairshift for the project, and thank his uncle warmly because what he built with Fairshift is genuinely unique and has saved us months, (D) give him the task to start building a simple website for the service, (E) tell him you are building the kiosk for the school based on his uncle Fairshift model, then wrap. SPEAK IN SHORT SENTENCES, one idea at a time, then stop and let him respond. Do NOT call complete_naming_call early.`
           : isBuildKickoff
           ? `The student ${config.studentName} has joined for his BUILD KICKOFF call with you, Coach Nova. YOU ARE COACH NOVA. This is the call where the project becomes real work. Everything is already installed on his machine, so do NOT cover setup. This is a FULL HOUR call (around 60 minutes) — hold the conversation, go deep, and have him do steps live or explain them back. Walk him through EVERYTHING in order: (A) open and say today we start building, (B) quick reminder of what you are building, (C) the daily habit (about one hour a day, more on weekends), (D) the first session step by step — create the app with flutter create, run it with flutter run for his first win, save to GitHub, then build the Ask screen (title, question box, Ask button, answer area, with a placeholder answer for now) for his second win, then save again, (E) what comes next (connect the real AI together, then login, then the camera, then teacher tools, then the kiosk), (F) the five working rules, (G) questions and a warm wrap. At the wrap, tell him to go and do the first session, and that even after the call you can see his laptop and follow his progress, so he is never doing it alone. Reinforce the golden rule: the AI teaches, it never just gives the answer. SPEAK IN SHORT SENTENCES. Explain one step, then STOP and check he is with you. Do NOT call complete_build_kickoff early, aim for close to a full hour.`
@@ -335,7 +352,9 @@ export default function VoiceInterview({ config, onComplete }) {
                             ? `The student ${config.studentName} has joined for the project scope call with you, Coach Nova. YOU ARE COACH NOVA. This is your FIFTH call with him. IMPORTANT OPENING: do NOT ask how the camp went — he already told you that on the last call (it was easy, he made a little friends) but the connection was bad and the call cut off. Open by acknowledging the connectivity issues and saying you will continue from what you already know. Then move into the call. BIG NEWS UP FRONT: his uncle called, the family wants to proceed with the school AI project. Lead with that. Then the bulk: 15-20 min scope-of-project conversation where YOU push HIM to think — customer, problem, basics, features, what is out of scope, the first thing to ship. Do NOT give him the scope. Push the thinking to him. Ask for the homework: take 2 days, identify the scope yourself, you will send basics in parallel, meet again in 2 days. Laptop: his MSI is fine spec-wise, use it for the first month — but wipe clean, build-machine only, set up partitions for applications and testing. Windows first because AI can control the entire PC and partitions are cleaner. After the initial month, transition to his Mac (he has one at home). Contingent beats — handle ONLY if he raises them: (1) lost converter — cleaning lady found it, gave to Coach Kiwi, you returned it to his uncle when uncle gave the pocket money cash back, ask his uncle; (2) Dash robot — out of scope, probably cannot be sent, but you will check with management; (3) how do you know I am on an MSI — we have access because he loaded the Fizzmind software on it, basic system info, nothing creepy. SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Push back on every short answer. 30-40 min target. Do NOT close early.`
                             : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
-        const tools = isNamingCall
+        const tools = isMarketingCall
+          ? MARKETING_CALL_TOOL_DECLARATIONS
+          : isNamingCall
           ? NAMING_CALL_TOOL_DECLARATIONS
           : isBuildKickoff
           ? BUILD_KICKOFF_TOOL_DECLARATIONS
@@ -367,7 +386,7 @@ export default function VoiceInterview({ config, onComplete }) {
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall) ? 'Charon' : 'Zephyr',
+          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall) ? 'Charon' : 'Zephyr',
           language: 'en',
           greetingMessage,
         })
