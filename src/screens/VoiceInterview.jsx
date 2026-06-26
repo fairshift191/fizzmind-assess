@@ -17,6 +17,7 @@ import { buildIdeaCheckinPrompt, IDEA_CHECKIN_TOOL_DECLARATIONS } from '../asses
 import { buildBuildKickoffPrompt, BUILD_KICKOFF_TOOL_DECLARATIONS } from '../assessment/build-kickoff-prompt.js'
 import { buildNamingCallPrompt, NAMING_CALL_TOOL_DECLARATIONS } from '../assessment/naming-call-prompt.js'
 import { buildMarketingCallPrompt, MARKETING_CALL_TOOL_DECLARATIONS } from '../assessment/marketing-call-prompt.js'
+import { buildFrustratedCallPrompt, FRUSTRATED_CALL_TOOL_DECLARATIONS } from '../assessment/frustrated-call-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -53,12 +54,13 @@ export default function VoiceInterview({ config, onComplete }) {
   const isBuildKickoff = config.inviteVariant === 'build_kickoff'
   const isNamingCall = config.inviteVariant === 'naming_call'
   const isMarketingCall = config.inviteVariant === 'marketing_call'
+  const isFrustratedCall = config.inviteVariant === 'frustrated_call'
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor || isWeekendPlan
     ? 'Beverly'
     : isPostAdmission
       ? 'Sophie'
-      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall
+      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall
         ? 'Coach Nova'
         : 'Scout'
   const sessionLabel = isMarketingCall
@@ -87,7 +89,9 @@ export default function VoiceInterview({ config, onComplete }) {
                   ? 'Post-Camp Wrap'
                   : isScopeCall
                     ? 'Scope Call'
-                    : isCodeInterview
+                    : isFrustratedCall
+                      ? 'Pace Call'
+                      : isCodeInterview
           ? 'Code Interpretation'
           : 'Top 50 Interview'
 
@@ -242,6 +246,12 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}`,
               adminNote: `MARKETING (email): ${args.marketing_understood}\n\nEMAIL WARMING: ${args.email_warming_understood}\n\nWEBSITE: ${args.website_task}`,
             })
+          } else if (tool === 'complete_frustrated_call') {
+            setInterviewResult({
+              projectPlan: `WEBSITE HOMEWORK: ${args.website_homework}\n\nDecision-taking: ${args.decision_taking}`,
+              personNote: `Mood: ${args.mood}. Frustration response: ${args.frustration_response}`,
+              adminNote: `NEXT CALL: ${args.next_call}`,
+            })
           }
         })
 
@@ -315,7 +325,12 @@ export default function VoiceInterview({ config, onComplete }) {
                                 studentName: config.studentName,
                                 studentContext: config.studentContext,
                               })
-                            : buildInterviewPrompt({
+                            : isFrustratedCall
+                              ? buildFrustratedCallPrompt({
+                                  studentName: config.studentName,
+                                  studentContext: config.studentContext,
+                                })
+                              : buildInterviewPrompt({
                     studentName: config.studentName,
                     track: config.track,
                     campName: config.campName,
@@ -350,7 +365,9 @@ export default function VoiceInterview({ config, onComplete }) {
                           ? `The student ${config.studentName} has joined for the post-camp wrap call with you, Coach Nova. YOU ARE COACH NOVA. This is your FOURTH call with him. Tone is WARMER than last time — the camp is wrapping, you are on the same side. NOT scolding. 25 to 35 min target. HOLD THE CONVERSATION. Do NOT call complete_post_camp_wrap early. Five parts: (A) hear about the camp experience properly, (B) check on Vanya's personality development assignments — if he says yes he did them, probe WHEN he wrote them, and if he admits he did them all today/at the last minute, GET ANNOYED (sharp not cruel) and make him commit to not cramming again, (C) check on the project idea and dad conversation, set "come back in a few days with the locked direction", (D) tell him the daily build sessions start once direction is locked, (E) the laptop setup — high-powered Windows laptop, COMPLETELY clean (fresh install, no games, no clutter, no school stuff, no other activities on it EVER — build machine only). Mention that on Windows we can have AI control the entire PC (open apps, install, manage files, run builds), Mac comes later just for day-to-day. Also tell him the Wild Minds kit ships from Singapore to his address — ask for the address and any accessories he wants (headphones, mouse, notebook). SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Push back on every short answer.`
                           : isScopeCall
                             ? `The student ${config.studentName} has joined for the project scope call with you, Coach Nova. YOU ARE COACH NOVA. This is your FIFTH call with him. IMPORTANT OPENING: do NOT ask how the camp went — he already told you that on the last call (it was easy, he made a little friends) but the connection was bad and the call cut off. Open by acknowledging the connectivity issues and saying you will continue from what you already know. Then move into the call. BIG NEWS UP FRONT: his uncle called, the family wants to proceed with the school AI project. Lead with that. Then the bulk: 15-20 min scope-of-project conversation where YOU push HIM to think — customer, problem, basics, features, what is out of scope, the first thing to ship. Do NOT give him the scope. Push the thinking to him. Ask for the homework: take 2 days, identify the scope yourself, you will send basics in parallel, meet again in 2 days. Laptop: his MSI is fine spec-wise, use it for the first month — but wipe clean, build-machine only, set up partitions for applications and testing. Windows first because AI can control the entire PC and partitions are cleaner. After the initial month, transition to his Mac (he has one at home). Contingent beats — handle ONLY if he raises them: (1) lost converter — cleaning lady found it, gave to Coach Kiwi, you returned it to his uncle when uncle gave the pocket money cash back, ask his uncle; (2) Dash robot — out of scope, probably cannot be sent, but you will check with management; (3) how do you know I am on an MSI — we have access because he loaded the Fizzmind software on it, basic system info, nothing creepy. SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Push back on every short answer. 30-40 min target. Do NOT close early.`
-                            : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
+                            : isFrustratedCall
+                              ? `The student ${config.studentName} has joined for a pace + feedback call with you, Coach Nova. YOU ARE COACH NOVA. This is your SIXTH call. Your tone tonight is FRUSTRATED, DISAPPOINTED, A BIT HOT — but not cruel, not yelling. Open warmly enough that he answers, then turn: tell him you are frustrated, the pace is too slow, other students are pulling ahead. Then five parts: (A) the frustration up front + ask for long answers; (B) website feedback — no Ack tab as its own tab, it should be accessible from clicking Home; menu bar in the header must be visible on every page (not just home); try to incorporate a chatbot (bottom-right corner); (C) tell him what you have been doing — speaking to his uncle multiple times, actively building the framework under his guidance, framework will be ready by Monday and you will share it then; (D) the hard truth — irrespective of whether you get on a call he MUST be working every day, he cannot stay idle if he wants any shot at the AI summit, other students are taking decisions by themselves and are way ahead, you are DISAPPOINTED at how long this is taking, the TEAM EVALUATES THE STUDENT not the coach, you are only here to assist and help, the building is on him, he needs to take decisions himself and speed up everything; (E) schedule the next call together (Monday evening or Tuesday, aim Monday because the framework is ready by then), wrap with "I am on your side, I am frustrated because I believe in you". SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Break the frustration and the hard truth into short sharp turns with pauses. Push back on every short answer. 30-40 min target. Do NOT close early.`
+                              : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
         const tools = isMarketingCall
           ? MARKETING_CALL_TOOL_DECLARATIONS
@@ -380,13 +397,15 @@ export default function VoiceInterview({ config, onComplete }) {
                           ? POST_CAMP_WRAP_TOOL_DECLARATIONS
                           : isScopeCall
                             ? SCOPE_CALL_TOOL_DECLARATIONS
-                            : INTERVIEW_TOOL_DECLARATIONS
+                            : isFrustratedCall
+                              ? FRUSTRATED_CALL_TOOL_DECLARATIONS
+                              : INTERVIEW_TOOL_DECLARATIONS
 
         await adapter.connect({
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall) ? 'Charon' : 'Zephyr',
+          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall) ? 'Charon' : 'Zephyr',
           language: 'en',
           greetingMessage,
         })
