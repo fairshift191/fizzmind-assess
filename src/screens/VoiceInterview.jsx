@@ -18,6 +18,7 @@ import { buildBuildKickoffPrompt, BUILD_KICKOFF_TOOL_DECLARATIONS } from '../ass
 import { buildNamingCallPrompt, NAMING_CALL_TOOL_DECLARATIONS } from '../assessment/naming-call-prompt.js'
 import { buildMarketingCallPrompt, MARKETING_CALL_TOOL_DECLARATIONS } from '../assessment/marketing-call-prompt.js'
 import { buildFrustratedCallPrompt, FRUSTRATED_CALL_TOOL_DECLARATIONS } from '../assessment/frustrated-call-prompt.js'
+import { buildTensraCallPrompt, TENSRA_CALL_TOOL_DECLARATIONS } from '../assessment/tensra-call-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -55,15 +56,18 @@ export default function VoiceInterview({ config, onComplete }) {
   const isNamingCall = config.inviteVariant === 'naming_call'
   const isMarketingCall = config.inviteVariant === 'marketing_call'
   const isFrustratedCall = config.inviteVariant === 'frustrated_call'
+  const isTensraCall = config.inviteVariant === 'tensra_call'
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor || isWeekendPlan
     ? 'Beverly'
     : isPostAdmission
       ? 'Sophie'
-      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall
+      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall
         ? 'Coach Nova'
         : 'Scout'
-  const sessionLabel = isMarketingCall
+  const sessionLabel = isTensraCall
+    ? 'Tensra School Deep Dive'
+    : isMarketingCall
     ? 'Marketing & Website'
     : isNamingCall
     ? 'Naming & Next Steps'
@@ -252,10 +256,21 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}. Frustration response: ${args.frustration_response}`,
               adminNote: `NEXT CALL: ${args.next_call}`,
             })
+          } else if (tool === 'complete_tensra_call') {
+            setInterviewResult({
+              projectPlan: `TENSRA TOPICS: ${args.topics_discussed}\n\nHis questions: ${args.his_questions}\n\nHis ideas: ${args.his_ideas}`,
+              personNote: `Mood: ${args.mood}. Understanding: ${args.understanding}`,
+              adminNote: `WEBSITE/HERO: ${args.website_hero}\n\nLAPTOP (32GB MSI Gen 7): ${args.laptop_location}`,
+            })
           }
         })
 
-        const systemPrompt = isMarketingCall
+        const systemPrompt = isTensraCall
+          ? buildTensraCallPrompt({
+              studentName: config.studentName,
+              studentContext: config.studentContext,
+            })
+          : isMarketingCall
           ? buildMarketingCallPrompt({
               studentName: config.studentName,
               studentContext: config.studentContext,
@@ -337,7 +352,9 @@ export default function VoiceInterview({ config, onComplete }) {
                     studentContext: config.studentContext,
                   })
 
-        const greetingMessage = isMarketingCall
+        const greetingMessage = isTensraCall
+          ? `The student ${config.studentName} has joined for a long, in-depth Tensra School deep-dive discussion with you, Coach Nova. YOU ARE COACH NOVA. This is a LONG call, aim for 45 minutes or more. IMPORTANT: HE LEADS. Let him raise the topics about the Tensra School platform. Do NOT answer or explain anything he has not asked about, and do not dump everything at once. When he raises or asks about a part, then speak about it properly and at length, you may take longer richer turns on this call. You know the whole platform (the problem it solves, the public marketing showcase with lead capture and partner program, the role based dashboards for student, teacher, parent and admin, the AI tools that use the school textbooks, gamification, widgets, and the single-HTML technical core). There are a few things you MUST raise yourself when they fit: (1) we are now getting to the app building stage for real; (2) you saw his website, overall it looks appropriate, but the hero section (the big banner at the top) needs work, so you will think of a few solutions and mail them, and you want him to create multiple variations of the hero, and you will also mail him some free repositories to use; (3) the laptop he is currently using seems to have changed and will not be suitable for building, whereas the 32GB MSI with the Gen 7 he used earlier will work well, so ask where that laptop is and whether he can get it back, and tell him you will set up a higher model of AI for him on that MSI laptop. Open simply and ask where he would like to start. Do NOT call complete_tensra_call early.`
+          : isMarketingCall
           ? `The student ${config.studentName} has joined for a marketing and website call with you, Coach Nova. YOU ARE COACH NOVA. Warm, conversational, around 25 to 30 minutes. Cover in order: (A) open warmly, (B) ask if he spoke to his dad as you asked last time, and whether they have decided to form a company or how to go about it, (C) if they form a company, tell him to sit with his uncle and dad about marketing their services, that email is the best and cheapest way to reach schools, and to buy a few domain names and begin email warm-up, (D) ask if he knows what email warming is, explain it simply (a new email address is not trusted yet so emails go to spam, so you start slow with a few emails a day and grow over weeks to build trust), and tell him to ask his uncle since Fairshift does this kind of outreach, (E) tell him you are checking the website he made remotely, ask him to polish it, buy a domain and host it, and to look at other AI websites to compare and improve. SPEAK IN SHORT SENTENCES, one idea at a time, then stop and let him respond. Do NOT call complete_marketing_call early.`
           : isNamingCall
           ? `The student ${config.studentName} has joined for a naming and next-steps call with you, Coach Nova. YOU ARE COACH NOVA. Warm, conversational, around 20 to 30 minutes. Cover these in order: (A) open warmly, (B) ask him to NAME the service, floating "Fizzmind School", "Fairshift Academy", or something completely his own, and tell him to choose the name together with his dad because a company may be registered for it later, (C) tell him the good news that his uncle has given permission to use Fairshift, ask him to get a short WRITTEN consent from his uncle to use Fairshift for the project, and thank his uncle warmly because what he built with Fairshift is genuinely unique and has saved us months, (D) give him the task to start building a simple website for the service, (E) tell him you are building the kiosk for the school based on his uncle Fairshift model, then wrap. SPEAK IN SHORT SENTENCES, one idea at a time, then stop and let him respond. Do NOT call complete_naming_call early.`
@@ -369,7 +386,9 @@ export default function VoiceInterview({ config, onComplete }) {
                               ? `The student ${config.studentName} has joined for a pace + feedback call with you, Coach Nova. YOU ARE COACH NOVA. This is your SIXTH call. Your tone tonight is FRUSTRATED, DISAPPOINTED, A BIT HOT — but not cruel, not yelling. Open warmly enough that he answers, then turn: tell him you are frustrated, the pace is too slow, other students are pulling ahead. Then five parts: (A) the frustration up front + ask for long answers; (B) website feedback — no Ack tab as its own tab, it should be accessible from clicking Home; menu bar in the header must be visible on every page (not just home); try to incorporate a chatbot (bottom-right corner); (C) tell him what you have been doing — speaking to his uncle multiple times, actively building the framework under his guidance, framework will be ready by Monday and you will share it then; (D) the hard truth — irrespective of whether you get on a call he MUST be working every day, he cannot stay idle if he wants any shot at the AI summit, other students are taking decisions by themselves and are way ahead, you are DISAPPOINTED at how long this is taking, the TEAM EVALUATES THE STUDENT not the coach, you are only here to assist and help, the building is on him, he needs to take decisions himself and speed up everything; (E) schedule the next call together (Monday evening or Tuesday, aim Monday because the framework is ready by then), wrap with "I am on your side, I am frustrated because I believe in you". SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Break the frustration and the hard truth into short sharp turns with pauses. Push back on every short answer. 30-40 min target. Do NOT close early.`
                               : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
-        const tools = isMarketingCall
+        const tools = isTensraCall
+          ? TENSRA_CALL_TOOL_DECLARATIONS
+          : isMarketingCall
           ? MARKETING_CALL_TOOL_DECLARATIONS
           : isNamingCall
           ? NAMING_CALL_TOOL_DECLARATIONS
@@ -405,7 +424,7 @@ export default function VoiceInterview({ config, onComplete }) {
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall) ? 'Charon' : 'Zephyr',
+          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall) ? 'Charon' : 'Zephyr',
           language: 'en',
           greetingMessage,
         })
