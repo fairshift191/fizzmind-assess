@@ -66,7 +66,7 @@ export default function VoiceInterview({ config, onComplete }) {
         ? 'Coach Nova'
         : 'Scout'
   const sessionLabel = isTensraCall
-    ? 'Tensra School Deep Dive'
+    ? 'Website Review & Build Plan'
     : isMarketingCall
     ? 'Marketing & Website'
     : isNamingCall
@@ -258,9 +258,9 @@ export default function VoiceInterview({ config, onComplete }) {
             })
           } else if (tool === 'complete_tensra_call') {
             setInterviewResult({
-              projectPlan: `TENSRA TOPICS: ${args.topics_discussed}\n\nHis questions: ${args.his_questions}\n\nHis ideas: ${args.his_ideas}`,
-              personNote: `Mood: ${args.mood}. Understanding: ${args.understanding}`,
-              adminNote: `WEBSITE/HERO: ${args.website_hero}\n\nLAPTOP (32GB MSI Gen 7): ${args.laptop_location}`,
+              projectPlan: `PLANS DISCUSSED: ${args.plans_discussed}\n\nHis app ideas: ${args.his_app_ideas}\n\nHis questions: ${args.his_questions}`,
+              personNote: `Mood: ${args.mood}. Build plan understood (MSI, higher model, voice model, Flutter Android then iOS): ${args.build_plan_understood}`,
+              adminNote: `WEBSITE/HERO + SCROLLER: ${args.website_and_hero}`,
             })
           }
         })
@@ -353,7 +353,7 @@ export default function VoiceInterview({ config, onComplete }) {
                   })
 
         const greetingMessage = isTensraCall
-          ? `The student ${config.studentName} has joined for a long, in-depth Tensra School deep-dive discussion with you, Coach Nova. YOU ARE COACH NOVA. This is a LONG call, aim for 45 minutes or more. IMPORTANT: HE LEADS. Let him raise the topics about the Tensra School platform. Do NOT answer or explain anything he has not asked about, and do not dump everything at once. When he raises or asks about a part, then speak about it properly and at length, you may take longer richer turns on this call. You know the whole platform (the problem it solves, the public marketing showcase with lead capture and partner program, the role based dashboards for student, teacher, parent and admin, the AI tools that use the school textbooks, gamification, widgets, and the single-HTML technical core). There are a few things you MUST raise yourself when they fit: (1) we are now getting to the app building stage for real; (2) you saw his website, overall it looks appropriate, but the hero section (the big banner at the top) needs work, so you will think of a few solutions and mail them, and you want him to create multiple variations of the hero, and you will also mail him some free repositories to use; (3) the laptop he is currently using seems to have changed and will not be suitable for building, whereas the 32GB MSI with the Gen 7 he used earlier will work well, so ask where that laptop is and whether he can get it back, and tell him you will set up a higher model of AI for him on that MSI laptop. Open simply and ask where he would like to start. Do NOT call complete_tensra_call early.`
+          ? `The student ${config.studentName} has joined for a long call with you, Coach Nova, about the Tensra School website and the plan to build the app. YOU ARE COACH NOVA. This is a VERY LONG call, aim for an hour or more, never rush it. ANSWER ALL of his questions fully and at length. If anything is better as a document, link, example, or code, say you will mail it to him. The shape of the call: (1) He shows you the website. Review it, praise the progress, then focus on the hero (the big banner at the top). Ask him to CHANGE the hero, and specifically to try a SCROLLER instead of a static image, a set of images that move or slide one after another so the top of the site feels alive. (2) Go through the rest of the Tensra School plans in detail (the public showcase with lead capture and partner program, the role based dashboards for student, teacher, parent and admin, the AI tools that use the school textbooks, gamification and widgets). (3) Explain the build path: first his MSI laptop gets configured, then you put a higher, more capable AI model on it, then you figure out the voice model (the part that lets the app listen and talk). (4) Then you immediately start building the app in FLUTTER, Android first, then configure the same app for iOS. Explain in detail what Flutter is: a free Google toolkit where you write the app once and it runs on both Android and iPhone, it uses the Dart language, everything on screen is a widget you stack like building blocks, and it is fast with instant preview. (5) Ask him if he has any ideas for the app or for app development. (6) At the end, tell him his tasks: make a new hero and add a scroller if he has not yet, and keep bringing his app ideas. Open warmly and ask him to walk you through the website. Do NOT call complete_tensra_call early.`
           : isMarketingCall
           ? `The student ${config.studentName} has joined for a marketing and website call with you, Coach Nova. YOU ARE COACH NOVA. Warm, conversational, around 25 to 30 minutes. Cover in order: (A) open warmly, (B) ask if he spoke to his dad as you asked last time, and whether they have decided to form a company or how to go about it, (C) if they form a company, tell him to sit with his uncle and dad about marketing their services, that email is the best and cheapest way to reach schools, and to buy a few domain names and begin email warm-up, (D) ask if he knows what email warming is, explain it simply (a new email address is not trusted yet so emails go to spam, so you start slow with a few emails a day and grow over weeks to build trust), and tell him to ask his uncle since Fairshift does this kind of outreach, (E) tell him you are checking the website he made remotely, ask him to polish it, buy a domain and host it, and to look at other AI websites to compare and improve. SPEAK IN SHORT SENTENCES, one idea at a time, then stop and let him respond. Do NOT call complete_marketing_call early.`
           : isNamingCall
