@@ -116,6 +116,7 @@ export default function InviteTest({ inviteCode, onReset }) {
   const isMarketingCall = isVoiceInterview && inviteVariant === 'marketing_call'
   const isFrustratedCall = isVoiceInterview && inviteVariant === 'frustrated_call'
   const isTensraCall = isVoiceInterview && inviteVariant === 'tensra_call'
+  const isNameserverCall = isVoiceInterview && inviteVariant === 'nameserver_call'
   const trackInfo = invite && !isInterview ? TRACK_INFO[invite.track] : null
   const interviewInfo = isCodeInterview
     ? {
@@ -220,6 +221,13 @@ export default function InviteTest({ inviteCode, onReset }) {
                           label: 'Website Review & Build Plan · with Coach Nova',
                           icon: '🎙️',
                           desc: 'Show Coach Nova the website, sort out the hero, then plan the app build together. A long one, an hour or more. Find a quiet spot and settle in.',
+                          color: '#C9963A',
+                        }
+                      : isNameserverCall
+                      ? {
+                          label: 'Domain & Hosting Setup · with Coach Nova',
+                          icon: '🎙️',
+                          desc: 'Coach Nova walks you through pointing tensra.app and lining up hosting, then sets up Saturday to deploy the app together. Find a quiet spot.',
                           color: '#C9963A',
                         }
                       : isPostAdmission
@@ -368,7 +376,7 @@ export default function InviteTest({ inviteCode, onReset }) {
           >
             <div style={{ ...styles.badge, borderColor: `${interviewInfo.color}30`, color: interviewInfo.color, background: `${interviewInfo.color}10` }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: interviewInfo.color, display: 'inline-block' }} />
-              {isCodeInterview ? 'Final Round' : isPostCounsellor ? 'Wrap-up Call' : isPostAdmission ? 'Counsellor Session' : isDayOneCheckin ? 'Day 1 Check-in' : isDayTwoCheckin ? 'Day 2 + 3 Review' : isDayThreeFollowup ? 'Follow-up Call' : isWeekendPlan ? 'Weekend Plan' : isPostCampPushback ? 'Post-Camp Call' : isPostCampWrap ? 'Camp Wrap' : isScopeCall ? 'Scope Call' : isIdeaCheckin ? 'Idea Check-in' : isBuildKickoff ? 'Build Kickoff' : isNamingCall ? 'Naming & Next Steps' : isMarketingCall ? 'Marketing & Website' : isFrustratedCall ? 'Pace Call' : isTensraCall ? 'Website & Build Plan' : "You're in the top 50"}
+              {isCodeInterview ? 'Final Round' : isPostCounsellor ? 'Wrap-up Call' : isPostAdmission ? 'Counsellor Session' : isDayOneCheckin ? 'Day 1 Check-in' : isDayTwoCheckin ? 'Day 2 + 3 Review' : isDayThreeFollowup ? 'Follow-up Call' : isWeekendPlan ? 'Weekend Plan' : isPostCampPushback ? 'Post-Camp Call' : isPostCampWrap ? 'Camp Wrap' : isScopeCall ? 'Scope Call' : isIdeaCheckin ? 'Idea Check-in' : isBuildKickoff ? 'Build Kickoff' : isNamingCall ? 'Naming & Next Steps' : isMarketingCall ? 'Marketing & Website' : isFrustratedCall ? 'Pace Call' : isTensraCall ? 'Website & Build Plan' : isNameserverCall ? 'Domain & Hosting' : "You're in the top 50"}
             </div>
             <div style={styles.iconLarge}>{interviewInfo.icon}</div>
             <h1 style={styles.title}>
@@ -404,6 +412,8 @@ export default function InviteTest({ inviteCode, onReset }) {
                                   ? `${student.first_name}, we need to talk.`
                                   : isTensraCall
                                   ? `Hey ${student.first_name}, let's dig in.`
+                                  : isNameserverCall
+                                  ? `Hey ${student.first_name}, let's get you live.`
                                   : `Congratulations, ${student.first_name}!`}
             </h1>
             <p style={styles.subtitle}>
@@ -439,6 +449,8 @@ export default function InviteTest({ inviteCode, onReset }) {
                                   ? <>Coach Nova has feedback on your website, an update on the framework, and a serious conversation about your pace. Around <strong style={{ color: interviewInfo.color }}>30 to 40 minutes</strong>.</>
                                   : isTensraCall
                                   ? <>Show Coach Nova the website, fix up the hero, then plan the app build together. <strong style={{ color: interviewInfo.color }}>An hour or more</strong>. Find a quiet spot and settle in.</>
+                                  : isNameserverCall
+                                  ? <>Coach Nova walks you through pointing <strong style={{ color: interviewInfo.color }}>tensra.app</strong> and lining up hosting, then sets up Saturday to deploy the app together. Find a quiet spot.</>
                                   : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
             </p>
             <div style={{ ...styles.infoBox, borderColor: `${interviewInfo.color}20`, background: `${interviewInfo.color}08` }}>
@@ -549,6 +561,20 @@ export default function InviteTest({ inviteCode, onReset }) {
                   <div style={styles.rule}><span style={styles.ruleDot} />Coach Nova will be direct with you tonight</div>
                   <div style={styles.rule}><span style={styles.ruleDot} />Go long — short answers will not do</div>
                 </>
+              ) : isTensraCall ? (
+                <>
+                  <div style={styles.rule}><span style={styles.ruleDot} />An hour or more, voice only</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Show Coach Nova the website and hero</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Plan the app build together</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Bring your questions and ideas</div>
+                </>
+              ) : isNameserverCall ? (
+                <>
+                  <div style={styles.rule}><span style={styles.ruleDot} />A proper chat, voice only</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Pointing tensra.app and lining up hosting</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Ask your uncle for the details first</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Then Saturday we deploy together</div>
+                </>
               ) : (
                 <>
                   <div style={styles.rule}><span style={styles.ruleDot} />About 10 minutes, voice only</div>
@@ -562,7 +588,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               onClick={() => setPhase('interview')}
               style={{ ...styles.startBtn, background: interviewInfo.color, color: '#0D0F12' }}
             >
-              {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : isDayOneCheckin ? 'Start Check-in with Scout →' : isDayTwoCheckin ? 'Start Review with Coach Nova →' : isDayThreeFollowup ? 'Start Call with Coach Nova →' : isWeekendPlan ? 'Start Weekend Plan with Beverly →' : isPostCampPushback ? 'Start Call with Coach Nova →' : isPostCampWrap ? 'Start Wrap with Coach Nova →' : isScopeCall ? 'Start Scope Call with Coach Nova →' : isIdeaCheckin ? 'Start Check-in with Coach Nova →' : isBuildKickoff ? 'Start Build Kickoff with Coach Nova →' : isNamingCall ? 'Start Call with Coach Nova →' : isMarketingCall ? 'Start Call with Coach Nova →' : isFrustratedCall ? 'Start Call with Coach Nova →' : 'Start Interview →'}
+              {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : isDayOneCheckin ? 'Start Check-in with Scout →' : isDayTwoCheckin ? 'Start Review with Coach Nova →' : isDayThreeFollowup ? 'Start Call with Coach Nova →' : isWeekendPlan ? 'Start Weekend Plan with Beverly →' : isPostCampPushback ? 'Start Call with Coach Nova →' : isPostCampWrap ? 'Start Wrap with Coach Nova →' : isScopeCall ? 'Start Scope Call with Coach Nova →' : isIdeaCheckin ? 'Start Check-in with Coach Nova →' : isBuildKickoff ? 'Start Build Kickoff with Coach Nova →' : isNamingCall ? 'Start Call with Coach Nova →' : isMarketingCall ? 'Start Call with Coach Nova →' : isFrustratedCall ? 'Start Call with Coach Nova →' : isTensraCall ? 'Start Call with Coach Nova →' : isNameserverCall ? 'Start Call with Coach Nova →' : 'Start Interview →'}
             </button>
             <p style={styles.footerNote}>fizzmind — Summer 2026 · {student.email}</p>
           </motion.div>
