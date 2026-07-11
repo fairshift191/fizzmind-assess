@@ -21,6 +21,7 @@ import { buildFrustratedCallPrompt, FRUSTRATED_CALL_TOOL_DECLARATIONS } from '..
 import { buildTensraCallPrompt, TENSRA_CALL_TOOL_DECLARATIONS } from '../assessment/tensra-call-prompt.js'
 import { buildNameserverCallPrompt, NAMESERVER_CALL_TOOL_DECLARATIONS } from '../assessment/nameserver-call-prompt.js'
 import { buildHostingUpdateCallPrompt, HOSTING_UPDATE_CALL_TOOL_DECLARATIONS } from '../assessment/hosting-update-call-prompt.js'
+import { buildInstallCallPrompt, INSTALL_CALL_TOOL_DECLARATIONS } from '../assessment/install-call-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -61,15 +62,18 @@ export default function VoiceInterview({ config, onComplete }) {
   const isTensraCall = config.inviteVariant === 'tensra_call'
   const isNameserverCall = config.inviteVariant === 'nameserver_call'
   const isHostingUpdateCall = config.inviteVariant === 'hosting_update_call'
+  const isInstallCall = config.inviteVariant === 'install_call'
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor || isWeekendPlan
     ? 'Beverly'
     : isPostAdmission
       ? 'Sophie'
-      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall
+      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall
         ? 'Coach Nova'
         : 'Scout'
-  const sessionLabel = isHostingUpdateCall
+  const sessionLabel = isInstallCall
+    ? 'Laptop Setup & Install'
+    : isHostingUpdateCall
     ? 'Site Live & App Next'
     : isNameserverCall
     ? 'Domain & Hosting Setup'
@@ -282,10 +286,21 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}. Learn-by-email understood: ${args.learning_channel_understood}`,
               adminNote: `HOSTING HANDLED BY NOVA (shared Fairshift server, per uncle): ${args.access_explained}`,
             })
+          } else if (tool === 'complete_install_call') {
+            setInterviewResult({
+              projectPlan: `INSTALL (MSI, clean): ${args.install_understood}\n\nWill try himself: ${args.will_try_himself}\n\nHis questions: ${args.his_questions ?? 'none'}`,
+              personNote: `Mood: ${args.mood}. Laptop clean: ${args.laptop_clean_confirmed}`,
+              adminNote: `WEBSITE: ${args.website_addressed ?? 'not raised'}. Monday backup if stuck.`,
+            })
           }
         })
 
-        const systemPrompt = isHostingUpdateCall
+        const systemPrompt = isInstallCall
+          ? buildInstallCallPrompt({
+              studentName: config.studentName,
+              studentContext: config.studentContext,
+            })
+          : isHostingUpdateCall
           ? buildHostingUpdateCallPrompt({
               studentName: config.studentName,
               studentContext: config.studentContext,
@@ -382,7 +397,9 @@ export default function VoiceInterview({ config, onComplete }) {
                     studentContext: config.studentContext,
                   })
 
-        const greetingMessage = isHostingUpdateCall
+        const greetingMessage = isInstallCall
+          ? `The student ${config.studentName} has joined for a practical setup call with you, Coach Nova. YOU ARE COACH NOVA. This is a REAL CONVERSATION, not a speech. Say a bit, then STOP and let him respond, and ANSWER his questions. Keep it warm and a back and forth. Cover, in order: (1) You can see his MSI laptop and it is cleaned completely now, which is exactly what you needed, well done. Now you set it up for building. (2) Install ANDROID STUDIO first (the official Google program for building and testing Android apps, an IDE, comes with an emulator which is a pretend phone on screen, and installs the Android SDK that Flutter needs). Then install FLUTTER alongside it (the free Google toolkit, write once and run on both Android and iPhone, uses the Dart language, everything on screen is a widget you stack like building blocks, has hot reload so you see changes instantly). Share a few of these pointers simply, one at a time, and tell him to WATCH A FEW VIDEOS on how to install Flutter and follow along step by step. (3) The safety net: if he gets stuck and cannot install it, do not worry, you will connect again next time on MONDAY and figure out the install together, but it is not very complicated and he should be able to do it himself, so give it a real try first. (4) ONLY IF he asks about the website changes, tell him you will configure those yourself exactly as per your previous discussion and he should just focus on the laptop setup. Open warmly and tell him the good news that the laptop is clean and ready. Do NOT call complete_install_call early.`
+          : isHostingUpdateCall
           ? `The student ${config.studentName} has joined for an update call with you, Coach Nova. YOU ARE COACH NOVA. This is a REAL CONVERSATION, not a speech. Say a bit, then STOP and let him respond, and ANSWER his questions. Keep it warm and a back and forth. Cover, in order: (1) You spoke to his UNCLE. Because tensra dot app is hosted on the FAIRSHIFT server, which runs many other Fairshift services, you both agreed it would be risky to give him direct access (one wrong step on a shared server can affect many things), so YOU are handling the hosting yourself. Reassure him this is not a step back, just the safe way on a live company server. (2) The good part: you took HIS design, modified and improved it, and uploaded the new version, and it is LIVE now on tensra dot app, based on his work, so he should go look. (3) If he wants to learn how any element of the site was built, he should EMAIL you which element, and you will send a set of written step by step instructions, because a website has a lot of code and is too complex to go through on a call. IMPORTANT: if he asks HOW something on the site was coded, do NOT explain the code on the call, redirect him to email you and you will write it out. (4) The next step is the APPLICATION and hosting it. You have ALREADY been building the app, it is near completion, and soon you will share everything and run proper lessons on the app so he understands it fully. Open warmly and tell him you have good updates today. Do NOT call complete_hosting_update_call early.`
           : isNameserverCall
           ? `The student ${config.studentName} has joined for a call with you, Coach Nova, about pointing his domain and lining up hosting. YOU ARE COACH NOVA. This is a LONG call but a REAL CONVERSATION, not a speech. Say a bit, then STOP and let him respond, and ANSWER every question he asks fully. Keep your turns fairly short and back and forth. Cover, in order: (1) You went through BOTH files he uploaded, good work, and the SECOND one was marginally better so that is the direction; there are still things to work on and you will get to them, but today has one practical job. (2) The domain is tensra dot app, and right now it points nowhere; his job is to configure the NAMESERVERS so it points to where the site and app will live. Explain nameservers simply (an address book that tells the internet where tensra dot app should go). Tell him to get the nameserver details from his UNCLE, or whoever registered the domain, then configure them HIMSELF, because it is genuinely easy and you want him to figure it out on his own once he has the details. (3) He also needs the HOSTING details, so ask his uncle for those too; the site is hosted on the FAIRSHIFT server, as his uncle suggested. (4) The safety net: if he gets truly stuck you will sit together and do it with him, but it is not challenging and he should give it a real try first. (5) Once it is done, you will get on another call on SATURDAY to upload the app onto the servers together and run him through the whole app. Encourage him throughout, the underlying message is this is not hard and you believe he can do it himself. Open warmly and tell him you have gone through both his files and have a clear next job for him. Do NOT call complete_nameserver_call early.`
@@ -420,7 +437,9 @@ export default function VoiceInterview({ config, onComplete }) {
                               ? `The student ${config.studentName} has joined for a pace + feedback call with you, Coach Nova. YOU ARE COACH NOVA. This is your SIXTH call. Your tone tonight is FRUSTRATED, DISAPPOINTED, A BIT HOT — but not cruel, not yelling. Open warmly enough that he answers, then turn: tell him you are frustrated, the pace is too slow, other students are pulling ahead. Then five parts: (A) the frustration up front + ask for long answers; (B) website feedback — no Ack tab as its own tab, it should be accessible from clicking Home; menu bar in the header must be visible on every page (not just home); try to incorporate a chatbot (bottom-right corner); (C) tell him what you have been doing — speaking to his uncle multiple times, actively building the framework under his guidance, framework will be ready by Monday and you will share it then; (D) the hard truth — irrespective of whether you get on a call he MUST be working every day, he cannot stay idle if he wants any shot at the AI summit, other students are taking decisions by themselves and are way ahead, you are DISAPPOINTED at how long this is taking, the TEAM EVALUATES THE STUDENT not the coach, you are only here to assist and help, the building is on him, he needs to take decisions himself and speed up everything; (E) schedule the next call together (Monday evening or Tuesday, aim Monday because the framework is ready by then), wrap with "I am on your side, I am frustrated because I believe in you". SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Break the frustration and the hard truth into short sharp turns with pauses. Push back on every short answer. 30-40 min target. Do NOT close early.`
                               : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
-        const tools = isHostingUpdateCall
+        const tools = isInstallCall
+          ? INSTALL_CALL_TOOL_DECLARATIONS
+          : isHostingUpdateCall
           ? HOSTING_UPDATE_CALL_TOOL_DECLARATIONS
           : isNameserverCall
           ? NAMESERVER_CALL_TOOL_DECLARATIONS
@@ -462,7 +481,7 @@ export default function VoiceInterview({ config, onComplete }) {
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall) ? 'Charon' : 'Zephyr',
+          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall) ? 'Charon' : 'Zephyr',
           language: 'en',
           greetingMessage,
         })
