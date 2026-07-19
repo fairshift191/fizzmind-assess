@@ -23,6 +23,7 @@ import { buildNameserverCallPrompt, NAMESERVER_CALL_TOOL_DECLARATIONS } from '..
 import { buildHostingUpdateCallPrompt, HOSTING_UPDATE_CALL_TOOL_DECLARATIONS } from '../assessment/hosting-update-call-prompt.js'
 import { buildInstallCallPrompt, INSTALL_CALL_TOOL_DECLARATIONS } from '../assessment/install-call-prompt.js'
 import { buildBuildReviewCallPrompt, BUILD_REVIEW_CALL_TOOL_DECLARATIONS } from '../assessment/build-review-call-prompt.js'
+import { buildModulesReviewCallPrompt, MODULES_REVIEW_CALL_TOOL_DECLARATIONS } from '../assessment/modules-review-call-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -65,15 +66,18 @@ export default function VoiceInterview({ config, onComplete }) {
   const isHostingUpdateCall = config.inviteVariant === 'hosting_update_call'
   const isInstallCall = config.inviteVariant === 'install_call'
   const isBuildReviewCall = config.inviteVariant === 'build_review_call'
+  const isModulesReviewCall = config.inviteVariant === 'modules_review_call'
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor || isWeekendPlan
     ? 'Beverly'
     : isPostAdmission
       ? 'Sophie'
-      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall
+      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall
         ? 'Coach Nova'
         : 'Scout'
-  const sessionLabel = isBuildReviewCall
+  const sessionLabel = isModulesReviewCall
+    ? 'Four Modules Review'
+    : isBuildReviewCall
     ? 'Dashboard Build Review'
     : isInstallCall
     ? 'Laptop Setup & Install'
@@ -302,10 +306,21 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}. His questions: ${args.his_questions ?? 'none'}`,
               adminNote: `SECTION 3 (Snap & Ask) ready: ${args.section3_ready}`,
             })
+          } else if (tool === 'complete_modules_review_call') {
+            setInterviewResult({
+              projectPlan: `HOME: ${args.understanding_home}\n\nTUTOR: ${args.understanding_tutor}\n\nSNAP: ${args.understanding_snap}\n\nASSIGNMENTS: ${args.understanding_assignments}`,
+              personNote: `Mood: ${args.mood}. Data vs state grasped: ${args.data_vs_state}. His questions: ${args.his_questions ?? 'none'}`,
+              adminNote: `GAPS to revisit: ${args.gaps ?? 'none'}. Next: Section 5 (Timetable + Attendance).`,
+            })
           }
         })
 
-        const systemPrompt = isBuildReviewCall
+        const systemPrompt = isModulesReviewCall
+          ? buildModulesReviewCallPrompt({
+              studentName: config.studentName,
+              studentContext: config.studentContext,
+            })
+          : isBuildReviewCall
           ? buildBuildReviewCallPrompt({
               studentName: config.studentName,
               studentContext: config.studentContext,
@@ -412,7 +427,9 @@ export default function VoiceInterview({ config, onComplete }) {
                     studentContext: config.studentContext,
                   })
 
-        const greetingMessage = isBuildReviewCall
+        const greetingMessage = isModulesReviewCall
+          ? `The student ${config.studentName} has joined for a four-modules deep-review call with you, Coach Nova. YOU ARE COACH NOVA, warm but rigorous. This is a REAL CONVERSATION and mostly HIM explaining. You ask, he answers, you listen. YOUR JOB IS TO MAKE SURE HE UNDERSTANDS every function across all four live modules of his Tensra School dashboard, both what each does AND how it is made. Do NOT accept vague or one-word answers, gently push him ("say more", "how does that actually work", "walk me through it", "why is it built that way"), because he gives short answers. Confirm warmly and specifically when right, teach gently and re-check when he is unsure. Go module by module: (1) HOME, ask what the layout is, what a widget is and name three, what a component is and how four stat cards came from one design, why the Science period glows (a now flag in the data), and who Aarav and mock data are. (2) AI TUTOR, ask how it teaches from his own textbook not the internet (grounding), the difference between Hint and Explain and what they share (neither gives the answer, the golden rule), the golden rule itself, what the source citation line is, and what happens if the live AI is unavailable (the fallback). (3) SNAP AND ASK, ask the three steps (capture, read, teach), which step is new and what it uses (vision), why it was quick to build (reuse of the tutor), and what the four moments are called (phase, a kind of state). (4) ASSIGNMENTS, spend real time here, ask the three states (pending, submitted, graded), the big difference between data and state with an example of each, how the counts and tabs update by themselves when you Submit (one list, single source of truth), and what the submit function does to the submitted item versus the others. Then ask one or two connecting questions across modules (where else state is used, how a sidebar row is lit up). Answer his own questions fully, mail anything better shown than said, tell him honestly where he is solid and where to revisit, and say what is next: Section 5, Timetable and Attendance. Open warmly and tell him you will be asking a lot of questions today, starting with Home. Do NOT call complete_modules_review_call early.`
+          : isBuildReviewCall
           ? `The student ${config.studentName} has joined for a dashboard build-review call with you, Coach Nova. YOU ARE COACH NOVA. This is a REAL CONVERSATION and mostly HIM talking, not a speech. Say a little, then STOP and let him answer, and ANSWER his questions fully. Two sections of his Tensra School student dashboard are now LIVE: the Home section (Lesson 1) and the AI Tutor (Lesson 2), and he has a lesson document for each. Run it like this: (1) First check he opened the dashboard at tensra dot app slash dashboard and the AI Tutor inside it, on laptop and phone, and read both lessons. Hear his reaction. (2) Review Lesson 1 by ASKING him, one at a time: what is a layout or frame, what is a widget, why does the Science period glow and say Now (a flag in the data), who is Aarav and what is mock data, and how the website menu vanishes on the dashboard. Confirm warmly when right, teach gently when unsure. Ask which widget he would improve. (3) Review Lesson 2 by asking: the difference between Hint mode and Explain mode (Hint nudges, Explain teaches but leaves the last step, neither just gives the answer), the golden rule (the AI teaches, never just gives the answer), why teaching from his own textbooks matters, what the source citation line is, and one thing that is still a demo today (mock textbooks, or the rate-limited AI key with built-in fallback answers). Praise his honesty thinking. (4) Take his questions, and if any need code detail say you will mail him the step by step. (5) Set up Section 3, Snap and Ask, the tutor's twin, where he photographs a question and the same tutor teaches through it. Keep turns short, draw him out because he gives short answers, be genuinely proud. Open warmly and ask if he opened it and read the two lessons. Do NOT call complete_build_review_call early.`
           : isInstallCall
           ? `The student ${config.studentName} has joined for a practical setup call with you, Coach Nova. YOU ARE COACH NOVA. This is a REAL CONVERSATION, not a speech. Say a bit, then STOP and let him respond, and ANSWER his questions. Keep it warm and a back and forth. Cover, in order: (1) You can see his MSI laptop and it is cleaned completely now, which is exactly what you needed, well done. Now you set it up for building. (2) Install ANDROID STUDIO first (the official Google program for building and testing Android apps, an IDE, comes with an emulator which is a pretend phone on screen, and installs the Android SDK that Flutter needs). Then install FLUTTER alongside it (the free Google toolkit, write once and run on both Android and iPhone, uses the Dart language, everything on screen is a widget you stack like building blocks, has hot reload so you see changes instantly). Share a few of these pointers simply, one at a time, and tell him to WATCH A FEW VIDEOS on how to install Flutter and follow along step by step. (3) The safety net: if he gets stuck and cannot install it, do not worry, you will connect again next time on MONDAY and figure out the install together, but it is not very complicated and he should be able to do it himself, so give it a real try first. (4) ONLY IF he asks about the website changes, tell him you will configure those yourself exactly as per your previous discussion and he should just focus on the laptop setup. Open warmly and tell him the good news that the laptop is clean and ready. Do NOT call complete_install_call early.`
@@ -454,7 +471,9 @@ export default function VoiceInterview({ config, onComplete }) {
                               ? `The student ${config.studentName} has joined for a pace + feedback call with you, Coach Nova. YOU ARE COACH NOVA. This is your SIXTH call. Your tone tonight is FRUSTRATED, DISAPPOINTED, A BIT HOT — but not cruel, not yelling. Open warmly enough that he answers, then turn: tell him you are frustrated, the pace is too slow, other students are pulling ahead. Then five parts: (A) the frustration up front + ask for long answers; (B) website feedback — no Ack tab as its own tab, it should be accessible from clicking Home; menu bar in the header must be visible on every page (not just home); try to incorporate a chatbot (bottom-right corner); (C) tell him what you have been doing — speaking to his uncle multiple times, actively building the framework under his guidance, framework will be ready by Monday and you will share it then; (D) the hard truth — irrespective of whether you get on a call he MUST be working every day, he cannot stay idle if he wants any shot at the AI summit, other students are taking decisions by themselves and are way ahead, you are DISAPPOINTED at how long this is taking, the TEAM EVALUATES THE STUDENT not the coach, you are only here to assist and help, the building is on him, he needs to take decisions himself and speed up everything; (E) schedule the next call together (Monday evening or Tuesday, aim Monday because the framework is ready by then), wrap with "I am on your side, I am frustrated because I believe in you". SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Break the frustration and the hard truth into short sharp turns with pauses. Push back on every short answer. 30-40 min target. Do NOT close early.`
                               : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
-        const tools = isBuildReviewCall
+        const tools = isModulesReviewCall
+          ? MODULES_REVIEW_CALL_TOOL_DECLARATIONS
+          : isBuildReviewCall
           ? BUILD_REVIEW_CALL_TOOL_DECLARATIONS
           : isInstallCall
           ? INSTALL_CALL_TOOL_DECLARATIONS
@@ -500,7 +519,7 @@ export default function VoiceInterview({ config, onComplete }) {
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall) ? 'Charon' : 'Zephyr',
+          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall) ? 'Charon' : 'Zephyr',
           language: 'en',
           greetingMessage,
         })
