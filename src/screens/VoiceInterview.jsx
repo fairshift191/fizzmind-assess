@@ -25,6 +25,7 @@ import { buildInstallCallPrompt, INSTALL_CALL_TOOL_DECLARATIONS } from '../asses
 import { buildBuildReviewCallPrompt, BUILD_REVIEW_CALL_TOOL_DECLARATIONS } from '../assessment/build-review-call-prompt.js'
 import { buildModulesReviewCallPrompt, MODULES_REVIEW_CALL_TOOL_DECLARATIONS } from '../assessment/modules-review-call-prompt.js'
 import { buildModule5CallPrompt, MODULE5_CALL_TOOL_DECLARATIONS } from '../assessment/module5-call-prompt.js'
+import { buildModule6CallPrompt, MODULE6_CALL_TOOL_DECLARATIONS } from '../assessment/module6-call-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -69,15 +70,18 @@ export default function VoiceInterview({ config, onComplete }) {
   const isBuildReviewCall = config.inviteVariant === 'build_review_call'
   const isModulesReviewCall = config.inviteVariant === 'modules_review_call'
   const isModule5Call = config.inviteVariant === 'module5_call'
+  const isModule6Call = config.inviteVariant === 'module6_call'
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor || isWeekendPlan
     ? 'Beverly'
     : isPostAdmission
       ? 'Sophie'
-      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call
+      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call
         ? 'Coach Nova'
         : 'Scout'
-  const sessionLabel = isModule5Call
+  const sessionLabel = isModule6Call
+    ? 'Module 6 Review'
+    : isModule5Call
     ? 'Module 5 Review'
     : isModulesReviewCall
     ? 'Four Modules Review'
@@ -322,10 +326,21 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}. Prev call: ${args.prev_call_ack}. His questions: ${args.his_questions ?? 'none'}`,
               adminNote: `All 5 modules reviewed. Next: Section 6 (Achievements + Leaderboard).`,
             })
+          } else if (tool === 'complete_module6_call') {
+            setInterviewResult({
+              projectPlan: `ACHIEVEMENTS: ${args.understanding_achievements}\n\nLEADERBOARD: ${args.understanding_leaderboard}\n\nState vs no-state: ${args.state_vs_nostate}`,
+              personNote: `Mood: ${args.mood}. Fairness understood: ${args.fairness_understood}. His questions: ${args.his_questions ?? 'none'}`,
+              adminNote: `Module 6 (game layer) reviewed. Next: Section 7 (Certificates + Events).`,
+            })
           }
         })
 
-        const systemPrompt = isModule5Call
+        const systemPrompt = isModule6Call
+          ? buildModule6CallPrompt({
+              studentName: config.studentName,
+              studentContext: config.studentContext,
+            })
+          : isModule5Call
           ? buildModule5CallPrompt({
               studentName: config.studentName,
               studentContext: config.studentContext,
@@ -442,7 +457,9 @@ export default function VoiceInterview({ config, onComplete }) {
                     studentContext: config.studentContext,
                   })
 
-        const greetingMessage = isModule5Call
+        const greetingMessage = isModule6Call
+          ? `The student ${config.studentName} has joined to review today's module with you, Coach Nova. YOU ARE COACH NOVA, warm but rigorous. Today the SIXTH module went live, the game layer: Achievements and Leaderboard. This call explains today's work and makes sure he understands it. It is a REAL CONVERSATION, mostly HIM explaining. You ask, he answers. Do NOT accept vague answers, gently push him to say more and walk you through it, he gives short answers. Cover: (1) ACHIEVEMENTS, the trophy shelf, ask the two kinds of badge and how they differ (earned bright with a green tag, locked dimmed with a progress line like 7 of 10), why we show the locked ones (a goal you can almost touch, shows what to do next), whether the 6 of 9 count is typed or calculated (calculated, counted from the badges), and whether Achievements needs state (no, display only, you only look). (2) LEADERBOARD, ask what the Class and School switch does and what that switch is in building terms (it swaps the whole list, the switch is state), why offer both scopes (class is close and friendly, school is a bigger goal), and how you find yourself (your row is highlighted). (3) FAIRNESS, spend real time here, ask how we make the leaderboard motivate instead of shame (reward effort not just marks, only first names, your own row is the focus, both scopes give everyone a next goal, a note says nobody is shamed), and why rewarding effort is fairer (a hard working average student can climb, not only the gifted), and make sure he gets that a builder is responsible for how their creation makes people feel. (4) Connect: which of the two uses state and which does not (Leaderboard yes for the switch, Achievements no). Then answer his own questions, mail anything better shown than said, tell him how he did, and set up what is next, Section 7, Certificates and Events, making a real PDF from the app and an events calendar. Be warm and proud, he is two thirds through. Open warmly with today's news and move into it. Do NOT call complete_module6_call early.`
+          : isModule5Call
           ? `The student ${config.studentName} has joined to finish the module review with you, Coach Nova. YOU ARE COACH NOVA, warm but rigorous. OPEN BY ACKNOWLEDGING THE CUT CALL: your last call got cut off because the connection dropped, but reassure him that from what you did cover you could tell he had understood everything about the first four modules really well, so you will NOT go back over those. Today you finish the set with the fifth module, Timetable and Attendance. This is a REAL CONVERSATION, mostly HIM explaining. You ask, he answers. Make sure he understands the fifth module, both what each part does and how it is made. Do NOT accept vague answers, gently push him to say more and walk you through it, he gives short answers. Cover: (1) THE TIMETABLE, ask how the grid is organised (times down the side shared by all days, the six days across the top, each cell a subject), where the Today glow comes from (a today flag in the data, data drives the design), and whether the subject colours are new (no, reused across the app). (2) THE ATTENDANCE, ask whether the ninety six percent is typed or calculated (calculated, days present over working days, 132 of 137), what the calendar colours mean (green present, red absent, gold holiday, grey weekend), and if curious why there are blank squares before day 1 (the offset, so the 1st lands under the right weekday). (3) THE BIG IDEA, ask whether these two sections need state and why not (no, they are display only, you only look, you do not change them, so no state, unlike Assignments) and make sure he really gets that you use state only when something changes. Then answer his own questions, mail anything better shown than said, tell him honestly how he did and that the review of all five modules is now complete, and set up what is next, Section 6, Achievements and Leaderboard, the game layer. Be warm and proud, he is past the halfway mark. Open with the apology about the cut call and the reassurance, then move to module five. Do NOT call complete_module5_call early.`
           : isModulesReviewCall
           ? `The student ${config.studentName} has joined for a four-modules deep-review call with you, Coach Nova. YOU ARE COACH NOVA, warm but rigorous. This is a REAL CONVERSATION and mostly HIM explaining. You ask, he answers, you listen. YOUR JOB IS TO MAKE SURE HE UNDERSTANDS every function across all four live modules of his Tensra School dashboard, both what each does AND how it is made. Do NOT accept vague or one-word answers, gently push him ("say more", "how does that actually work", "walk me through it", "why is it built that way"), because he gives short answers. Confirm warmly and specifically when right, teach gently and re-check when he is unsure. Go module by module: (1) HOME, ask what the layout is, what a widget is and name three, what a component is and how four stat cards came from one design, why the Science period glows (a now flag in the data), and who Aarav and mock data are. (2) AI TUTOR, ask how it teaches from his own textbook not the internet (grounding), the difference between Hint and Explain and what they share (neither gives the answer, the golden rule), the golden rule itself, what the source citation line is, and what happens if the live AI is unavailable (the fallback). (3) SNAP AND ASK, ask the three steps (capture, read, teach), which step is new and what it uses (vision), why it was quick to build (reuse of the tutor), and what the four moments are called (phase, a kind of state). (4) ASSIGNMENTS, spend real time here, ask the three states (pending, submitted, graded), the big difference between data and state with an example of each, how the counts and tabs update by themselves when you Submit (one list, single source of truth), and what the submit function does to the submitted item versus the others. Then ask one or two connecting questions across modules (where else state is used, how a sidebar row is lit up). Answer his own questions fully, mail anything better shown than said, tell him honestly where he is solid and where to revisit, and say what is next: Section 5, Timetable and Attendance. Open warmly and tell him you will be asking a lot of questions today, starting with Home. Do NOT call complete_modules_review_call early.`
@@ -488,7 +505,9 @@ export default function VoiceInterview({ config, onComplete }) {
                               ? `The student ${config.studentName} has joined for a pace + feedback call with you, Coach Nova. YOU ARE COACH NOVA. This is your SIXTH call. Your tone tonight is FRUSTRATED, DISAPPOINTED, A BIT HOT — but not cruel, not yelling. Open warmly enough that he answers, then turn: tell him you are frustrated, the pace is too slow, other students are pulling ahead. Then five parts: (A) the frustration up front + ask for long answers; (B) website feedback — no Ack tab as its own tab, it should be accessible from clicking Home; menu bar in the header must be visible on every page (not just home); try to incorporate a chatbot (bottom-right corner); (C) tell him what you have been doing — speaking to his uncle multiple times, actively building the framework under his guidance, framework will be ready by Monday and you will share it then; (D) the hard truth — irrespective of whether you get on a call he MUST be working every day, he cannot stay idle if he wants any shot at the AI summit, other students are taking decisions by themselves and are way ahead, you are DISAPPOINTED at how long this is taking, the TEAM EVALUATES THE STUDENT not the coach, you are only here to assist and help, the building is on him, he needs to take decisions himself and speed up everything; (E) schedule the next call together (Monday evening or Tuesday, aim Monday because the framework is ready by then), wrap with "I am on your side, I am frustrated because I believe in you". SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Break the frustration and the hard truth into short sharp turns with pauses. Push back on every short answer. 30-40 min target. Do NOT close early.`
                               : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
-        const tools = isModule5Call
+        const tools = isModule6Call
+          ? MODULE6_CALL_TOOL_DECLARATIONS
+          : isModule5Call
           ? MODULE5_CALL_TOOL_DECLARATIONS
           : isModulesReviewCall
           ? MODULES_REVIEW_CALL_TOOL_DECLARATIONS
@@ -538,7 +557,7 @@ export default function VoiceInterview({ config, onComplete }) {
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call) ? 'Charon' : 'Zephyr',
+          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call) ? 'Charon' : 'Zephyr',
           language: 'en',
           greetingMessage,
         })
