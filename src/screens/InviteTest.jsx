@@ -124,6 +124,7 @@ export default function InviteTest({ inviteCode, onReset }) {
   const isModule5Call = isVoiceInterview && inviteVariant === 'module5_call'
   const isModule6Call = isVoiceInterview && inviteVariant === 'module6_call'
   const isFullReviewCall = isVoiceInterview && inviteVariant === 'full_review_call'
+  const isChatHistoryCall = isVoiceInterview && inviteVariant === 'chat_history_call'
   const trackInfo = invite && !isInterview ? TRACK_INFO[invite.track] : null
   const interviewInfo = isCodeInterview
     ? {
@@ -286,6 +287,13 @@ export default function InviteTest({ inviteCode, onReset }) {
                           desc: 'Ten of eleven sections are live. Coach Nova runs you through everything built so far, section by section, and has you explain it back. A longer call. Have the whole dashboard open.',
                           color: '#C9963A',
                         }
+                      : isChatHistoryCall
+                      ? {
+                          label: 'Finished Dashboard · with Coach Nova',
+                          icon: '🎙️',
+                          desc: 'The last section, Chat History, is live, so the whole Student dashboard is done. Coach Nova talks it through and tells you what comes next. Have the dashboard open.',
+                          color: '#C9963A',
+                        }
                       : isPostAdmission
           ? {
               label: 'Counsellor Session · with Sophie',
@@ -432,7 +440,7 @@ export default function InviteTest({ inviteCode, onReset }) {
           >
             <div style={{ ...styles.badge, borderColor: `${interviewInfo.color}30`, color: interviewInfo.color, background: `${interviewInfo.color}10` }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: interviewInfo.color, display: 'inline-block' }} />
-              {isCodeInterview ? 'Final Round' : isPostCounsellor ? 'Wrap-up Call' : isPostAdmission ? 'Counsellor Session' : isDayOneCheckin ? 'Day 1 Check-in' : isDayTwoCheckin ? 'Day 2 + 3 Review' : isDayThreeFollowup ? 'Follow-up Call' : isWeekendPlan ? 'Weekend Plan' : isPostCampPushback ? 'Post-Camp Call' : isPostCampWrap ? 'Camp Wrap' : isScopeCall ? 'Scope Call' : isIdeaCheckin ? 'Idea Check-in' : isBuildKickoff ? 'Build Kickoff' : isNamingCall ? 'Naming & Next Steps' : isMarketingCall ? 'Marketing & Website' : isFrustratedCall ? 'Pace Call' : isTensraCall ? 'Website & Build Plan' : isNameserverCall ? 'Domain & Hosting' : isHostingUpdateCall ? 'Site Live & App Next' : isInstallCall ? 'Laptop Setup' : isBuildReviewCall ? 'Build Review' : isModulesReviewCall ? 'Four Modules Review' : isModule5Call ? 'Module 5 Review' : isModule6Call ? 'Module 6 Review' : isFullReviewCall ? 'Full Run-Through' : "You're in the top 50"}
+              {isCodeInterview ? 'Final Round' : isPostCounsellor ? 'Wrap-up Call' : isPostAdmission ? 'Counsellor Session' : isDayOneCheckin ? 'Day 1 Check-in' : isDayTwoCheckin ? 'Day 2 + 3 Review' : isDayThreeFollowup ? 'Follow-up Call' : isWeekendPlan ? 'Weekend Plan' : isPostCampPushback ? 'Post-Camp Call' : isPostCampWrap ? 'Camp Wrap' : isScopeCall ? 'Scope Call' : isIdeaCheckin ? 'Idea Check-in' : isBuildKickoff ? 'Build Kickoff' : isNamingCall ? 'Naming & Next Steps' : isMarketingCall ? 'Marketing & Website' : isFrustratedCall ? 'Pace Call' : isTensraCall ? 'Website & Build Plan' : isNameserverCall ? 'Domain & Hosting' : isHostingUpdateCall ? 'Site Live & App Next' : isInstallCall ? 'Laptop Setup' : isBuildReviewCall ? 'Build Review' : isModulesReviewCall ? 'Four Modules Review' : isModule5Call ? 'Module 5 Review' : isModule6Call ? 'Module 6 Review' : isFullReviewCall ? 'Full Run-Through' : isChatHistoryCall ? 'Finished Dashboard' : "You're in the top 50"}
             </div>
             <div style={styles.iconLarge}>{interviewInfo.icon}</div>
             <h1 style={styles.title}>
@@ -484,6 +492,8 @@ export default function InviteTest({ inviteCode, onReset }) {
                                   ? `Hey ${student.first_name}, today's module.`
                                   : isFullReviewCall
                                   ? `Hey ${student.first_name}, the whole thing.`
+                                  : isChatHistoryCall
+                                  ? `${student.first_name}, the dashboard is done.`
                                   : `Congratulations, ${student.first_name}!`}
             </h1>
             <p style={styles.subtitle}>
@@ -535,6 +545,8 @@ export default function InviteTest({ inviteCode, onReset }) {
                                   ? <>Today's module is live: the <strong style={{ color: interviewInfo.color }}>game layer</strong>, Achievements and Leaderboard. Coach Nova explains it and asks you to walk it back. Have the dashboard and Lesson 6 ready.</>
                                   : isFullReviewCall
                                   ? <>Ten of eleven sections are live. Coach Nova runs you through <strong style={{ color: interviewInfo.color }}>everything built so far</strong> and has you explain it back. A longer call. Have the whole dashboard open.</>
+                                  : isChatHistoryCall
+                                  ? <>The last section, Chat History, is live, so the <strong style={{ color: interviewInfo.color }}>whole Student dashboard is done</strong>. Coach Nova talks it through and tells you what comes next. Have the dashboard open.</>
                                   : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
             </p>
             <div style={{ ...styles.infoBox, borderColor: `${interviewInfo.color}20`, background: `${interviewInfo.color}08` }}>
@@ -708,6 +720,13 @@ export default function InviteTest({ inviteCode, onReset }) {
                   <div style={styles.rule}><span style={styles.ruleDot} />We go through all ten sections, you explain them</div>
                   <div style={styles.rule}><span style={styles.ruleDot} />A longer call, come ready</div>
                 </>
+              ) : isChatHistoryCall ? (
+                <>
+                  <div style={styles.rule}><span style={styles.ruleDot} />The finished dashboard, voice only</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Chat History is live, all eleven sections done</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />We talk it through, and what comes next</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Things move fast from here</div>
+                </>
               ) : (
                 <>
                   <div style={styles.rule}><span style={styles.ruleDot} />About 10 minutes, voice only</div>
@@ -721,7 +740,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               onClick={() => setPhase('interview')}
               style={{ ...styles.startBtn, background: interviewInfo.color, color: '#0D0F12' }}
             >
-              {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : isDayOneCheckin ? 'Start Check-in with Scout →' : isDayTwoCheckin ? 'Start Review with Coach Nova →' : isDayThreeFollowup ? 'Start Call with Coach Nova →' : isWeekendPlan ? 'Start Weekend Plan with Beverly →' : isPostCampPushback ? 'Start Call with Coach Nova →' : isPostCampWrap ? 'Start Wrap with Coach Nova →' : isScopeCall ? 'Start Scope Call with Coach Nova →' : isIdeaCheckin ? 'Start Check-in with Coach Nova →' : isBuildKickoff ? 'Start Build Kickoff with Coach Nova →' : isNamingCall ? 'Start Call with Coach Nova →' : isMarketingCall ? 'Start Call with Coach Nova →' : isFrustratedCall ? 'Start Call with Coach Nova →' : isTensraCall ? 'Start Call with Coach Nova →' : isNameserverCall ? 'Start Call with Coach Nova →' : isHostingUpdateCall ? 'Start Call with Coach Nova →' : isInstallCall ? 'Start Call with Coach Nova →' : isBuildReviewCall ? 'Start Call with Coach Nova →' : isModulesReviewCall ? 'Start Call with Coach Nova →' : isModule5Call ? 'Start Call with Coach Nova →' : isModule6Call ? 'Start Call with Coach Nova →' : isFullReviewCall ? 'Start Call with Coach Nova →' : 'Start Interview →'}
+              {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : isDayOneCheckin ? 'Start Check-in with Scout →' : isDayTwoCheckin ? 'Start Review with Coach Nova →' : isDayThreeFollowup ? 'Start Call with Coach Nova →' : isWeekendPlan ? 'Start Weekend Plan with Beverly →' : isPostCampPushback ? 'Start Call with Coach Nova →' : isPostCampWrap ? 'Start Wrap with Coach Nova →' : isScopeCall ? 'Start Scope Call with Coach Nova →' : isIdeaCheckin ? 'Start Check-in with Coach Nova →' : isBuildKickoff ? 'Start Build Kickoff with Coach Nova →' : isNamingCall ? 'Start Call with Coach Nova →' : isMarketingCall ? 'Start Call with Coach Nova →' : isFrustratedCall ? 'Start Call with Coach Nova →' : isTensraCall ? 'Start Call with Coach Nova →' : isNameserverCall ? 'Start Call with Coach Nova →' : isHostingUpdateCall ? 'Start Call with Coach Nova →' : isInstallCall ? 'Start Call with Coach Nova →' : isBuildReviewCall ? 'Start Call with Coach Nova →' : isModulesReviewCall ? 'Start Call with Coach Nova →' : isModule5Call ? 'Start Call with Coach Nova →' : isModule6Call ? 'Start Call with Coach Nova →' : isFullReviewCall ? 'Start Call with Coach Nova →' : isChatHistoryCall ? 'Start Call with Coach Nova →' : 'Start Interview →'}
             </button>
             <p style={styles.footerNote}>fizzmind — Summer 2026 · {student.email}</p>
           </motion.div>

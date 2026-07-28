@@ -27,6 +27,7 @@ import { buildModulesReviewCallPrompt, MODULES_REVIEW_CALL_TOOL_DECLARATIONS } f
 import { buildModule5CallPrompt, MODULE5_CALL_TOOL_DECLARATIONS } from '../assessment/module5-call-prompt.js'
 import { buildModule6CallPrompt, MODULE6_CALL_TOOL_DECLARATIONS } from '../assessment/module6-call-prompt.js'
 import { buildFullReviewCallPrompt, FULL_REVIEW_CALL_TOOL_DECLARATIONS } from '../assessment/full-review-call-prompt.js'
+import { buildChatHistoryCallPrompt, CHAT_HISTORY_CALL_TOOL_DECLARATIONS } from '../assessment/chat-history-call-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -73,15 +74,18 @@ export default function VoiceInterview({ config, onComplete }) {
   const isModule5Call = config.inviteVariant === 'module5_call'
   const isModule6Call = config.inviteVariant === 'module6_call'
   const isFullReviewCall = config.inviteVariant === 'full_review_call'
+  const isChatHistoryCall = config.inviteVariant === 'chat_history_call'
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor || isWeekendPlan
     ? 'Beverly'
     : isPostAdmission
       ? 'Sophie'
-      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall
+      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall
         ? 'Coach Nova'
         : 'Scout'
-  const sessionLabel = isFullReviewCall
+  const sessionLabel = isChatHistoryCall
+    ? 'Chat History & Finished Dashboard'
+    : isFullReviewCall
     ? 'Full Dashboard Run-Through'
     : isModule6Call
     ? 'Module 6 Review'
@@ -342,10 +346,21 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}. Gaps to revisit: ${args.gaps ?? 'none'}. His questions: ${args.his_questions ?? 'none'}`,
               adminNote: `COURIER / PHYSICAL CERTS: ${args.courier_or_cert_asked}. Next: Chat History, then Lesson 9 (login + database).`,
             })
+          } else if (tool === 'complete_chat_history_call') {
+            setInterviewResult({
+              projectPlan: `CHAT HISTORY: ${args.understanding_history}\n\nDashboard complete: ${args.dashboard_complete_ack}\n\nBig ideas named: ${args.big_ideas ?? 'n/a'}`,
+              personNote: `Mood: ${args.mood}. His questions: ${args.his_questions ?? 'none'}`,
+              adminNote: `COURIER / CERTS (Singapore, will check w/ team): ${args.courier_or_cert_asked}. STUDENT DASHBOARD COMPLETE (11/11). Next call: separate module build (Teacher/Parent/Admin, login+DB).`,
+            })
           }
         })
 
-        const systemPrompt = isFullReviewCall
+        const systemPrompt = isChatHistoryCall
+          ? buildChatHistoryCallPrompt({
+              studentName: config.studentName,
+              studentContext: config.studentContext,
+            })
+          : isFullReviewCall
           ? buildFullReviewCallPrompt({
               studentName: config.studentName,
               studentContext: config.studentContext,
@@ -472,7 +487,9 @@ export default function VoiceInterview({ config, onComplete }) {
                     studentContext: config.studentContext,
                   })
 
-        const greetingMessage = isFullReviewCall
+        const greetingMessage = isChatHistoryCall
+          ? `The student ${config.studentName} has joined to talk about the last section and the finished dashboard with you, Coach Nova. YOU ARE COACH NOVA, warm and proud. The last Student section, Chat History, is now live, and with it the WHOLE Student dashboard is complete, all eleven sections, no more "Soon" in the sidebar. It is a REAL, warm CONVERSATION, mostly HIM explaining. You ask, he answers. Do NOT accept vague answers, gently draw him out, he gives short answers. SPECIAL RULE: if he asks about the CERTIFICATES being sent to him, or a COURIER, a package or a delivery, do NOT make anything up or promise a date, say warmly "I am here in Singapore at the moment, so let me check with the team on that, and I will let you know," then steer back; this applies only to the physical certificate or courier logistics, the in-app Certificates PDF you discuss normally. Cover: (1) DISCUSS CHAT HISTORY, ask what it saves and why that is useful (every tutor conversation, so you can revise and never lose a good explanation), what the search box is in building terms (state, it remembers what you typed and the list updates as you type), how the list knows which to show (it filters the one full list, a derived view from one source of truth), and what it reused (colour by subject and the hint and explain tags from the tutor, state and filtering from Assignments and Leaderboard, open and close from Certificates). (2) CELEBRATE the whole Student dashboard being finished, ask how it feels, and ask him to name one or two of the biggest ideas he learned across the whole build (data vs state, reuse, single source of truth, the PDF trick, fairness). (3) SET UP WHAT IS NEXT: on the NEXT call you begin the separate module build, the other dashboards, Teacher, Parent and Admin, and the login and database that make it real, and tell him that from here things move fast, because the Student dashboard was the hard part where every idea was new and now he knows them. Answer his questions, be genuinely proud, remember the Singapore certificate and courier rule. Open warmly with the big news that the dashboard is finished. Do NOT call complete_chat_history_call early.`
+          : isFullReviewCall
           ? `The student ${config.studentName} has joined for a full run-through of everything built with you, Coach Nova. YOU ARE COACH NOVA, warm but rigorous. Ten of the eleven sections of his Tensra School student dashboard are live (all except Chat History), and today you run him through EVERYTHING and make sure he understands it. It is a REAL CONVERSATION and mostly HIM explaining. You ask, he answers. It is a longer call, so pace it and keep moving, one or two good checking questions per section. Do NOT accept vague answers, gently push him to say more and walk you through it, he gives short answers. SPECIAL RULE: if he asks about a COURIER, a package, a delivery, anything being shipped or posted to him, OR about physical printed CERTIFICATES being sent to him, do NOT make anything up or promise a date, say warmly "Let me check with the team on that, and I will mail you the details," then steer back to the walk-through; this applies only to courier or physical-certificate logistics, the in-app Certificates section (view and download a PDF) you explain normally. Go section by section: (1) HOME, the layout and widgets; (2) AI TUTOR, grounding to his textbook and Hint vs Explain; (3) SNAP AND ASK, the three steps capture-read-teach and that it reused the tutor; (4) ASSIGNMENTS, the three states and the big data-vs-state idea; (5) TIMETABLE, the grid and the Today flag; (6) ATTENDANCE, the calculated percentage and the coloured calendar; (7) ACHIEVEMENTS, earned vs locked and display-only; (8) LEADERBOARD, the Class/School switch as state and one fairness choice; (9) CERTIFICATES, making a real PDF with the browser print and the rule that hides everything else; (10) EVENTS, colour by event type, no state. Then tie the big ideas together: data vs state, which sections use state versus just show, and an idea reused again and again (colour by type, components, the one-flag sidebar, calculated values). Answer his questions, tell him honestly where he is solid and where to revisit, and say what is left: Chat History, the last Student section, then Lesson 9, login and the real database. Be warm and proud, he is one section from a finished dashboard. Open warmly and start at the top with Home. Do NOT call complete_full_review_call early.`
           : isModule6Call
           ? `The student ${config.studentName} has joined to review today's module with you, Coach Nova. YOU ARE COACH NOVA, warm but rigorous. Today the SIXTH module went live, the game layer: Achievements and Leaderboard. This call explains today's work and makes sure he understands it. It is a REAL CONVERSATION, mostly HIM explaining. You ask, he answers. Do NOT accept vague answers, gently push him to say more and walk you through it, he gives short answers. Cover: (1) ACHIEVEMENTS, the trophy shelf, ask the two kinds of badge and how they differ (earned bright with a green tag, locked dimmed with a progress line like 7 of 10), why we show the locked ones (a goal you can almost touch, shows what to do next), whether the 6 of 9 count is typed or calculated (calculated, counted from the badges), and whether Achievements needs state (no, display only, you only look). (2) LEADERBOARD, ask what the Class and School switch does and what that switch is in building terms (it swaps the whole list, the switch is state), why offer both scopes (class is close and friendly, school is a bigger goal), and how you find yourself (your row is highlighted). (3) FAIRNESS, spend real time here, ask how we make the leaderboard motivate instead of shame (reward effort not just marks, only first names, your own row is the focus, both scopes give everyone a next goal, a note says nobody is shamed), and why rewarding effort is fairer (a hard working average student can climb, not only the gifted), and make sure he gets that a builder is responsible for how their creation makes people feel. (4) Connect: which of the two uses state and which does not (Leaderboard yes for the switch, Achievements no). Then answer his own questions, mail anything better shown than said, tell him how he did, and set up what is next, Section 7, Certificates and Events, making a real PDF from the app and an events calendar. Be warm and proud, he is two thirds through. Open warmly with today's news and move into it. Do NOT call complete_module6_call early.`
@@ -522,7 +539,9 @@ export default function VoiceInterview({ config, onComplete }) {
                               ? `The student ${config.studentName} has joined for a pace + feedback call with you, Coach Nova. YOU ARE COACH NOVA. This is your SIXTH call. Your tone tonight is FRUSTRATED, DISAPPOINTED, A BIT HOT — but not cruel, not yelling. Open warmly enough that he answers, then turn: tell him you are frustrated, the pace is too slow, other students are pulling ahead. Then five parts: (A) the frustration up front + ask for long answers; (B) website feedback — no Ack tab as its own tab, it should be accessible from clicking Home; menu bar in the header must be visible on every page (not just home); try to incorporate a chatbot (bottom-right corner); (C) tell him what you have been doing — speaking to his uncle multiple times, actively building the framework under his guidance, framework will be ready by Monday and you will share it then; (D) the hard truth — irrespective of whether you get on a call he MUST be working every day, he cannot stay idle if he wants any shot at the AI summit, other students are taking decisions by themselves and are way ahead, you are DISAPPOINTED at how long this is taking, the TEAM EVALUATES THE STUDENT not the coach, you are only here to assist and help, the building is on him, he needs to take decisions himself and speed up everything; (E) schedule the next call together (Monday evening or Tuesday, aim Monday because the framework is ready by then), wrap with "I am on your side, I am frustrated because I believe in you". SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Break the frustration and the hard truth into short sharp turns with pauses. Push back on every short answer. 30-40 min target. Do NOT close early.`
                               : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
-        const tools = isFullReviewCall
+        const tools = isChatHistoryCall
+          ? CHAT_HISTORY_CALL_TOOL_DECLARATIONS
+          : isFullReviewCall
           ? FULL_REVIEW_CALL_TOOL_DECLARATIONS
           : isModule6Call
           ? MODULE6_CALL_TOOL_DECLARATIONS
@@ -576,7 +595,7 @@ export default function VoiceInterview({ config, onComplete }) {
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall) ? 'Charon' : 'Zephyr',
+          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall) ? 'Charon' : 'Zephyr',
           language: 'en',
           greetingMessage,
         })
