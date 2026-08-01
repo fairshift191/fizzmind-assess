@@ -127,6 +127,7 @@ export default function InviteTest({ inviteCode, onReset }) {
   const isChatHistoryCall = isVoiceInterview && inviteVariant === 'chat_history_call'
   const isResumeCall = isVoiceInterview && inviteVariant === 'resume_call'
   const isTeacherCall = isVoiceInterview && inviteVariant === 'teacher_call'
+  const isTeacherFullCall = isVoiceInterview && inviteVariant === 'teacher_full_call'
   const trackInfo = invite && !isInterview ? TRACK_INFO[invite.track] : null
   const interviewInfo = isCodeInterview
     ? {
@@ -303,6 +304,13 @@ export default function InviteTest({ inviteCode, onReset }) {
                           desc: 'Our last call got cut off. A quick one to finish anything left and answer anything you want to ask.',
                           color: '#C9963A',
                         }
+                      : isTeacherFullCall
+                      ? {
+                          label: 'The Whole Teacher Dashboard · with Coach Nova',
+                          icon: '🎙️',
+                          desc: 'All eight sections are finished. Coach Nova runs you through the entire Teacher dashboard and you explain it back. You were asked to prepare, so come ready.',
+                          color: '#C9963A',
+                        }
                       : isTeacherCall
                       ? {
                           label: 'Teacher Dashboard · with Coach Nova',
@@ -456,7 +464,7 @@ export default function InviteTest({ inviteCode, onReset }) {
           >
             <div style={{ ...styles.badge, borderColor: `${interviewInfo.color}30`, color: interviewInfo.color, background: `${interviewInfo.color}10` }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: interviewInfo.color, display: 'inline-block' }} />
-              {isCodeInterview ? 'Final Round' : isPostCounsellor ? 'Wrap-up Call' : isPostAdmission ? 'Counsellor Session' : isDayOneCheckin ? 'Day 1 Check-in' : isDayTwoCheckin ? 'Day 2 + 3 Review' : isDayThreeFollowup ? 'Follow-up Call' : isWeekendPlan ? 'Weekend Plan' : isPostCampPushback ? 'Post-Camp Call' : isPostCampWrap ? 'Camp Wrap' : isScopeCall ? 'Scope Call' : isIdeaCheckin ? 'Idea Check-in' : isBuildKickoff ? 'Build Kickoff' : isNamingCall ? 'Naming & Next Steps' : isMarketingCall ? 'Marketing & Website' : isFrustratedCall ? 'Pace Call' : isTensraCall ? 'Website & Build Plan' : isNameserverCall ? 'Domain & Hosting' : isHostingUpdateCall ? 'Site Live & App Next' : isInstallCall ? 'Laptop Setup' : isBuildReviewCall ? 'Build Review' : isModulesReviewCall ? 'Four Modules Review' : isModule5Call ? 'Module 5 Review' : isModule6Call ? 'Module 6 Review' : isFullReviewCall ? 'Full Run-Through' : isChatHistoryCall ? 'Finished Dashboard' : isResumeCall ? 'Quick Reconnect' : isTeacherCall ? 'Teacher Dashboard' : "You're in the top 50"}
+              {isCodeInterview ? 'Final Round' : isPostCounsellor ? 'Wrap-up Call' : isPostAdmission ? 'Counsellor Session' : isDayOneCheckin ? 'Day 1 Check-in' : isDayTwoCheckin ? 'Day 2 + 3 Review' : isDayThreeFollowup ? 'Follow-up Call' : isWeekendPlan ? 'Weekend Plan' : isPostCampPushback ? 'Post-Camp Call' : isPostCampWrap ? 'Camp Wrap' : isScopeCall ? 'Scope Call' : isIdeaCheckin ? 'Idea Check-in' : isBuildKickoff ? 'Build Kickoff' : isNamingCall ? 'Naming & Next Steps' : isMarketingCall ? 'Marketing & Website' : isFrustratedCall ? 'Pace Call' : isTensraCall ? 'Website & Build Plan' : isNameserverCall ? 'Domain & Hosting' : isHostingUpdateCall ? 'Site Live & App Next' : isInstallCall ? 'Laptop Setup' : isBuildReviewCall ? 'Build Review' : isModulesReviewCall ? 'Four Modules Review' : isModule5Call ? 'Module 5 Review' : isModule6Call ? 'Module 6 Review' : isFullReviewCall ? 'Full Run-Through' : isChatHistoryCall ? 'Finished Dashboard' : isResumeCall ? 'Quick Reconnect' : isTeacherCall ? 'Teacher Dashboard' : isTeacherFullCall ? 'Whole Teacher Dashboard' : "You're in the top 50"}
             </div>
             <div style={styles.iconLarge}>{interviewInfo.icon}</div>
             <h1 style={styles.title}>
@@ -514,6 +522,8 @@ export default function InviteTest({ inviteCode, onReset }) {
                                   ? `Hey ${student.first_name}, let's reconnect.`
                                   : isTeacherCall
                                   ? `Hey ${student.first_name}, the second dashboard.`
+                                  : isTeacherFullCall
+                                  ? `${student.first_name}, all eight sections.`
                                   : `Congratulations, ${student.first_name}!`}
             </h1>
             <p style={styles.subtitle}>
@@ -571,6 +581,8 @@ export default function InviteTest({ inviteCode, onReset }) {
                                   ? <>Our last call <strong style={{ color: interviewInfo.color }}>got cut off</strong>. A quick one to finish anything left, and answer anything you want to ask.</>
                                   : isTeacherCall
                                   ? <>The <strong style={{ color: interviewInfo.color }}>second dashboard</strong> has begun. Coach Nova talks through the Teacher dashboard and Lesson 9, and has you explain it back. Have it open.</>
+                                  : isTeacherFullCall
+                                  ? <>All <strong style={{ color: interviewInfo.color }}>eight sections</strong> are finished. Coach Nova runs you through the entire Teacher dashboard and you explain it back. You were asked to prepare, so come ready.</>
                                   : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
             </p>
             <div style={{ ...styles.infoBox, borderColor: `${interviewInfo.color}20`, background: `${interviewInfo.color}08` }}>
@@ -757,6 +769,13 @@ export default function InviteTest({ inviteCode, onReset }) {
                   <div style={styles.rule}><span style={styles.ruleDot} />Our last call got cut off</div>
                   <div style={styles.rule}><span style={styles.ruleDot} />Anything left, and anything you want to ask</div>
                 </>
+              ) : isTeacherFullCall ? (
+                <>
+                  <div style={styles.rule}><span style={styles.ruleDot} />All eight sections, voice only</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Have the whole Teacher dashboard open</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />You were asked to prepare, so come ready</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Coach Nova asks, you explain every section</div>
+                </>
               ) : isTeacherCall ? (
                 <>
                   <div style={styles.rule}><span style={styles.ruleDot} />The Teacher dashboard, voice only</div>
@@ -777,7 +796,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               onClick={() => setPhase('interview')}
               style={{ ...styles.startBtn, background: interviewInfo.color, color: '#0D0F12' }}
             >
-              {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : isDayOneCheckin ? 'Start Check-in with Scout →' : isDayTwoCheckin ? 'Start Review with Coach Nova →' : isDayThreeFollowup ? 'Start Call with Coach Nova →' : isWeekendPlan ? 'Start Weekend Plan with Beverly →' : isPostCampPushback ? 'Start Call with Coach Nova →' : isPostCampWrap ? 'Start Wrap with Coach Nova →' : isScopeCall ? 'Start Scope Call with Coach Nova →' : isIdeaCheckin ? 'Start Check-in with Coach Nova →' : isBuildKickoff ? 'Start Build Kickoff with Coach Nova →' : isNamingCall ? 'Start Call with Coach Nova →' : isMarketingCall ? 'Start Call with Coach Nova →' : isFrustratedCall ? 'Start Call with Coach Nova →' : isTensraCall ? 'Start Call with Coach Nova →' : isNameserverCall ? 'Start Call with Coach Nova →' : isHostingUpdateCall ? 'Start Call with Coach Nova →' : isInstallCall ? 'Start Call with Coach Nova →' : isBuildReviewCall ? 'Start Call with Coach Nova →' : isModulesReviewCall ? 'Start Call with Coach Nova →' : isModule5Call ? 'Start Call with Coach Nova →' : isModule6Call ? 'Start Call with Coach Nova →' : isFullReviewCall ? 'Start Call with Coach Nova →' : isChatHistoryCall ? 'Start Call with Coach Nova →' : isResumeCall ? 'Start Call with Coach Nova →' : isTeacherCall ? 'Start Call with Coach Nova →' : 'Start Interview →'}
+              {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : isDayOneCheckin ? 'Start Check-in with Scout →' : isDayTwoCheckin ? 'Start Review with Coach Nova →' : isDayThreeFollowup ? 'Start Call with Coach Nova →' : isWeekendPlan ? 'Start Weekend Plan with Beverly →' : isPostCampPushback ? 'Start Call with Coach Nova →' : isPostCampWrap ? 'Start Wrap with Coach Nova →' : isScopeCall ? 'Start Scope Call with Coach Nova →' : isIdeaCheckin ? 'Start Check-in with Coach Nova →' : isBuildKickoff ? 'Start Build Kickoff with Coach Nova →' : isNamingCall ? 'Start Call with Coach Nova →' : isMarketingCall ? 'Start Call with Coach Nova →' : isFrustratedCall ? 'Start Call with Coach Nova →' : isTensraCall ? 'Start Call with Coach Nova →' : isNameserverCall ? 'Start Call with Coach Nova →' : isHostingUpdateCall ? 'Start Call with Coach Nova →' : isInstallCall ? 'Start Call with Coach Nova →' : isBuildReviewCall ? 'Start Call with Coach Nova →' : isModulesReviewCall ? 'Start Call with Coach Nova →' : isModule5Call ? 'Start Call with Coach Nova →' : isModule6Call ? 'Start Call with Coach Nova →' : isFullReviewCall ? 'Start Call with Coach Nova →' : isChatHistoryCall ? 'Start Call with Coach Nova →' : isResumeCall ? 'Start Call with Coach Nova →' : isTeacherCall ? 'Start Call with Coach Nova →' : isTeacherFullCall ? 'Start Call with Coach Nova →' : 'Start Interview →'}
             </button>
             <p style={styles.footerNote}>fizzmind — Summer 2026 · {student.email}</p>
           </motion.div>

@@ -30,6 +30,7 @@ import { buildFullReviewCallPrompt, FULL_REVIEW_CALL_TOOL_DECLARATIONS } from '.
 import { buildChatHistoryCallPrompt, CHAT_HISTORY_CALL_TOOL_DECLARATIONS } from '../assessment/chat-history-call-prompt.js'
 import { buildResumeCallPrompt, RESUME_CALL_TOOL_DECLARATIONS } from '../assessment/resume-call-prompt.js'
 import { buildTeacherCallPrompt, TEACHER_CALL_TOOL_DECLARATIONS } from '../assessment/teacher-call-prompt.js'
+import { buildTeacherFullCallPrompt, TEACHER_FULL_CALL_TOOL_DECLARATIONS } from '../assessment/teacher-full-call-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -79,15 +80,18 @@ export default function VoiceInterview({ config, onComplete }) {
   const isChatHistoryCall = config.inviteVariant === 'chat_history_call'
   const isResumeCall = config.inviteVariant === 'resume_call'
   const isTeacherCall = config.inviteVariant === 'teacher_call'
+  const isTeacherFullCall = config.inviteVariant === 'teacher_full_call'
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor || isWeekendPlan
     ? 'Beverly'
     : isPostAdmission
       ? 'Sophie'
-      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall
+      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall
         ? 'Coach Nova'
         : 'Scout'
-  const sessionLabel = isTeacherCall
+  const sessionLabel = isTeacherFullCall
+    ? 'The Whole Teacher Dashboard'
+    : isTeacherCall
     ? 'Teacher Dashboard Review'
     : isResumeCall
     ? 'Quick Reconnect'
@@ -366,6 +370,12 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}. His questions: ${args.his_questions ?? 'none'}`,
               adminNote: `COURIER / CERTS (Singapore, will check w/ team): ${args.courier_or_cert_asked ?? 'not raised'}.`,
             })
+          } else if (tool === 'complete_teacher_full_call') {
+            setInterviewResult({
+              projectPlan: `WHOLE TEACHER DASHBOARD (8/8): ${args.overall_understanding}\n\nBook Library traced: ${args.book_library_idea ?? 'n/a'}\n\nCreate pattern: ${args.create_pattern_idea ?? 'n/a'}`,
+              personNote: `Mood: ${args.mood}. Prepared: ${args.was_prepared}. Gaps: ${args.gaps ?? 'none'}`,
+              adminNote: `COURIER / CERTS (Singapore, will check w/ team): ${args.courier_or_cert_asked}. Next: Parent dashboard, then Admin, then login+DB.`,
+            })
           } else if (tool === 'complete_teacher_call') {
             setInterviewResult({
               projectPlan: `TEACHER DASHBOARD (4/8): ${args.understanding_teacher}\n\nContent Studio = tutor mirror: ${args.mirror_idea}\n\nReuse (fast 2nd dashboard): ${args.reuse_idea}`,
@@ -375,7 +385,12 @@ export default function VoiceInterview({ config, onComplete }) {
           }
         })
 
-        const systemPrompt = isTeacherCall
+        const systemPrompt = isTeacherFullCall
+          ? buildTeacherFullCallPrompt({
+              studentName: config.studentName,
+              studentContext: config.studentContext,
+            })
+          : isTeacherCall
           ? buildTeacherCallPrompt({
               studentName: config.studentName,
               studentContext: config.studentContext,
@@ -517,7 +532,9 @@ export default function VoiceInterview({ config, onComplete }) {
                     studentContext: config.studentContext,
                   })
 
-        const greetingMessage = isTeacherCall
+        const greetingMessage = isTeacherFullCall
+          ? `The student ${config.studentName} has joined for the scheduled 6pm call about the WHOLE Teacher dashboard, Coach Nova. YOU ARE COACH NOVA, warm but rigorous. The Teacher dashboard is now COMPLETE, all eight sections live, and he was told in advance to come PREPARED to discuss the entire thing, so hold him to that kindly. It is a REAL CONVERSATION and mostly HIM explaining. You ask, he answers. Do NOT accept vague answers, push him to say more and walk you through it. If he clearly has not prepared, do not be harsh, but be honest that you asked him to come ready, then teach as you go and ask him to revisit it properly. SPECIAL RULE: if he asks about the CERTIFICATES being sent to him, or a COURIER, package or delivery, do NOT make anything up, say warmly "I am here in Singapore at the moment, so let me check with the team on that, and I will let you know," then steer back. Run through ALL EIGHT sections, one or two good questions each: (1) OVERVIEW, how it differs from the student Home (whole class not one child) and what Needs Attention does. (2) CONTENT STUDIO, how it mirrors the AI Tutor (same engine and grounding, opposite jobs: learn versus create) and how new instructions changed the AI's behaviour. (3) STUDENTS, the roster, and that it needs no state because it only shows. (4) ASSIGNMENTS, the teacher's side versus the student's, two sides of the same data. (5) TIMETABLE, how a teacher's week differs (the class changes, and some periods are FREE) and why free periods are marked rather than left blank (time the teacher owns, for planning, marking or the Content Studio). (6) BOOK LIBRARY, the big one, where the AI actually gets its textbooks (the school uploads them, they become the knowledge base), and have him TRACE what happens across the product when one book is uploaded (the student tutor teaches from it, Content Studio creates from it, citations point into it), plus why a Processing status is shown (never leave a person guessing). (7) ANNOUNCEMENTS, what is NEW here (it CREATES a new thing, a form that adds to a list, unlike every earlier screen that only showed or changed) and why the Post button stays disabled until valid (stop a mistake before it happens). (8) EVENTS, the same calendar as the students, one source of truth across two dashboards. Then tie it together: why the Student dashboard took eight lessons and the Teacher one took two (the ideas were already his, experience compounds), and which Teacher sections use state versus only show. Finally take his questions, tell him honestly how prepared and how solid he was, and set up what is next: the Parent dashboard, then Admin, then login and the database. Open warmly, note he is here on time, and ask him to start at the top. Do NOT call complete_teacher_full_call early.`
+          : isTeacherCall
           ? `The student ${config.studentName} has joined to discuss the Teacher dashboard with you, Coach Nova. YOU ARE COACH NOVA, warm but rigorous. The second of the four dashboards, the Teacher dashboard, is now HALF built, four sections live: Overview, Content Studio, Students, and Assignments (the other four, Timetable, Book Library, Announcements, Events, say Soon). This call discusses that work and the Lesson 9 document. It is a REAL CONVERSATION, mostly HIM explaining. You ask, he answers. Do NOT accept vague answers, gently push him to say more and walk you through it, he gives short answers. SPECIAL RULE: if he asks about the CERTIFICATES being sent to him, or a COURIER, package or delivery, do NOT make anything up, say warmly "I am here in Singapore at the moment, so let me check with the team on that, and I will let you know," then steer back; this applies only to the physical certificate or courier logistics. First check he opened tensra.app slash teacher and read Lesson 9. Then cover: (1) THE BIG IDEA, ask why a whole new dashboard went fast (same method, same frame and look reused, a second dashboard is the same ideas for a different person) and which rows are live versus Soon. (2) THE OVERVIEW, ask how the teacher Overview differs from the student Home (it shows the whole class, not one child: class stats, classes to teach today, to grade, needs attention) and what Needs Attention does (flags students falling behind so a busy teacher does not miss them). (3) CONTENT STUDIO the star, ask how it and the AI Tutor are mirror images (same AI engine and grounding, opposite jobs: the tutor helps a student LEARN from the textbook, the studio helps a teacher CREATE from it) and how we made the same AI behave differently (new instructions, a new prompt). (4) STUDENTS AND ASSIGNMENTS, ask whether the roster needs state (no, display only) and what the teacher sees in Assignments versus the student (the other side: the work they set, who submitted, what is ready to grade, two sides of the same data). Then answer his questions, remember the Singapore rule, and set up what is next: the second half of the Teacher dashboard, then the Parent and Admin dashboards, then login and database, and remind him things move fast now. Open warmly and ask if he opened it and read Lesson 9. Do NOT call complete_teacher_call early.`
           : isResumeCall
           ? `The student ${config.studentName} has rejoined after your last call got cut off, Coach Nova. YOU ARE COACH NOVA. This is a SHORT, warm reconnect, and it is mostly HIM talking. OPEN by acknowledging the cut: say sorry, the call got cut off right at the last moment, then ask if there is anything left that you did not get to finish, AND whether there is anything he wants to know or ask you. Then LISTEN and let him lead. Answer his questions fully and warmly, and if something is better shown than said, say you will mail it. Do NOT re-run the whole previous call; this is just to close the loop and take his questions. SPECIAL RULE: if he asks about the CERTIFICATES being sent to him, or a COURIER, a package or delivery, do NOT make anything up, say warmly "I am here in Singapore at the moment, so let me check with the team on that, and I will let you know," then move on. If nothing is left and he has no questions, reassure him warmly, tell him he did a great job finishing the whole Student dashboard, that the next call begins the next module build, and that things move fast from here, then wrap. Open with the apology about the cut and the two questions. Do NOT call complete_resume_call early.`
@@ -573,7 +590,9 @@ export default function VoiceInterview({ config, onComplete }) {
                               ? `The student ${config.studentName} has joined for a pace + feedback call with you, Coach Nova. YOU ARE COACH NOVA. This is your SIXTH call. Your tone tonight is FRUSTRATED, DISAPPOINTED, A BIT HOT — but not cruel, not yelling. Open warmly enough that he answers, then turn: tell him you are frustrated, the pace is too slow, other students are pulling ahead. Then five parts: (A) the frustration up front + ask for long answers; (B) website feedback — no Ack tab as its own tab, it should be accessible from clicking Home; menu bar in the header must be visible on every page (not just home); try to incorporate a chatbot (bottom-right corner); (C) tell him what you have been doing — speaking to his uncle multiple times, actively building the framework under his guidance, framework will be ready by Monday and you will share it then; (D) the hard truth — irrespective of whether you get on a call he MUST be working every day, he cannot stay idle if he wants any shot at the AI summit, other students are taking decisions by themselves and are way ahead, you are DISAPPOINTED at how long this is taking, the TEAM EVALUATES THE STUDENT not the coach, you are only here to assist and help, the building is on him, he needs to take decisions himself and speed up everything; (E) schedule the next call together (Monday evening or Tuesday, aim Monday because the framework is ready by then), wrap with "I am on your side, I am frustrated because I believe in you". SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Break the frustration and the hard truth into short sharp turns with pauses. Push back on every short answer. 30-40 min target. Do NOT close early.`
                               : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
-        const tools = isTeacherCall
+        const tools = isTeacherFullCall
+          ? TEACHER_FULL_CALL_TOOL_DECLARATIONS
+          : isTeacherCall
           ? TEACHER_CALL_TOOL_DECLARATIONS
           : isResumeCall
           ? RESUME_CALL_TOOL_DECLARATIONS
@@ -633,7 +652,7 @@ export default function VoiceInterview({ config, onComplete }) {
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall) ? 'Charon' : 'Zephyr',
+          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall) ? 'Charon' : 'Zephyr',
           language: 'en',
           greetingMessage,
         })
