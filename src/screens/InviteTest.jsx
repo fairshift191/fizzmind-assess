@@ -132,6 +132,7 @@ export default function InviteTest({ inviteCode, onReset }) {
   const isAdminBriefCall = isVoiceInterview && inviteVariant === 'admin_brief_call'
   const isAdminCall = isVoiceInterview && inviteVariant === 'admin_call'
   const isAdmin2Call = isVoiceInterview && inviteVariant === 'admin2_call'
+  const isAdmin3Call = isVoiceInterview && inviteVariant === 'admin3_call'
   const trackInfo = invite && !isInterview ? TRACK_INFO[invite.track] : null
   const interviewInfo = isCodeInterview
     ? {
@@ -306,6 +307,13 @@ export default function InviteTest({ inviteCode, onReset }) {
                           label: 'Quick Reconnect · with Coach Nova',
                           icon: '🎙️',
                           desc: 'Our last call got cut off. A quick one to finish anything left and answer anything you want to ask.',
+                          color: '#C9963A',
+                        }
+                      : isAdmin3Call
+                      ? {
+                          label: 'Every Dashboard Finished · with Coach Nova',
+                          icon: '🎙️',
+                          desc: 'Reports, Announcements and Settings are live, so all four dashboards are done. Coach Nova goes through the last three and what the final piece really means.',
                           color: '#C9963A',
                         }
                       : isAdmin2Call
@@ -496,7 +504,7 @@ export default function InviteTest({ inviteCode, onReset }) {
           >
             <div style={{ ...styles.badge, borderColor: `${interviewInfo.color}30`, color: interviewInfo.color, background: `${interviewInfo.color}10` }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: interviewInfo.color, display: 'inline-block' }} />
-              {isCodeInterview ? 'Final Round' : isPostCounsellor ? 'Wrap-up Call' : isPostAdmission ? 'Counsellor Session' : isDayOneCheckin ? 'Day 1 Check-in' : isDayTwoCheckin ? 'Day 2 + 3 Review' : isDayThreeFollowup ? 'Follow-up Call' : isWeekendPlan ? 'Weekend Plan' : isPostCampPushback ? 'Post-Camp Call' : isPostCampWrap ? 'Camp Wrap' : isScopeCall ? 'Scope Call' : isIdeaCheckin ? 'Idea Check-in' : isBuildKickoff ? 'Build Kickoff' : isNamingCall ? 'Naming & Next Steps' : isMarketingCall ? 'Marketing & Website' : isFrustratedCall ? 'Pace Call' : isTensraCall ? 'Website & Build Plan' : isNameserverCall ? 'Domain & Hosting' : isHostingUpdateCall ? 'Site Live & App Next' : isInstallCall ? 'Laptop Setup' : isBuildReviewCall ? 'Build Review' : isModulesReviewCall ? 'Four Modules Review' : isModule5Call ? 'Module 5 Review' : isModule6Call ? 'Module 6 Review' : isFullReviewCall ? 'Full Run-Through' : isChatHistoryCall ? 'Finished Dashboard' : isResumeCall ? 'Quick Reconnect' : isTeacherCall ? 'Teacher Dashboard' : isTeacherFullCall ? 'Whole Teacher Dashboard' : isParentCall ? 'Parent Dashboard' : isAdminBriefCall ? 'Finishing Up' : isAdminCall ? 'Admin Dashboard' : isAdmin2Call ? 'Admin, Part 2' : "You're in the top 50"}
+              {isCodeInterview ? 'Final Round' : isPostCounsellor ? 'Wrap-up Call' : isPostAdmission ? 'Counsellor Session' : isDayOneCheckin ? 'Day 1 Check-in' : isDayTwoCheckin ? 'Day 2 + 3 Review' : isDayThreeFollowup ? 'Follow-up Call' : isWeekendPlan ? 'Weekend Plan' : isPostCampPushback ? 'Post-Camp Call' : isPostCampWrap ? 'Camp Wrap' : isScopeCall ? 'Scope Call' : isIdeaCheckin ? 'Idea Check-in' : isBuildKickoff ? 'Build Kickoff' : isNamingCall ? 'Naming & Next Steps' : isMarketingCall ? 'Marketing & Website' : isFrustratedCall ? 'Pace Call' : isTensraCall ? 'Website & Build Plan' : isNameserverCall ? 'Domain & Hosting' : isHostingUpdateCall ? 'Site Live & App Next' : isInstallCall ? 'Laptop Setup' : isBuildReviewCall ? 'Build Review' : isModulesReviewCall ? 'Four Modules Review' : isModule5Call ? 'Module 5 Review' : isModule6Call ? 'Module 6 Review' : isFullReviewCall ? 'Full Run-Through' : isChatHistoryCall ? 'Finished Dashboard' : isResumeCall ? 'Quick Reconnect' : isTeacherCall ? 'Teacher Dashboard' : isTeacherFullCall ? 'Whole Teacher Dashboard' : isParentCall ? 'Parent Dashboard' : isAdminBriefCall ? 'Finishing Up' : isAdminCall ? 'Admin Dashboard' : isAdmin2Call ? 'Admin, Part 2' : isAdmin3Call ? 'Build Complete' : "You're in the top 50"}
             </div>
             <div style={styles.iconLarge}>{interviewInfo.icon}</div>
             <h1 style={styles.title}>
@@ -564,6 +572,8 @@ export default function InviteTest({ inviteCode, onReset }) {
                                   ? `${student.first_name}, the last dashboard.`
                                   : isAdmin2Call
                                   ? `${student.first_name}, three more.`
+                                  : isAdmin3Call
+                                  ? `${student.first_name}, they're all done.`
                                   : `Congratulations, ${student.first_name}!`}
             </h1>
             <p style={styles.subtitle}>
@@ -631,6 +641,8 @@ export default function InviteTest({ inviteCode, onReset }) {
                                   ? <>The last dashboard has begun. Coach Nova goes through Overview, Students and Staff, and the <strong style={{ color: interviewInfo.color }}>screens that can do real harm</strong>. Have it open.</>
                                   : isAdmin2Call
                                   ? <>Attendance, Fees and the Knowledge Base. These are about <strong style={{ color: interviewInfo.color }}>judgement more than code</strong>, so Coach Nova will mostly ask you why. Have Lesson 13 ready.</>
+                                  : isAdmin3Call
+                                  ? <>Reports, Announcements and Settings are live, so <strong style={{ color: interviewInfo.color }}>all four dashboards are finished</strong>. Coach Nova goes through the last three, and what the final piece really means.</>
                                   : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
             </p>
             <div style={{ ...styles.infoBox, borderColor: `${interviewInfo.color}20`, background: `${interviewInfo.color}08` }}>
@@ -817,6 +829,13 @@ export default function InviteTest({ inviteCode, onReset }) {
                   <div style={styles.rule}><span style={styles.ruleDot} />Our last call got cut off</div>
                   <div style={styles.rule}><span style={styles.ruleDot} />Anything left, and anything you want to ask</div>
                 </>
+              ) : isAdmin3Call ? (
+                <>
+                  <div style={styles.rule}><span style={styles.ruleDot} />The last three sections, voice only</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Every dashboard is finished now</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Have Lesson 14 ready, especially Part 4</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Then what the last piece really means</div>
+                </>
               ) : isAdmin2Call ? (
                 <>
                   <div style={styles.rule}><span style={styles.ruleDot} />Three sections, voice only</div>
@@ -871,7 +890,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               onClick={() => setPhase('interview')}
               style={{ ...styles.startBtn, background: interviewInfo.color, color: '#0D0F12' }}
             >
-              {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : isDayOneCheckin ? 'Start Check-in with Scout →' : isDayTwoCheckin ? 'Start Review with Coach Nova →' : isDayThreeFollowup ? 'Start Call with Coach Nova →' : isWeekendPlan ? 'Start Weekend Plan with Beverly →' : isPostCampPushback ? 'Start Call with Coach Nova →' : isPostCampWrap ? 'Start Wrap with Coach Nova →' : isScopeCall ? 'Start Scope Call with Coach Nova →' : isIdeaCheckin ? 'Start Check-in with Coach Nova →' : isBuildKickoff ? 'Start Build Kickoff with Coach Nova →' : isNamingCall ? 'Start Call with Coach Nova →' : isMarketingCall ? 'Start Call with Coach Nova →' : isFrustratedCall ? 'Start Call with Coach Nova →' : isTensraCall ? 'Start Call with Coach Nova →' : isNameserverCall ? 'Start Call with Coach Nova →' : isHostingUpdateCall ? 'Start Call with Coach Nova →' : isInstallCall ? 'Start Call with Coach Nova →' : isBuildReviewCall ? 'Start Call with Coach Nova →' : isModulesReviewCall ? 'Start Call with Coach Nova →' : isModule5Call ? 'Start Call with Coach Nova →' : isModule6Call ? 'Start Call with Coach Nova →' : isFullReviewCall ? 'Start Call with Coach Nova →' : isChatHistoryCall ? 'Start Call with Coach Nova →' : isResumeCall ? 'Start Call with Coach Nova →' : isTeacherCall ? 'Start Call with Coach Nova →' : isTeacherFullCall ? 'Start Call with Coach Nova →' : isParentCall ? 'Start Call with Coach Nova →' : isAdminBriefCall ? 'Start Call with Coach Nova →' : isAdminCall ? 'Start Call with Coach Nova →' : isAdmin2Call ? 'Start Call with Coach Nova →' : 'Start Interview →'}
+              {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : isDayOneCheckin ? 'Start Check-in with Scout →' : isDayTwoCheckin ? 'Start Review with Coach Nova →' : isDayThreeFollowup ? 'Start Call with Coach Nova →' : isWeekendPlan ? 'Start Weekend Plan with Beverly →' : isPostCampPushback ? 'Start Call with Coach Nova →' : isPostCampWrap ? 'Start Wrap with Coach Nova →' : isScopeCall ? 'Start Scope Call with Coach Nova →' : isIdeaCheckin ? 'Start Check-in with Coach Nova →' : isBuildKickoff ? 'Start Build Kickoff with Coach Nova →' : isNamingCall ? 'Start Call with Coach Nova →' : isMarketingCall ? 'Start Call with Coach Nova →' : isFrustratedCall ? 'Start Call with Coach Nova →' : isTensraCall ? 'Start Call with Coach Nova →' : isNameserverCall ? 'Start Call with Coach Nova →' : isHostingUpdateCall ? 'Start Call with Coach Nova →' : isInstallCall ? 'Start Call with Coach Nova →' : isBuildReviewCall ? 'Start Call with Coach Nova →' : isModulesReviewCall ? 'Start Call with Coach Nova →' : isModule5Call ? 'Start Call with Coach Nova →' : isModule6Call ? 'Start Call with Coach Nova →' : isFullReviewCall ? 'Start Call with Coach Nova →' : isChatHistoryCall ? 'Start Call with Coach Nova →' : isResumeCall ? 'Start Call with Coach Nova →' : isTeacherCall ? 'Start Call with Coach Nova →' : isTeacherFullCall ? 'Start Call with Coach Nova →' : isParentCall ? 'Start Call with Coach Nova →' : isAdminBriefCall ? 'Start Call with Coach Nova →' : isAdminCall ? 'Start Call with Coach Nova →' : isAdmin2Call ? 'Start Call with Coach Nova →' : isAdmin3Call ? 'Start Call with Coach Nova →' : 'Start Interview →'}
             </button>
             <p style={styles.footerNote}>fizzmind — Summer 2026 · {student.email}</p>
           </motion.div>
