@@ -136,6 +136,7 @@ export default function InviteTest({ inviteCode, onReset }) {
   const isRedesignCall = isVoiceInterview && inviteVariant === 'redesign_call'
   const isRedesign2Call = isVoiceInterview && inviteVariant === 'redesign2_call'
   const isLesson15Call = isVoiceInterview && inviteVariant === 'lesson15_call'
+  const isLesson16Call = isVoiceInterview && inviteVariant === 'lesson16_call'
   const trackInfo = invite && !isInterview ? TRACK_INFO[invite.track] : null
   const interviewInfo = isCodeInterview
     ? {
@@ -310,6 +311,13 @@ export default function InviteTest({ inviteCode, onReset }) {
                           label: 'Quick Reconnect · with Coach Nova',
                           icon: '🎙️',
                           desc: 'Our last call got cut off. A quick one to finish anything left and answer anything you want to ask.',
+                          color: '#C9963A',
+                        }
+                      : isLesson16Call
+                      ? {
+                          label: 'You Can Sign In Now · with Coach Nova',
+                          icon: '🎙️',
+                          desc: 'The door is on. Four accounts, four dashboards, one login. We go through Lesson 16, including a mistake I nearly shipped, and you try to break the guard while I watch.',
                           color: '#C9963A',
                         }
                       : isLesson15Call
@@ -528,7 +536,7 @@ export default function InviteTest({ inviteCode, onReset }) {
           >
             <div style={{ ...styles.badge, borderColor: `${interviewInfo.color}30`, color: interviewInfo.color, background: `${interviewInfo.color}10` }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: interviewInfo.color, display: 'inline-block' }} />
-              {isCodeInterview ? 'Final Round' : isPostCounsellor ? 'Wrap-up Call' : isPostAdmission ? 'Counsellor Session' : isDayOneCheckin ? 'Day 1 Check-in' : isDayTwoCheckin ? 'Day 2 + 3 Review' : isDayThreeFollowup ? 'Follow-up Call' : isWeekendPlan ? 'Weekend Plan' : isPostCampPushback ? 'Post-Camp Call' : isPostCampWrap ? 'Camp Wrap' : isScopeCall ? 'Scope Call' : isIdeaCheckin ? 'Idea Check-in' : isBuildKickoff ? 'Build Kickoff' : isNamingCall ? 'Naming & Next Steps' : isMarketingCall ? 'Marketing & Website' : isFrustratedCall ? 'Pace Call' : isTensraCall ? 'Website & Build Plan' : isNameserverCall ? 'Domain & Hosting' : isHostingUpdateCall ? 'Site Live & App Next' : isInstallCall ? 'Laptop Setup' : isBuildReviewCall ? 'Build Review' : isModulesReviewCall ? 'Four Modules Review' : isModule5Call ? 'Module 5 Review' : isModule6Call ? 'Module 6 Review' : isFullReviewCall ? 'Full Run-Through' : isChatHistoryCall ? 'Finished Dashboard' : isResumeCall ? 'Quick Reconnect' : isTeacherCall ? 'Teacher Dashboard' : isTeacherFullCall ? 'Whole Teacher Dashboard' : isParentCall ? 'Parent Dashboard' : isAdminBriefCall ? 'Finishing Up' : isAdminCall ? 'Admin Dashboard' : isAdmin2Call ? 'Admin, Part 2' : isAdmin3Call ? 'Build Complete' : isRedesignCall ? 'Redesign & Today' : isRedesign2Call ? 'Picking Back Up' : isLesson15Call ? 'Lesson 15' : "You're in the top 50"}
+              {isCodeInterview ? 'Final Round' : isPostCounsellor ? 'Wrap-up Call' : isPostAdmission ? 'Counsellor Session' : isDayOneCheckin ? 'Day 1 Check-in' : isDayTwoCheckin ? 'Day 2 + 3 Review' : isDayThreeFollowup ? 'Follow-up Call' : isWeekendPlan ? 'Weekend Plan' : isPostCampPushback ? 'Post-Camp Call' : isPostCampWrap ? 'Camp Wrap' : isScopeCall ? 'Scope Call' : isIdeaCheckin ? 'Idea Check-in' : isBuildKickoff ? 'Build Kickoff' : isNamingCall ? 'Naming & Next Steps' : isMarketingCall ? 'Marketing & Website' : isFrustratedCall ? 'Pace Call' : isTensraCall ? 'Website & Build Plan' : isNameserverCall ? 'Domain & Hosting' : isHostingUpdateCall ? 'Site Live & App Next' : isInstallCall ? 'Laptop Setup' : isBuildReviewCall ? 'Build Review' : isModulesReviewCall ? 'Four Modules Review' : isModule5Call ? 'Module 5 Review' : isModule6Call ? 'Module 6 Review' : isFullReviewCall ? 'Full Run-Through' : isChatHistoryCall ? 'Finished Dashboard' : isResumeCall ? 'Quick Reconnect' : isTeacherCall ? 'Teacher Dashboard' : isTeacherFullCall ? 'Whole Teacher Dashboard' : isParentCall ? 'Parent Dashboard' : isAdminBriefCall ? 'Finishing Up' : isAdminCall ? 'Admin Dashboard' : isAdmin2Call ? 'Admin, Part 2' : isAdmin3Call ? 'Build Complete' : isRedesignCall ? 'Redesign & Today' : isRedesign2Call ? 'Picking Back Up' : isLesson15Call ? 'Lesson 15' : isLesson16Call ? 'Login Is Live' : "You're in the top 50"}
             </div>
             <div style={styles.iconLarge}>{interviewInfo.icon}</div>
             <h1 style={styles.title}>
@@ -596,6 +604,8 @@ export default function InviteTest({ inviteCode, onReset }) {
                                   ? `${student.first_name}, the last dashboard.`
                                   : isAdmin2Call
                                   ? `${student.first_name}, three more.`
+                                  : isLesson16Call
+                                  ? `${student.first_name}, you can sign in now.`
                                   : isLesson15Call
                                   ? `${student.first_name}, your friend was right.`
                                   : isRedesign2Call
@@ -671,6 +681,8 @@ export default function InviteTest({ inviteCode, onReset }) {
                                   ? <>The last dashboard has begun. Coach Nova goes through Overview, Students and Staff, and the <strong style={{ color: interviewInfo.color }}>screens that can do real harm</strong>. Have it open.</>
                                   : isAdmin2Call
                                   ? <>Attendance, Fees and the Knowledge Base. These are about <strong style={{ color: interviewInfo.color }}>judgement more than code</strong>, so Coach Nova will mostly ask you why. Have Lesson 13 ready.</>
+                                  : isLesson16Call
+                                  ? <>Login is <strong style={{ color: interviewInfo.color }}>live</strong>. Read Lesson 16 first, then come with tensra.app open, because you are going to <strong style={{ color: interviewInfo.color }}>try to break the guard</strong> while I watch.</>
                                   : isLesson15Call
                                   ? <>The language switcher is <strong style={{ color: interviewInfo.color }}>built and live</strong>. Read Lesson 15 first, then come and <strong style={{ color: interviewInfo.color }}>argue with me</strong> about the scroller. I have written down why I think you are wrong.</>
                                   : isRedesign2Call
@@ -865,6 +877,13 @@ export default function InviteTest({ inviteCode, onReset }) {
                   <div style={styles.rule}><span style={styles.ruleDot} />Our last call got cut off</div>
                   <div style={styles.rule}><span style={styles.ruleDot} />Anything left, and anything you want to ask</div>
                 </>
+              ) : isLesson16Call ? (
+                <>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Read Lesson 16 before we speak, voice only</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Have tensra.app/login open, you will sign in</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Password for all four accounts: tensra2026</div>
+                  <div style={styles.rule}><span style={styles.ruleDot} />Homework 5 and 7. I want real answers.</div>
+                </>
               ) : isLesson15Call ? (
                 <>
                   <div style={styles.rule}><span style={styles.ruleDot} />Read Lesson 15 before we speak, voice only</div>
@@ -947,7 +966,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               onClick={() => setPhase('interview')}
               style={{ ...styles.startBtn, background: interviewInfo.color, color: '#0D0F12' }}
             >
-              {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : isDayOneCheckin ? 'Start Check-in with Scout →' : isDayTwoCheckin ? 'Start Review with Coach Nova →' : isDayThreeFollowup ? 'Start Call with Coach Nova →' : isWeekendPlan ? 'Start Weekend Plan with Beverly →' : isPostCampPushback ? 'Start Call with Coach Nova →' : isPostCampWrap ? 'Start Wrap with Coach Nova →' : isScopeCall ? 'Start Scope Call with Coach Nova →' : isIdeaCheckin ? 'Start Check-in with Coach Nova →' : isBuildKickoff ? 'Start Build Kickoff with Coach Nova →' : isNamingCall ? 'Start Call with Coach Nova →' : isMarketingCall ? 'Start Call with Coach Nova →' : isFrustratedCall ? 'Start Call with Coach Nova →' : isTensraCall ? 'Start Call with Coach Nova →' : isNameserverCall ? 'Start Call with Coach Nova →' : isHostingUpdateCall ? 'Start Call with Coach Nova →' : isInstallCall ? 'Start Call with Coach Nova →' : isBuildReviewCall ? 'Start Call with Coach Nova →' : isModulesReviewCall ? 'Start Call with Coach Nova →' : isModule5Call ? 'Start Call with Coach Nova →' : isModule6Call ? 'Start Call with Coach Nova →' : isFullReviewCall ? 'Start Call with Coach Nova →' : isChatHistoryCall ? 'Start Call with Coach Nova →' : isResumeCall ? 'Start Call with Coach Nova →' : isTeacherCall ? 'Start Call with Coach Nova →' : isTeacherFullCall ? 'Start Call with Coach Nova →' : isParentCall ? 'Start Call with Coach Nova →' : isAdminBriefCall ? 'Start Call with Coach Nova →' : isAdminCall ? 'Start Call with Coach Nova →' : isAdmin2Call ? 'Start Call with Coach Nova →' : isAdmin3Call ? 'Start Call with Coach Nova →' : isRedesignCall ? 'Start Call with Coach Nova →' : isRedesign2Call ? 'Start Call with Coach Nova →' : isLesson15Call ? 'Start Call with Coach Nova →' : 'Start Interview →'}
+              {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : isDayOneCheckin ? 'Start Check-in with Scout →' : isDayTwoCheckin ? 'Start Review with Coach Nova →' : isDayThreeFollowup ? 'Start Call with Coach Nova →' : isWeekendPlan ? 'Start Weekend Plan with Beverly →' : isPostCampPushback ? 'Start Call with Coach Nova →' : isPostCampWrap ? 'Start Wrap with Coach Nova →' : isScopeCall ? 'Start Scope Call with Coach Nova →' : isIdeaCheckin ? 'Start Check-in with Coach Nova →' : isBuildKickoff ? 'Start Build Kickoff with Coach Nova →' : isNamingCall ? 'Start Call with Coach Nova →' : isMarketingCall ? 'Start Call with Coach Nova →' : isFrustratedCall ? 'Start Call with Coach Nova →' : isTensraCall ? 'Start Call with Coach Nova →' : isNameserverCall ? 'Start Call with Coach Nova →' : isHostingUpdateCall ? 'Start Call with Coach Nova →' : isInstallCall ? 'Start Call with Coach Nova →' : isBuildReviewCall ? 'Start Call with Coach Nova →' : isModulesReviewCall ? 'Start Call with Coach Nova →' : isModule5Call ? 'Start Call with Coach Nova →' : isModule6Call ? 'Start Call with Coach Nova →' : isFullReviewCall ? 'Start Call with Coach Nova →' : isChatHistoryCall ? 'Start Call with Coach Nova →' : isResumeCall ? 'Start Call with Coach Nova →' : isTeacherCall ? 'Start Call with Coach Nova →' : isTeacherFullCall ? 'Start Call with Coach Nova →' : isParentCall ? 'Start Call with Coach Nova →' : isAdminBriefCall ? 'Start Call with Coach Nova →' : isAdminCall ? 'Start Call with Coach Nova →' : isAdmin2Call ? 'Start Call with Coach Nova →' : isAdmin3Call ? 'Start Call with Coach Nova →' : isRedesignCall ? 'Start Call with Coach Nova →' : isRedesign2Call ? 'Start Call with Coach Nova →' : isLesson15Call ? 'Start Call with Coach Nova →' : isLesson16Call ? 'Start Call with Coach Nova →' : 'Start Interview →'}
             </button>
             <p style={styles.footerNote}>fizzmind — Summer 2026 · {student.email}</p>
           </motion.div>
