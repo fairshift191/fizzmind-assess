@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { C } from '../theme'
+import { C, W, K, tint } from '../theme'
 import { motion } from 'framer-motion'
 import { getRandomArtsPrompt } from '../assessment/arts-prompts.js'
 import { supabase } from '../lib/supabase.js'
@@ -79,7 +79,7 @@ export default function ArtsTest({ studentName, onComplete }) {
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <div style={{
             display: 'inline-block', padding: '4px 14px', borderRadius: '99px',
-            background: 'rgba(236,72,153,0.12)', border: '1px solid rgba(236,72,153,0.25)',
+            background: tint(C.trackArts, 10), border: `1px solid ${tint(C.trackArts, 25)}`,
             fontSize: '12px', fontWeight: 600, color: C.trackArts,
             marginBottom: '16px',
           }}>
@@ -92,7 +92,7 @@ export default function ArtsTest({ studentName, onComplete }) {
           }}>
             Hey {studentName}, time to create!
           </h1>
-          <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.45)' }}>
+          <p style={{ fontSize: '14px', color: W[45] }}>
             There are no wrong answers. We want to see how you think, not how "good" your art is.
           </p>
         </div>
@@ -113,12 +113,12 @@ export default function ArtsTest({ studentName, onComplete }) {
           }}>
             {prompt.title}
           </h2>
-          <p style={{ fontSize: '15px', lineHeight: 1.7, color: 'rgba(255,255,255,0.7)', marginBottom: '16px' }}>
+          <p style={{ fontSize: '15px', lineHeight: 1.7, color: W[75], marginBottom: '16px' }}>
             {prompt.prompt}
           </p>
           <p style={{
-            fontSize: '13px', color: 'rgba(255,255,255,0.35)', fontStyle: 'italic',
-            padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px',
+            fontSize: '13px', color: W[35], fontStyle: 'italic',
+            padding: '12px', background: W[4], borderRadius: '8px',
           }}>
             {prompt.hint}
           </p>
@@ -131,7 +131,7 @@ export default function ArtsTest({ studentName, onComplete }) {
         }}>
           <div style={{
             fontSize: '11px', fontWeight: 600, textTransform: 'uppercase',
-            letterSpacing: '0.08em', color: 'rgba(255,255,255,0.4)', marginBottom: '16px',
+            letterSpacing: '0.08em', color: W[35], marginBottom: '16px',
           }}>
             Upload Your Creation
           </div>
@@ -149,12 +149,12 @@ export default function ArtsTest({ studentName, onComplete }) {
               onClick={() => fileRef.current?.click()}
               style={{
                 width: '100%', padding: '32px', borderRadius: '12px',
-                border: '2px dashed rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.02)',
-                color: 'rgba(255,255,255,0.5)', fontSize: '14px', cursor: 'pointer',
+                border: `2px dashed ${W[15]}`, background: W[4],
+                color: W[45], fontSize: '14px', cursor: 'pointer',
                 transition: 'all 0.2s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(236,72,153,0.4)'; e.currentTarget.style.color = C.trackArts }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = tint(C.trackArts, 40); e.currentTarget.style.color = C.trackArts }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = W[15]; e.currentTarget.style.color = W[45] }}
             >
               <div style={{ fontSize: '24px', marginBottom: '8px' }}>+</div>
               Drop your file here or click to browse
@@ -165,7 +165,7 @@ export default function ArtsTest({ studentName, onComplete }) {
           ) : (
             <div style={{
               display: 'flex', alignItems: 'center', gap: '14px',
-              padding: '14px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px',
+              padding: '14px', background: W[4], borderRadius: '10px',
             }}>
               {preview && (
                 <img src={preview} alt="Preview" style={{
@@ -176,15 +176,15 @@ export default function ArtsTest({ studentName, onComplete }) {
                 <div style={{ fontSize: '13px', fontWeight: 600, color: C.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {file.name}
                 </div>
-                <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)' }}>
+                <div style={{ fontSize: '12px', color: W[35] }}>
                   {(file.size / 1024 / 1024).toFixed(1)} MB
                 </div>
               </div>
               <button
                 onClick={() => { setFile(null); setPreview(null) }}
                 style={{
-                  padding: '6px 12px', borderRadius: '6px', background: 'rgba(239,68,68,0.12)',
-                  border: '1px solid rgba(239,68,68,0.2)', color: C.danger,
+                  padding: '6px 12px', borderRadius: '6px', background: tint(C.danger, 10),
+                  border: `1px solid ${tint(C.danger, 20)}`, color: C.danger,
                   fontSize: '12px', cursor: 'pointer',
                 }}
               >
@@ -201,7 +201,7 @@ export default function ArtsTest({ studentName, onComplete }) {
         }}>
           <div style={{
             fontSize: '11px', fontWeight: 600, textTransform: 'uppercase',
-            letterSpacing: '0.08em', color: 'rgba(255,255,255,0.4)', marginBottom: '12px',
+            letterSpacing: '0.08em', color: W[35], marginBottom: '12px',
           }}>
             Tell us about your piece
           </div>
@@ -217,7 +217,7 @@ export default function ArtsTest({ studentName, onComplete }) {
               resize: 'vertical', outline: 'none', fontFamily: 'inherit',
             }}
           />
-          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.25)', marginTop: '6px', textAlign: 'right' }}>
+          <div style={{ fontSize: '12px', color: W[25], marginTop: '6px', textAlign: 'right' }}>
             {description.length} / 2500
           </div>
         </div>
@@ -225,7 +225,7 @@ export default function ArtsTest({ studentName, onComplete }) {
         {error && (
           <div style={{
             padding: '12px 16px', borderRadius: '10px',
-            background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)',
+            background: tint(C.danger, 10), border: `1px solid ${tint(C.danger, 20)}`,
             color: C.danger, fontSize: '13px', marginBottom: '20px',
           }}>
             {error}
@@ -238,7 +238,7 @@ export default function ArtsTest({ studentName, onComplete }) {
           disabled={uploading}
           style={{
             width: '100%', padding: '16px', borderRadius: '12px',
-            background: uploading ? '#555' : C.trackArts, color: 'white',
+            background: uploading ? C.mute : C.trackArts, color: 'white',
             fontSize: '15px', fontWeight: 600, border: 'none',
             cursor: uploading ? 'wait' : 'pointer',
             transition: 'all 0.2s',

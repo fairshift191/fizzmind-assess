@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { C } from '../theme'
+import { C, W, K, tint } from '../theme'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GeminiLiveAdapter } from '../voice/GeminiLiveAdapter.js'
 import { BlobRenderer } from '../renderer/BlobRenderer.js'
@@ -232,7 +232,7 @@ const styles = {
     width: '100%',
     borderRadius: 'var(--radius-lg)',
     background: 'rgba(10, 10, 15, 0.85)',
-    border: '1px solid rgba(255,255,255,0.08)',
+    border: `1px solid ${W[8]}`,
     backdropFilter: 'blur(30px)',
     WebkitBackdropFilter: 'blur(30px)',
     padding: 'clamp(28px, 4vw, 44px)',
@@ -264,8 +264,8 @@ const styles = {
     gap: '12px',
     padding: '10px 14px',
     borderRadius: 'var(--radius-sm)',
-    background: 'rgba(255,255,255,0.04)',
-    border: '1px solid rgba(255,255,255,0.06)',
+    background: W[4],
+    border: `1px solid ${W[4]}`,
   },
   itemIcon: {
     fontSize: '18px',
@@ -286,8 +286,8 @@ const styles = {
   voiceNote: {
     fontSize: '12px',
     color: 'var(--text-secondary)',
-    background: 'rgba(59, 130, 246, 0.08)',
-    border: '1px solid rgba(59, 130, 246, 0.15)',
+    background: tint(C.trackCode, 10),
+    border: `1px solid ${tint(C.trackCode, 15)}`,
     borderRadius: 'var(--radius-sm)',
     padding: '8px 14px',
     marginBottom: '20px',
@@ -301,8 +301,8 @@ const styles = {
     fontSize: '14px',
     fontWeight: '500',
     color: 'var(--text-secondary)',
-    background: 'rgba(255,255,255,0.05)',
-    border: '1px solid rgba(255,255,255,0.08)',
+    background: W[4],
+    border: `1px solid ${W[8]}`,
     borderRadius: 'var(--radius-sm)',
     padding: '12px 28px',
     cursor: 'pointer',

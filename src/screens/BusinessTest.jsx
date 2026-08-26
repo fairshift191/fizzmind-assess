@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { C } from '../theme'
+import { C, W, K, tint } from '../theme'
 import { motion } from 'framer-motion'
 import { BUSINESS_QUESTIONS } from '../assessment/business-questions.js'
 
@@ -75,7 +75,7 @@ export default function BusinessTest({ studentName, onComplete }) {
         padding: '12px 24px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
-        <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>
+        <div style={{ fontSize: '13px', color: W[45] }}>
           <span style={{ fontWeight: 600, color: C.warning }}>Business Challenge</span>
           <span style={{ margin: '0 8px' }}>·</span>
           {studentName}
@@ -93,8 +93,8 @@ export default function BusinessTest({ studentName, onComplete }) {
           disabled={Object.keys(answers).length === 0}
           style={{
             padding: '8px 20px', borderRadius: '8px',
-            background: Object.keys(answers).length > 0 ? C.warning : '#333',
-            color: Object.keys(answers).length > 0 ? C.ground : '#666',
+            background: Object.keys(answers).length > 0 ? C.warning : C.mute,
+            color: Object.keys(answers).length > 0 ? C.ground : C.muteText,
             fontSize: '13px', fontWeight: 600, border: 'none', cursor: 'pointer',
           }}
         >
@@ -115,11 +115,11 @@ export default function BusinessTest({ studentName, onComplete }) {
               width: '28px', height: '28px', borderRadius: '6px',
               fontSize: '11px', fontWeight: 600, border: 'none', cursor: 'pointer',
               background: i === current ? C.warning
-                : answers[i] !== undefined ? 'rgba(245,158,11,0.2)'
+                : answers[i] !== undefined ? tint(C.warning, 20)
                 : C.panel,
               color: i === current ? C.ground
                 : answers[i] !== undefined ? C.warning
-                : 'rgba(255,255,255,0.3)',
+                : W[25],
             }}
           >
             {i + 1}
@@ -133,7 +133,7 @@ export default function BusinessTest({ studentName, onComplete }) {
         maxWidth: '700px', width: '100%', margin: '0 auto',
         padding: '20px 24px 120px',
       }}>
-        <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.3)', marginBottom: '12px' }}>
+        <div style={{ fontSize: '12px', color: W[25], marginBottom: '12px' }}>
           Question {current + 1} of {TOTAL}
         </div>
 
@@ -154,7 +154,7 @@ export default function BusinessTest({ studentName, onComplete }) {
                 style={{
                   display: 'flex', alignItems: 'flex-start', gap: '12px',
                   padding: '14px 16px', borderRadius: '12px',
-                  background: isSelected ? 'rgba(245,158,11,0.1)' : C.panel,
+                  background: isSelected ? tint(C.warning, 10) : C.panel,
                   border: `1.5px solid ${isSelected ? C.warning : C.line}`,
                   color: C.text, fontSize: '14px', lineHeight: 1.5,
                   textAlign: 'left', cursor: 'pointer', transition: 'all 0.15s',
@@ -164,8 +164,8 @@ export default function BusinessTest({ studentName, onComplete }) {
                   width: '24px', height: '24px', borderRadius: '50%', flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '12px', fontWeight: 700,
-                  background: isSelected ? C.warning : 'rgba(255,255,255,0.06)',
-                  color: isSelected ? C.ground : 'rgba(255,255,255,0.4)',
+                  background: isSelected ? C.warning : W[4],
+                  color: isSelected ? C.ground : W[35],
                 }}>
                   {String.fromCharCode(65 + i)}
                 </span>
@@ -189,7 +189,7 @@ export default function BusinessTest({ studentName, onComplete }) {
           style={{
             padding: '10px 24px', borderRadius: '8px',
             background: C.panel, border: `1px solid ${C.line}`,
-            color: current === 0 ? '#444' : C.text,
+            color: current === 0 ? C.mute : C.text,
             fontSize: '13px', fontWeight: 500, cursor: current === 0 ? 'default' : 'pointer',
           }}
         >

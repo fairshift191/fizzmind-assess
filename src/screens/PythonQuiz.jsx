@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { C } from '../theme'
+import { C, W, K, tint } from '../theme'
 import { motion, AnimatePresence } from 'framer-motion'
 import { selectQuestions } from '../assessment/questions.js'
 
@@ -103,7 +103,7 @@ function PythonQuiz({ config, onComplete }) {
         <div style={{
           ...styles.timer,
           color: isCriticalTime ? C.danger : isLowTime ? C.warning : 'var(--brand-primary)',
-          background: isCriticalTime ? 'rgba(239, 68, 68, 0.12)' : isLowTime ? 'rgba(245, 158, 11, 0.12)' : 'rgba(var(--brand-primary-rgb), 0.12)',
+          background: isCriticalTime ? tint(C.danger, 10) : isLowTime ? tint(C.warning, 10) : 'rgba(var(--brand-primary-rgb), 0.12)',
           animation: isCriticalTime ? 'pulse 1s ease infinite' : 'none',
         }}>
           {timeStr}
@@ -377,7 +377,7 @@ const styles = {
     lineHeight: 1.6,
     whiteSpace: 'pre-wrap',
     margin: '0 0 24px',
-    background: 'rgba(0,0,0,0.3)',
+    background: K[30],
     borderRadius: 'var(--radius-sm)',
     padding: '16px 20px',
     border: '1px solid var(--surface-glass-border)',

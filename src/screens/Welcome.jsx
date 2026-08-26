@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { C } from '../theme'
+import { C, W, K, tint } from '../theme'
 import { motion } from 'framer-motion'
 import { CAMPS, TRACKS } from '../assessment/dimensions.js'
 
@@ -219,7 +219,7 @@ const styles = {
     right: '-5%',
     width: '35%',
     height: '40%',
-    background: 'radial-gradient(ellipse, rgba(59, 130, 246, 0.08) 0%, transparent 65%)',
+    background: `radial-gradient(ellipse, ${tint(C.trackCode, 10)} 0%, transparent 65%)`,
     pointerEvents: 'none',
   },
   glowCenter: {
@@ -229,7 +229,7 @@ const styles = {
     transform: 'translate(-50%, -50%)',
     width: '70%',
     height: '35%',
-    background: 'radial-gradient(ellipse, rgba(255,255,255,0.02) 0%, transparent 55%)',
+    background: `radial-gradient(ellipse, ${W[4]} 0%, transparent 55%)`,
     pointerEvents: 'none',
   },
   scroll: {
@@ -306,10 +306,10 @@ const styles = {
     fontSize: '12px',
     fontWeight: '500',
     color: 'var(--text-secondary)',
-    background: 'rgba(255,255,255,0.04)',
+    background: W[4],
     borderRadius: 'var(--radius-full)',
     padding: '4px 12px',
-    border: '1px solid rgba(255,255,255,0.06)',
+    border: `1px solid ${W[4]}`,
     whiteSpace: 'nowrap',
   },
 
@@ -318,8 +318,8 @@ const styles = {
     width: '100%',
     maxWidth: '720px',
     borderRadius: 'var(--radius-md)',
-    background: 'rgba(255,255,255,0.05)',
-    border: '1px solid rgba(255,255,255,0.1)',
+    background: W[4],
+    border: `1px solid ${W[8]}`,
     padding: '18px 22px',
     marginBottom: 'clamp(20px, 2.5vh, 32px)',
   },
@@ -331,8 +331,8 @@ const styles = {
     fontSize: '13px',
     fontWeight: '400',
     color: 'var(--text-primary)',
-    background: 'rgba(0,0,0,0.3)',
-    border: '1px solid rgba(255,255,255,0.06)',
+    background: K[30],
+    border: `1px solid ${W[4]}`,
     borderRadius: '8px',
     outline: 'none',
     transition: 'border-color 0.2s',
@@ -343,8 +343,8 @@ const styles = {
     fontSize: '13px',
     fontWeight: '400',
     color: 'var(--text-primary)',
-    background: 'rgba(0,0,0,0.3)',
-    border: '1px solid rgba(255,255,255,0.06)',
+    background: K[30],
+    border: `1px solid ${W[4]}`,
     borderRadius: '8px',
     outline: 'none',
   },

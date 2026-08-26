@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { C } from '../theme'
+import { C, W, K, tint } from '../theme'
 import { motion, AnimatePresence } from 'framer-motion'
 import { verifyInvite, markInviteUsed } from '../lib/invites.js'
 import { saveTestResults, saveInterviewResults } from '../lib/supabase.js'
@@ -538,7 +538,7 @@ export default function InviteTest({ inviteCode, onReset }) {
 
             <button
               onClick={() => setPhase('test')}
-              style={{ ...styles.startBtn, background: trackInfo.color, color: invite.track === 'stem' ? '#fff' : C.ink }}
+              style={{ ...styles.startBtn, background: trackInfo.color, color: invite.track === 'stem' ? C.white : C.ink }}
             >
               Start Challenge →
             </button>
@@ -1132,8 +1132,8 @@ const styles = {
   card: {
     maxWidth: '540px',
     width: '100%',
-    background: 'rgba(255,255,255,0.04)',
-    border: '1px solid rgba(255,255,255,0.08)',
+    background: W[4],
+    border: `1px solid ${W[8]}`,
     borderRadius: '24px',
     padding: '48px 40px',
     textAlign: 'center',
@@ -1163,13 +1163,13 @@ const styles = {
     fontFamily: "'Space Grotesk', sans-serif",
     fontSize: '28px',
     fontWeight: '700',
-    color: '#fff',
+    color: C.white,
     margin: '0 0 10px',
     letterSpacing: '-0.02em',
   },
   subtitle: {
     fontSize: '16px',
-    color: 'rgba(255,255,255,0.65)',
+    color: W[60],
     lineHeight: 1.6,
     margin: '0 0 24px',
   },
@@ -1182,7 +1182,7 @@ const styles = {
   },
   infoText: {
     fontSize: '14px',
-    color: 'rgba(255,255,255,0.6)',
+    color: W[60],
     lineHeight: 1.6,
     margin: 0,
   },
@@ -1198,13 +1198,13 @@ const styles = {
     alignItems: 'center',
     gap: '10px',
     fontSize: '13px',
-    color: 'rgba(255,255,255,0.55)',
+    color: W[60],
   },
   ruleDot: {
     width: '5px',
     height: '5px',
     borderRadius: '50%',
-    background: 'rgba(255,255,255,0.3)',
+    background: W[25],
     flexShrink: 0,
   },
   startBtn: {
@@ -1221,7 +1221,7 @@ const styles = {
   },
   footerNote: {
     fontSize: '11px',
-    color: 'rgba(255,255,255,0.2)',
+    color: W[15],
     margin: 0,
   },
   center: {
@@ -1238,7 +1238,7 @@ const styles = {
   spinner: {
     width: '40px',
     height: '40px',
-    border: '3px solid rgba(201,150,58,0.15)',
+    border: `3px solid ${tint(C.gold, 15)}`,
     borderTop: `3px solid ${C.gold}`,
     borderRadius: '50%',
     animation: 'spin 0.8s linear infinite',
@@ -1246,24 +1246,24 @@ const styles = {
   },
   loadingText: {
     fontSize: '14px',
-    color: 'rgba(255,255,255,0.4)',
+    color: W[35],
   },
   errorIcon: { fontSize: '48px', marginBottom: '16px' },
   errorTitle: {
     fontFamily: "'Space Grotesk', sans-serif",
     fontSize: '24px',
     fontWeight: '700',
-    color: '#fff',
+    color: C.white,
     margin: '0 0 12px',
   },
   errorMsg: {
     fontSize: '16px',
-    color: 'rgba(255,255,255,0.6)',
+    color: W[60],
     margin: '0 0 12px',
   },
   errorHint: {
     fontSize: '13px',
-    color: 'rgba(255,255,255,0.35)',
+    color: W[35],
     maxWidth: '400px',
     lineHeight: 1.6,
     margin: '0 0 32px',
@@ -1273,9 +1273,9 @@ const styles = {
     alignItems: 'center',
     padding: '12px 28px',
     borderRadius: '99px',
-    background: 'rgba(255,255,255,0.06)',
-    color: 'rgba(255,255,255,0.6)',
-    border: '1px solid rgba(255,255,255,0.1)',
+    background: W[4],
+    color: W[60],
+    border: `1px solid ${W[8]}`,
     fontSize: '14px',
     fontWeight: '500',
     textDecoration: 'none',

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { C } from '../theme'
+import { C, W, K, tint } from '../theme'
 
 export default function ThankYou({ studentName, onReset, customMessage, title }) {
   return (
@@ -23,7 +23,7 @@ export default function ThankYou({ studentName, onReset, customMessage, title })
       <div style={{
         position: 'absolute', top: '30%', left: '50%', transform: 'translate(-50%, -50%)',
         width: '600px', height: '600px', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(201,150,58,0.08) 0%, transparent 70%)',
+        background: `radial-gradient(circle, ${tint(C.gold, 10)} 0%, transparent 70%)`,
         pointerEvents: 'none',
       }} />
 
@@ -45,8 +45,8 @@ export default function ThankYou({ studentName, onReset, customMessage, title })
           transition={{ duration: 0.5, delay: 0.4, type: 'spring', stiffness: 200 }}
           style={{
             width: '80px', height: '80px', borderRadius: '50%',
-            background: 'rgba(201,150,58,0.12)',
-            border: '2px solid rgba(201,150,58,0.3)',
+            background: tint(C.gold, 10),
+            border: `2px solid ${tint(C.gold, 30)}`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             margin: '0 auto 32px',
           }}
@@ -71,7 +71,7 @@ export default function ThankYou({ studentName, onReset, customMessage, title })
           <p style={{
             fontSize: '16px',
             lineHeight: 1.7,
-            color: 'rgba(255,255,255,0.7)',
+            color: W[75],
             marginBottom: '40px',
           }}>
             {customMessage}
@@ -81,7 +81,7 @@ export default function ThankYou({ studentName, onReset, customMessage, title })
             <p style={{
               fontSize: '16px',
               lineHeight: 1.7,
-              color: 'rgba(255,255,255,0.7)',
+              color: W[75],
               marginBottom: '12px',
             }}>
               Scout loved talking to you. Your assessment has been recorded and our team will personally review your conversation.
@@ -89,7 +89,7 @@ export default function ThankYou({ studentName, onReset, customMessage, title })
             <p style={{
               fontSize: '14px',
               lineHeight: 1.6,
-              color: 'rgba(255,255,255,0.45)',
+              color: W[45],
               marginBottom: '40px',
             }}>
               If you're a good fit, we'll reach out with the next step — a fun challenge tailored to your interests. Keep an eye on your email!
@@ -116,8 +116,8 @@ export default function ThankYou({ studentName, onReset, customMessage, title })
               onClick={onReset}
               style={{
                 padding: '12px 28px', borderRadius: '99px',
-                background: 'transparent', color: 'rgba(255,255,255,0.5)',
-                border: '1px solid rgba(255,255,255,0.15)',
+                background: 'transparent', color: W[45],
+                border: `1px solid ${W[15]}`,
                 fontSize: '14px', fontWeight: 500,
                 cursor: 'pointer',
                 transition: 'all 0.2s',
@@ -130,7 +130,7 @@ export default function ThankYou({ studentName, onReset, customMessage, title })
 
         <p style={{
           fontSize: '12px',
-          color: 'rgba(255,255,255,0.25)',
+          color: W[25],
           marginTop: '48px',
         }}>
           fizzmind — Where Curiosity Meets Adventure

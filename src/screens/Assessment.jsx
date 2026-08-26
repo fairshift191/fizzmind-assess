@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { C } from '../theme'
+import { C, W, K, tint } from '../theme'
 import { motion } from 'framer-motion'
 import { GeminiLiveAdapter } from '../voice/GeminiLiveAdapter.js'
 import { BlobRenderer } from '../renderer/BlobRenderer.js'
@@ -345,7 +345,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 20,
-    background: 'rgba(6, 6, 11, 0.8)',
+    background: tint(C.ink, 80),
   },
   loadingText: {
     fontSize: '18px',
@@ -395,7 +395,7 @@ const styles = {
     width: '48px',
     height: '48px',
     borderRadius: '50%',
-    background: 'rgba(239, 68, 68, 0.15)',
+    background: tint(C.danger, 15),
     color: C.danger,
     fontSize: '24px',
     fontWeight: '700',

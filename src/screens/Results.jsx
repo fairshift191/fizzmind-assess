@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { C } from '../theme'
+import { C, W, K, tint } from '../theme'
 import { useEffect, useRef } from 'react'
 import { CAMPS, TRACKS, DIMENSIONS } from '../assessment/dimensions.js'
 import { saveAssessmentResults } from '../lib/supabase.js'
@@ -196,13 +196,13 @@ function Results({ results, onReset }) {
                   borderColor: q.selected === undefined
                     ? 'var(--surface-glass-border)'
                     : q.isCorrect
-                      ? 'rgba(16, 185, 129, 0.3)'
-                      : 'rgba(239, 68, 68, 0.3)',
+                      ? tint(C.success, 30)
+                      : tint(C.danger, 30),
                   background: q.selected === undefined
                     ? 'var(--surface-glass)'
                     : q.isCorrect
-                      ? 'rgba(16, 185, 129, 0.06)'
-                      : 'rgba(239, 68, 68, 0.06)',
+                      ? tint(C.success, 5)
+                      : tint(C.danger, 5),
                 }}>
                   <span style={styles.quizQNum}>Q{i + 1}</span>
                   <span style={styles.quizQTopic}>{q.topic}</span>
@@ -274,7 +274,7 @@ const styles = {
     width: '56px',
     height: '56px',
     borderRadius: '50%',
-    background: 'rgba(16, 185, 129, 0.15)',
+    background: tint(C.success, 15),
     color: C.success,
     fontSize: '28px',
     fontWeight: '700',
