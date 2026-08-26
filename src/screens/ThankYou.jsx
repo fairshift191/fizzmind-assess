@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { C } from '../theme'
 
 export default function ThankYou({ studentName, onReset, customMessage, title }) {
   return (
@@ -9,7 +10,7 @@ export default function ThankYou({ studentName, onReset, customMessage, title })
       transition={{ duration: 0.6 }}
       style={{
         minHeight: '100vh',
-        background: '#0A0B0F',
+        background: C.ground,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -50,7 +51,7 @@ export default function ThankYou({ studentName, onReset, customMessage, title })
             margin: '0 auto 32px',
           }}
         >
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#C9963A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </motion.div>
@@ -59,7 +60,7 @@ export default function ThankYou({ studentName, onReset, customMessage, title })
           fontFamily: "'Playfair Display', Georgia, serif",
           fontSize: '2rem',
           fontWeight: 700,
-          color: '#C9963A',
+          color: C.gold,
           marginBottom: '16px',
           letterSpacing: '-0.02em',
         }}>
@@ -102,7 +103,7 @@ export default function ThankYou({ studentName, onReset, customMessage, title })
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
               padding: '12px 28px', borderRadius: '99px',
-              background: '#C9963A', color: '#0A0B0F',
+              background: C.gold, color: C.ground,
               fontSize: '14px', fontWeight: 600,
               textDecoration: 'none',
               transition: 'all 0.2s',

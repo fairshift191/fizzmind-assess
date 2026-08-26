@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { C } from '../theme'
 import { motion } from 'framer-motion'
 import { CAMPS, TRACKS } from '../assessment/dimensions.js'
 
@@ -365,7 +366,7 @@ const styles = {
     borderRadius: 'var(--radius-full)',
     border: 'none',
     background: 'var(--brand-primary)',
-    color: '#06060B',
+    color: C.ink,
     cursor: 'pointer',
     transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
   },

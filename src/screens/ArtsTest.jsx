@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { C } from '../theme'
 import { motion } from 'framer-motion'
 import { getRandomArtsPrompt } from '../assessment/arts-prompts.js'
 import { supabase } from '../lib/supabase.js'
@@ -67,7 +68,7 @@ export default function ArtsTest({ studentName, onComplete }) {
       exit={{ opacity: 0 }}
       style={{
         minHeight: '100vh',
-        background: '#0A0B0F',
+        background: C.ground,
         padding: '40px 20px',
         display: 'flex',
         justifyContent: 'center',
@@ -79,14 +80,14 @@ export default function ArtsTest({ studentName, onComplete }) {
           <div style={{
             display: 'inline-block', padding: '4px 14px', borderRadius: '99px',
             background: 'rgba(236,72,153,0.12)', border: '1px solid rgba(236,72,153,0.25)',
-            fontSize: '12px', fontWeight: 600, color: '#EC4899',
+            fontSize: '12px', fontWeight: 600, color: C.trackArts,
             marginBottom: '16px',
           }}>
             Creative Arts Challenge
           </div>
           <h1 style={{
             fontFamily: "'Playfair Display', Georgia, serif",
-            fontSize: '1.75rem', fontWeight: 700, color: '#E8E8ED',
+            fontSize: '1.75rem', fontWeight: 700, color: C.text,
             marginBottom: '8px',
           }}>
             Hey {studentName}, time to create!
@@ -98,17 +99,17 @@ export default function ArtsTest({ studentName, onComplete }) {
 
         {/* Prompt Card */}
         <div style={{
-          background: '#1A1D26', border: '1px solid #2A2D36', borderRadius: '16px',
+          background: C.panel, border: `1px solid ${C.line}`, borderRadius: '16px',
           padding: '28px', marginBottom: '28px',
         }}>
           <div style={{
             fontSize: '11px', fontWeight: 600, textTransform: 'uppercase',
-            letterSpacing: '0.08em', color: '#EC4899', marginBottom: '12px',
+            letterSpacing: '0.08em', color: C.trackArts, marginBottom: '12px',
           }}>
             Your Prompt
           </div>
           <h2 style={{
-            fontSize: '1.25rem', fontWeight: 700, color: '#E8E8ED', marginBottom: '12px',
+            fontSize: '1.25rem', fontWeight: 700, color: C.text, marginBottom: '12px',
           }}>
             {prompt.title}
           </h2>
@@ -125,7 +126,7 @@ export default function ArtsTest({ studentName, onComplete }) {
 
         {/* Upload */}
         <div style={{
-          background: '#1A1D26', border: '1px solid #2A2D36', borderRadius: '16px',
+          background: C.panel, border: `1px solid ${C.line}`, borderRadius: '16px',
           padding: '28px', marginBottom: '28px',
         }}>
           <div style={{
@@ -152,7 +153,7 @@ export default function ArtsTest({ studentName, onComplete }) {
                 color: 'rgba(255,255,255,0.5)', fontSize: '14px', cursor: 'pointer',
                 transition: 'all 0.2s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(236,72,153,0.4)'; e.currentTarget.style.color = '#EC4899' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(236,72,153,0.4)'; e.currentTarget.style.color = C.trackArts }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)' }}
             >
               <div style={{ fontSize: '24px', marginBottom: '8px' }}>+</div>
@@ -172,7 +173,7 @@ export default function ArtsTest({ studentName, onComplete }) {
                 }} />
               )}
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: '#E8E8ED', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: C.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {file.name}
                 </div>
                 <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)' }}>
@@ -183,7 +184,7 @@ export default function ArtsTest({ studentName, onComplete }) {
                 onClick={() => { setFile(null); setPreview(null) }}
                 style={{
                   padding: '6px 12px', borderRadius: '6px', background: 'rgba(239,68,68,0.12)',
-                  border: '1px solid rgba(239,68,68,0.2)', color: '#EF4444',
+                  border: '1px solid rgba(239,68,68,0.2)', color: C.danger,
                   fontSize: '12px', cursor: 'pointer',
                 }}
               >
@@ -195,7 +196,7 @@ export default function ArtsTest({ studentName, onComplete }) {
 
         {/* Description */}
         <div style={{
-          background: '#1A1D26', border: '1px solid #2A2D36', borderRadius: '16px',
+          background: C.panel, border: `1px solid ${C.line}`, borderRadius: '16px',
           padding: '28px', marginBottom: '28px',
         }}>
           <div style={{
@@ -211,8 +212,8 @@ export default function ArtsTest({ studentName, onComplete }) {
             maxLength={2500}
             style={{
               width: '100%', minHeight: '140px', padding: '14px',
-              background: '#0D0F12', border: '1px solid #2A2D36', borderRadius: '10px',
-              color: '#E8E8ED', fontSize: '14px', lineHeight: 1.6,
+              background: `${C.ground}`, border: `1px solid ${C.line}`, borderRadius: '10px',
+              color: C.text, fontSize: '14px', lineHeight: 1.6,
               resize: 'vertical', outline: 'none', fontFamily: 'inherit',
             }}
           />
@@ -225,7 +226,7 @@ export default function ArtsTest({ studentName, onComplete }) {
           <div style={{
             padding: '12px 16px', borderRadius: '10px',
             background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)',
-            color: '#EF4444', fontSize: '13px', marginBottom: '20px',
+            color: C.danger, fontSize: '13px', marginBottom: '20px',
           }}>
             {error}
           </div>
@@ -237,7 +238,7 @@ export default function ArtsTest({ studentName, onComplete }) {
           disabled={uploading}
           style={{
             width: '100%', padding: '16px', borderRadius: '12px',
-            background: uploading ? '#555' : '#EC4899', color: 'white',
+            background: uploading ? '#555' : C.trackArts, color: 'white',
             fontSize: '15px', fontWeight: 600, border: 'none',
             cursor: uploading ? 'wait' : 'pointer',
             transition: 'all 0.2s',

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { C } from '../theme'
 import { motion } from 'framer-motion'
 import { GeminiLiveAdapter } from '../voice/GeminiLiveAdapter.js'
 import { BlobRenderer } from '../renderer/BlobRenderer.js'
@@ -71,7 +72,7 @@ function Assessment({ config, onComplete }) {
         const renderer = new BlobRenderer()
         if (destroyed) return
         renderer.mount(rendererContainerRef.current)
-        renderer.setTheme({ primary: '#D4A853' })
+        renderer.setTheme({ primary: C.goldSoft })
         rendererRef.current = renderer
 
         // Create voice adapter
@@ -395,7 +396,7 @@ const styles = {
     height: '48px',
     borderRadius: '50%',
     background: 'rgba(239, 68, 68, 0.15)',
-    color: '#EF4444',
+    color: C.danger,
     fontSize: '24px',
     fontWeight: '700',
     display: 'flex',

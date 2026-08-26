@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { C } from '../theme'
 import { motion, AnimatePresence } from 'framer-motion'
 import { verifyInvite, markInviteUsed } from '../lib/invites.js'
 import { saveTestResults, saveInterviewResults } from '../lib/supabase.js'
@@ -15,19 +16,19 @@ const TRACK_INFO = {
     label: 'STEM & AI',
     icon: '🤖',
     desc: 'A Python coding challenge — 30 questions, 10 minutes. Navigate freely, no pressure.',
-    color: '#3B82F6',
+    color: C.trackCode,
   },
   arts: {
     label: 'Creative Arts',
     icon: '🎨',
     desc: 'A creative prompt — upload your work (image, video, audio) and write a short description.',
-    color: '#EC4899',
+    color: C.trackArts,
   },
   business: {
     label: 'Business & Entrepreneurship',
     icon: '💡',
     desc: '15 case study questions — strategic thinking scenarios, 15 minutes.',
-    color: '#F59E0B',
+    color: C.warning,
   },
 }
 
@@ -146,286 +147,286 @@ export default function InviteTest({ inviteCode, onReset }) {
         label: 'Code Interpretation',
         icon: '💬',
         desc: 'A short chat with Scout about the chatbot you built. Just a few minutes — walk her through what you made and how it works.',
-        color: '#C9963A',
+        color: C.gold,
       }
     : isPostCounsellor
       ? {
           label: 'Parent Call · with Beverly',
           icon: '🎙️',
           desc: 'A 15 to 20 minute call with Beverly, one of our coordinators, intended for the parents. Beverly will walk you through what the Wild Minds Fellowship actually is, the dates, and an important choice for your family.',
-          color: '#C9963A',
+          color: C.gold,
         }
       : isDayOneCheckin
         ? {
             label: 'Day 1 Check-in · with Scout',
             icon: '🎙️',
             desc: 'A short, friendly catch-up with Scout after your first day of the Fellowship. Just a few minutes — she wants to hear how it went.',
-            color: '#C9963A',
+            color: C.gold,
           }
         : isDayTwoCheckin
           ? {
               label: 'Day 2 + 3 Review · with Coach Nova',
               icon: '🎙️',
               desc: 'A proper review chat with Coach Nova after Days 2 and 3. Around 30 to 40 minutes. Your coaches will be listening in. Find a quiet spot.',
-              color: '#C9963A',
+              color: C.gold,
             }
           : isDayThreeFollowup
             ? {
                 label: 'Follow-up Call · with Coach Nova',
                 icon: '🎙️',
                 desc: 'A long catch-up with Coach Nova. Around 60 to 90 minutes. He wants the full picture of your day, your project thinking, and a proper chat about what you love. Find a really quiet spot and settle in.',
-                color: '#C9963A',
+                color: C.gold,
               }
             : isWeekendPlan
               ? {
                   label: 'Weekend Plan · with Beverly',
                   icon: '🎙️',
                   desc: 'A long chat with Beverly to plan your weekend in Kuala Lumpur. Around 45 to 60 minutes. She wants to know what would actually make this weekend yours.',
-                  color: '#C9963A',
+                  color: C.gold,
                 }
               : isPostCampPushback
                 ? {
                     label: 'Post-Camp Call · with Coach Nova',
                     icon: '🎙️',
                     desc: 'A serious call with Coach Nova. The camp was fun. The work starts now. 35 to 50 minutes. Find a quiet spot and be ready to be straight.',
-                    color: '#C9963A',
+                    color: C.gold,
                   }
                 : isPostCampWrap
                   ? {
                       label: 'Camp Wrap · with Coach Nova',
                       icon: '🎙️',
                       desc: 'A warm wrap-up with Coach Nova. The camp is done. Time to talk about how it went and what comes next. 25 to 35 minutes.',
-                      color: '#C9963A',
+                      color: C.gold,
                     }
                   : isScopeCall
                     ? {
                         label: 'Scope Call · with Coach Nova',
                         icon: '🎙️',
                         desc: 'A working call with Coach Nova. The school AI is a go. Time to start scoping the project. 30 to 40 minutes.',
-                        color: '#C9963A',
+                        color: C.gold,
                       }
                     : isIdeaCheckin
                     ? {
                         label: 'Idea Check-in · with Coach Nova',
                         icon: '🎙️',
                         desc: 'A relaxed call with Coach Nova. He wants to hear how you like the project idea, any suggestions you have, and to set your next step. About 15 to 20 minutes.',
-                        color: '#C9963A',
+                        color: C.gold,
                       }
                     : isBuildKickoff
                     ? {
                         label: 'Build Kickoff · with Coach Nova',
                         icon: '🎙️',
                         desc: 'A full hour with Coach Nova. He walks you through everything you need to do to start building, step by step, and stays with you after. Be at your laptop. About 1 hour.',
-                        color: '#C9963A',
+                        color: C.gold,
                       }
                     : isNamingCall
                     ? {
                         label: 'Naming & Next Steps · with Coach Nova',
                         icon: '🎙️',
                         desc: 'A chat with Coach Nova about naming your service, a few next steps, and some good news from your uncle. About 20 to 30 minutes.',
-                        color: '#C9963A',
+                        color: C.gold,
                       }
                     : isMarketingCall
                     ? {
                         label: 'Marketing & Website · with Coach Nova',
                         icon: '🎙️',
                         desc: 'A working call with Coach Nova about getting your service out there, by email and a website. About 25 to 30 minutes.',
-                        color: '#C9963A',
+                        color: C.gold,
                       }
                     : isFrustratedCall
                       ? {
                           label: 'Pace Call · with Coach Nova',
                           icon: '🎙️',
                           desc: 'A direct call with Coach Nova about pace, website feedback, and the project framework. 30 to 40 minutes. Find a quiet spot.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isTensraCall
                       ? {
                           label: 'Website Review & Build Plan · with Coach Nova',
                           icon: '🎙️',
                           desc: 'Show Coach Nova the website, sort out the hero, then plan the app build together. A long one, an hour or more. Find a quiet spot and settle in.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isNameserverCall
                       ? {
                           label: 'Domain & Hosting Setup · with Coach Nova',
                           icon: '🎙️',
                           desc: 'Coach Nova walks you through pointing tensra.app and lining up hosting, then sets up Saturday to deploy the app together. Find a quiet spot.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isHostingUpdateCall
                       ? {
                           label: 'Site Live & App Next · with Coach Nova',
                           icon: '🎙️',
                           desc: 'Coach Nova has updates: the site is live on tensra.app, built on your design, and the app is nearly ready. Come with your questions.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isInstallCall
                       ? {
                           label: 'Laptop Setup & Install · with Coach Nova',
                           icon: '🎙️',
                           desc: 'The MSI is clean and ready. Coach Nova walks you through installing Android Studio and Flutter so you can start building. Have your laptop with you.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isBuildReviewCall
                       ? {
                           label: 'Dashboard Build Review · with Coach Nova',
                           icon: '🎙️',
                           desc: 'Two sections are live: Home and the AI Tutor. Coach Nova goes through both lessons and your homework with you, then sets up Section 3. Have the dashboard open.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isModulesReviewCall
                       ? {
                           label: 'Four Modules Review · with Coach Nova',
                           icon: '🎙️',
                           desc: 'All four modules are live. Coach Nova goes through each one and asks you questions to make sure you understand every function. Have the dashboard and all four lessons ready.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isModule5Call
                       ? {
                           label: 'Module 5 Review · with Coach Nova',
                           icon: '🎙️',
                           desc: 'The last call cut out, but you have the first four. Now we finish with the fifth module, Timetable and Attendance. Have the dashboard and Lesson 5 ready.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isModule6Call
                       ? {
                           label: 'Module 6 Review · with Coach Nova',
                           icon: '🎙️',
                           desc: "Today's module went live: the game layer, Achievements and Leaderboard. Coach Nova explains it and asks you to walk it back. Have the dashboard and Lesson 6 ready.",
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isFullReviewCall
                       ? {
                           label: 'Full Dashboard Run-Through · with Coach Nova',
                           icon: '🎙️',
                           desc: 'Ten of eleven sections are live. Coach Nova runs you through everything built so far, section by section, and has you explain it back. A longer call. Have the whole dashboard open.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isChatHistoryCall
                       ? {
                           label: 'Finished Dashboard · with Coach Nova',
                           icon: '🎙️',
                           desc: 'The last section, Chat History, is live, so the whole Student dashboard is done. Coach Nova talks it through and tells you what comes next. Have the dashboard open.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isResumeCall
                       ? {
                           label: 'Quick Reconnect · with Coach Nova',
                           icon: '🎙️',
                           desc: 'Our last call got cut off. A quick one to finish anything left and answer anything you want to ask.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isLesson17Call
                       ? {
                           label: 'I Found Two More · with Coach Nova',
                           icon: '🎙️',
                           desc: 'Lesson 17 asked you to find a rule I was still breaking. Within an hour of sending it, I found two more myself. Plus two decisions that are yours.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isTabsCall
                       ? {
                           label: 'Five Slots, Six Sections · with Coach Nova',
                           icon: '🎙️',
                           desc: 'Your jump is fixed. Now two decisions that the Flutter app will be built from, and both of them are yours to make.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isAppShellCall
                       ? {
                           label: 'You Were Right Twice · with Coach Nova',
                           icon: '🎙️',
                           desc: 'Your Telugu fix is done and the scroller you argued for is built. Bring your phone: the student dashboard is now an app, and what you make of it decides how we build the Flutter one.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isLesson16Call
                       ? {
                           label: 'You Can Sign In Now · with Coach Nova',
                           icon: '🎙️',
                           desc: 'The door is on. Four accounts, four dashboards, one login. We go through Lesson 16, including a mistake I nearly shipped, and you try to break the guard while I watch.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isLesson15Call
                       ? {
                           label: 'Lesson 15 & One Argument · with Coach Nova',
                           icon: '🎙️',
                           desc: 'Your friend\u2019s language switcher is built and live. We go through Lesson 15, and then I want a proper argument with you about the scroller you asked for.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isRedesign2Call
                       ? {
                           label: 'Picking Up Where We Cut · with Coach Nova',
                           icon: '🎙️',
                           desc: 'The line dropped last time, and we had already been through nearly everything. This one is short. Two questions for you, and then anything you have for me.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isRedesignCall
                       ? {
                           label: 'The Redesign & Today · with Coach Nova',
                           icon: '🎙️',
                           desc: 'The whole site has been redesigned and made to work on a phone, and it is live. Coach Nova goes through what changed, four things that were genuinely broken, and what you both do today.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isAdmin3Call
                       ? {
                           label: 'Every Dashboard Finished · with Coach Nova',
                           icon: '🎙️',
                           desc: 'Reports, Announcements and Settings are live, so all four dashboards are done. Coach Nova goes through the last three and what the final piece really means.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isAdmin2Call
                       ? {
                           label: 'Attendance, Fees & Knowledge Base · with Coach Nova',
                           icon: '🎙️',
                           desc: 'Three more Admin sections, and these are about judgement more than code. Coach Nova will mostly ask you why. Have Lesson 13 ready.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isAdminCall
                       ? {
                           label: 'The Admin Dashboard · with Coach Nova',
                           icon: '🎙️',
                           desc: 'The last dashboard has begun. Coach Nova goes through Overview, Students and Staff, and the screens that can do real harm. Have it open.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isAdminBriefCall
                       ? {
                           label: 'Finishing Up · with Coach Nova',
                           icon: '🎙️',
                           desc: 'Our call cut off with one thing left: the Admin dashboard, why it matters most and why it is the riskiest. A short one.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isParentCall
                       ? {
                           label: 'The Parent Dashboard · with Coach Nova',
                           icon: '🎙️',
                           desc: 'The third dashboard is finished. Coach Nova goes through it and Lesson 11 with you, especially the child switcher. Have it open.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isTeacherFullCall
                       ? {
                           label: 'The Whole Teacher Dashboard · with Coach Nova',
                           icon: '🎙️',
                           desc: 'All eight sections are finished. Coach Nova runs you through the entire Teacher dashboard and you explain it back. You were asked to prepare, so come ready.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isTeacherCall
                       ? {
                           label: 'Teacher Dashboard · with Coach Nova',
                           icon: '🎙️',
                           desc: 'The second dashboard has begun. Coach Nova talks through the Teacher dashboard and Lesson 9, and has you explain it back. Have it open.',
-                          color: '#C9963A',
+                          color: C.gold,
                         }
                       : isPostAdmission
           ? {
               label: 'Counsellor Session · with Sophie',
               icon: '🎙️',
               desc: 'A longer chat (around 45 minutes) with Sophie, one of our counsellors. She wants to get to know you properly so we can pick the right camp for you.',
-              color: '#C9963A',
+              color: C.gold,
             }
           : {
               label: 'Top 50 Interview',
               icon: '🎙️',
               desc: 'A short conversation with Scout — congratulations on reaching the top 50! You\'ll chat about your Challenge project and we\'ll explain scholarships.',
-              color: '#C9963A',
+              color: C.gold,
             }
 
   return (
@@ -458,7 +459,7 @@ export default function InviteTest({ inviteCode, onReset }) {
           <p style={styles.errorMsg}>{errorMsg}</p>
           <p style={styles.errorHint}>
             Make sure you're using the exact link that was sent to you. If you think this is a mistake, contact{' '}
-            <a href="mailto:hello@fizzmind.com" style={{ color: '#C9963A' }}>hello@fizzmind.com</a>.
+            <a href="mailto:hello@fizzmind.com" style={{ color: C.gold }}>hello@fizzmind.com</a>.
           </p>
           <a href="https://fizzmind.com" style={styles.backBtn}>← Back to Fizzmind</a>
         </motion.div>
@@ -529,7 +530,7 @@ export default function InviteTest({ inviteCode, onReset }) {
 
             <button
               onClick={() => setPhase('test')}
-              style={{ ...styles.startBtn, background: trackInfo.color, color: invite.track === 'stem' ? '#fff' : '#06060B' }}
+              style={{ ...styles.startBtn, background: trackInfo.color, color: invite.track === 'stem' ? '#fff' : C.ink }}
             >
               Start Challenge →
             </button>
@@ -1021,7 +1022,7 @@ export default function InviteTest({ inviteCode, onReset }) {
             </div>
             <button
               onClick={() => setPhase('interview')}
-              style={{ ...styles.startBtn, background: interviewInfo.color, color: '#0D0F12' }}
+              style={{ ...styles.startBtn, background: interviewInfo.color, color: `${C.ground}` }}
             >
               {isCodeInterview ? 'Start Chat →' : isPostCounsellor ? 'Start Call with Beverly →' : isPostAdmission ? 'Start Session with Sophie →' : isDayOneCheckin ? 'Start Check-in with Scout →' : isDayTwoCheckin ? 'Start Review with Coach Nova →' : isDayThreeFollowup ? 'Start Call with Coach Nova →' : isWeekendPlan ? 'Start Weekend Plan with Beverly →' : isPostCampPushback ? 'Start Call with Coach Nova →' : isPostCampWrap ? 'Start Wrap with Coach Nova →' : isScopeCall ? 'Start Scope Call with Coach Nova →' : isIdeaCheckin ? 'Start Check-in with Coach Nova →' : isBuildKickoff ? 'Start Build Kickoff with Coach Nova →' : isNamingCall ? 'Start Call with Coach Nova →' : isMarketingCall ? 'Start Call with Coach Nova →' : isFrustratedCall ? 'Start Call with Coach Nova →' : isTensraCall ? 'Start Call with Coach Nova →' : isNameserverCall ? 'Start Call with Coach Nova →' : isHostingUpdateCall ? 'Start Call with Coach Nova →' : isInstallCall ? 'Start Call with Coach Nova →' : isBuildReviewCall ? 'Start Call with Coach Nova →' : isModulesReviewCall ? 'Start Call with Coach Nova →' : isModule5Call ? 'Start Call with Coach Nova →' : isModule6Call ? 'Start Call with Coach Nova →' : isFullReviewCall ? 'Start Call with Coach Nova →' : isChatHistoryCall ? 'Start Call with Coach Nova →' : isResumeCall ? 'Start Call with Coach Nova →' : isTeacherCall ? 'Start Call with Coach Nova →' : isTeacherFullCall ? 'Start Call with Coach Nova →' : isParentCall ? 'Start Call with Coach Nova →' : isAdminBriefCall ? 'Start Call with Coach Nova →' : isAdminCall ? 'Start Call with Coach Nova →' : isAdmin2Call ? 'Start Call with Coach Nova →' : isAdmin3Call ? 'Start Call with Coach Nova →' : isRedesignCall ? 'Start Call with Coach Nova →' : isRedesign2Call ? 'Start Call with Coach Nova →' : isLesson15Call ? 'Start Call with Coach Nova →' : isLesson16Call ? 'Start Call with Coach Nova →' : isAppShellCall ? 'Start Call with Coach Nova →' : isTabsCall ? 'Start Call with Coach Nova →' : isLesson17Call ? 'Start Call with Coach Nova →' : 'Start Interview →'}
             </button>
@@ -1091,7 +1092,7 @@ const styles = {
   page: {
     width: '100%',
     minHeight: '100vh',
-    background: '#06060B',
+    background: C.ink,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1207,7 +1208,7 @@ const styles = {
   center: {
     width: '100%',
     minHeight: '100vh',
-    background: '#06060B',
+    background: C.ink,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -1219,7 +1220,7 @@ const styles = {
     width: '40px',
     height: '40px',
     border: '3px solid rgba(201,150,58,0.15)',
-    borderTop: '3px solid #C9963A',
+    borderTop: `3px solid ${C.gold}`,
     borderRadius: '50%',
     animation: 'spin 0.8s linear infinite',
     marginBottom: '16px',

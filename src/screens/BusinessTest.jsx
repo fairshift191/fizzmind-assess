@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { C } from '../theme'
 import { motion } from 'framer-motion'
 import { BUSINESS_QUESTIONS } from '../assessment/business-questions.js'
 
@@ -62,7 +63,7 @@ export default function BusinessTest({ studentName, onComplete }) {
       exit={{ opacity: 0 }}
       style={{
         minHeight: '100vh',
-        background: '#0A0B0F',
+        background: C.ground,
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -70,19 +71,19 @@ export default function BusinessTest({ studentName, onComplete }) {
       {/* Top bar */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 10,
-        background: '#0D0F14', borderBottom: '1px solid #1E2130',
+        background: `${C.ground}`, borderBottom: `1px solid ${C.panelHi}`,
         padding: '12px 24px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
         <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>
-          <span style={{ fontWeight: 600, color: '#F59E0B' }}>Business Challenge</span>
+          <span style={{ fontWeight: 600, color: C.warning }}>Business Challenge</span>
           <span style={{ margin: '0 8px' }}>·</span>
           {studentName}
         </div>
 
         <div style={{
           fontSize: '18px', fontWeight: 700, fontFamily: "'Fira Code', monospace",
-          color: timeLeft <= 30 ? '#EF4444' : timeLeft <= 60 ? '#F59E0B' : '#E8E8ED',
+          color: timeLeft <= 30 ? C.danger : timeLeft <= 60 ? C.warning : C.text,
         }}>
           {mm}:{ss}
         </div>
@@ -92,8 +93,8 @@ export default function BusinessTest({ studentName, onComplete }) {
           disabled={Object.keys(answers).length === 0}
           style={{
             padding: '8px 20px', borderRadius: '8px',
-            background: Object.keys(answers).length > 0 ? '#F59E0B' : '#333',
-            color: Object.keys(answers).length > 0 ? '#0A0B0F' : '#666',
+            background: Object.keys(answers).length > 0 ? C.warning : '#333',
+            color: Object.keys(answers).length > 0 ? C.ground : '#666',
             fontSize: '13px', fontWeight: 600, border: 'none', cursor: 'pointer',
           }}
         >
@@ -113,11 +114,11 @@ export default function BusinessTest({ studentName, onComplete }) {
             style={{
               width: '28px', height: '28px', borderRadius: '6px',
               fontSize: '11px', fontWeight: 600, border: 'none', cursor: 'pointer',
-              background: i === current ? '#F59E0B'
+              background: i === current ? C.warning
                 : answers[i] !== undefined ? 'rgba(245,158,11,0.2)'
-                : '#1A1D26',
-              color: i === current ? '#0A0B0F'
-                : answers[i] !== undefined ? '#F59E0B'
+                : C.panel,
+              color: i === current ? C.ground
+                : answers[i] !== undefined ? C.warning
                 : 'rgba(255,255,255,0.3)',
             }}
           >
@@ -137,7 +138,7 @@ export default function BusinessTest({ studentName, onComplete }) {
         </div>
 
         <p style={{
-          fontSize: '17px', lineHeight: 1.7, color: '#E8E8ED',
+          fontSize: '17px', lineHeight: 1.7, color: C.text,
           fontWeight: 500, marginBottom: '28px',
         }}>
           {q.question}
@@ -153,9 +154,9 @@ export default function BusinessTest({ studentName, onComplete }) {
                 style={{
                   display: 'flex', alignItems: 'flex-start', gap: '12px',
                   padding: '14px 16px', borderRadius: '12px',
-                  background: isSelected ? 'rgba(245,158,11,0.1)' : '#1A1D26',
-                  border: `1.5px solid ${isSelected ? '#F59E0B' : '#2A2D36'}`,
-                  color: '#E8E8ED', fontSize: '14px', lineHeight: 1.5,
+                  background: isSelected ? 'rgba(245,158,11,0.1)' : C.panel,
+                  border: `1.5px solid ${isSelected ? C.warning : C.line}`,
+                  color: C.text, fontSize: '14px', lineHeight: 1.5,
                   textAlign: 'left', cursor: 'pointer', transition: 'all 0.15s',
                 }}
               >
@@ -163,8 +164,8 @@ export default function BusinessTest({ studentName, onComplete }) {
                   width: '24px', height: '24px', borderRadius: '50%', flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '12px', fontWeight: 700,
-                  background: isSelected ? '#F59E0B' : 'rgba(255,255,255,0.06)',
-                  color: isSelected ? '#0A0B0F' : 'rgba(255,255,255,0.4)',
+                  background: isSelected ? C.warning : 'rgba(255,255,255,0.06)',
+                  color: isSelected ? C.ground : 'rgba(255,255,255,0.4)',
                 }}>
                   {String.fromCharCode(65 + i)}
                 </span>
@@ -178,7 +179,7 @@ export default function BusinessTest({ studentName, onComplete }) {
       {/* Bottom nav */}
       <div style={{
         position: 'fixed', bottom: 0, left: 0, right: 0,
-        background: '#0D0F14', borderTop: '1px solid #1E2130',
+        background: `${C.ground}`, borderTop: `1px solid ${C.panelHi}`,
         padding: '14px 24px',
         display: 'flex', justifyContent: 'space-between',
       }}>
@@ -187,8 +188,8 @@ export default function BusinessTest({ studentName, onComplete }) {
           disabled={current === 0}
           style={{
             padding: '10px 24px', borderRadius: '8px',
-            background: '#1A1D26', border: '1px solid #2A2D36',
-            color: current === 0 ? '#444' : '#E8E8ED',
+            background: C.panel, border: `1px solid ${C.line}`,
+            color: current === 0 ? '#444' : C.text,
             fontSize: '13px', fontWeight: 500, cursor: current === 0 ? 'default' : 'pointer',
           }}
         >
@@ -199,7 +200,7 @@ export default function BusinessTest({ studentName, onComplete }) {
             onClick={() => setCurrent(Math.min(TOTAL - 1, current + 1))}
             style={{
               padding: '10px 24px', borderRadius: '8px',
-              background: '#F59E0B', color: '#0A0B0F',
+              background: C.warning, color: C.ground,
               fontSize: '13px', fontWeight: 600, border: 'none', cursor: 'pointer',
             }}
           >
@@ -210,7 +211,7 @@ export default function BusinessTest({ studentName, onComplete }) {
             onClick={handleSubmit}
             style={{
               padding: '10px 24px', borderRadius: '8px',
-              background: '#10B981', color: 'white',
+              background: C.success, color: 'white',
               fontSize: '13px', fontWeight: 600, border: 'none', cursor: 'pointer',
             }}
           >

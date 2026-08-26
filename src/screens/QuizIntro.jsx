@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { C } from '../theme'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GeminiLiveAdapter } from '../voice/GeminiLiveAdapter.js'
 import { BlobRenderer } from '../renderer/BlobRenderer.js'
@@ -50,7 +51,7 @@ function QuizIntro({ config, onStart, onBack }) {
         const renderer = new BlobRenderer()
         if (destroyed) return
         renderer.mount(rendererContainerRef.current)
-        renderer.setTheme({ primary: '#3B82F6' })
+        renderer.setTheme({ primary: C.trackCode })
         rendererRef.current = renderer
 
         const adapter = new GeminiLiveAdapter()
@@ -310,8 +311,8 @@ const styles = {
   startBtn: {
     fontSize: '14px',
     fontWeight: '600',
-    color: '#06060B',
-    background: '#3B82F6',
+    color: C.ink,
+    background: C.trackCode,
     border: 'none',
     borderRadius: 'var(--radius-sm)',
     padding: '12px 32px',

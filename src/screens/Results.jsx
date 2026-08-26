@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { C } from '../theme'
 import { useEffect, useRef } from 'react'
 import { CAMPS, TRACKS, DIMENSIONS } from '../assessment/dimensions.js'
 import { saveAssessmentResults } from '../lib/supabase.js'
@@ -173,7 +174,7 @@ function Results({ results, onReset }) {
               <div style={styles.quizStat}>
                 <div style={{
                   ...styles.quizStatValue,
-                  color: quizResults.percentage >= 70 ? '#10B981' : quizResults.percentage >= 50 ? '#D4A853' : '#F59E0B',
+                  color: quizResults.percentage >= 70 ? C.success : quizResults.percentage >= 50 ? C.goldSoft : C.warning,
                 }}>{quizResults.percentage}%</div>
                 <div style={styles.quizStatLabel}>Score</div>
               </div>
@@ -207,7 +208,7 @@ function Results({ results, onReset }) {
                   <span style={styles.quizQTopic}>{q.topic}</span>
                   <span style={{
                     ...styles.quizQResult,
-                    color: q.selected === undefined ? 'var(--text-tertiary)' : q.isCorrect ? '#10B981' : '#EF4444',
+                    color: q.selected === undefined ? 'var(--text-tertiary)' : q.isCorrect ? C.success : C.danger,
                   }}>
                     {q.selected === undefined ? 'Skipped' : q.isCorrect ? '\u2713' : '\u2717'}
                   </span>
@@ -234,10 +235,10 @@ function Results({ results, onReset }) {
 }
 
 function getScoreColor(score) {
-  if (score >= 8) return '#10B981'
-  if (score >= 6) return '#D4A853'
-  if (score >= 4) return '#F59E0B'
-  return '#EF4444'
+  if (score >= 8) return C.success
+  if (score >= 6) return C.goldSoft
+  if (score >= 4) return C.warning
+  return C.danger
 }
 
 const styles = {
@@ -274,7 +275,7 @@ const styles = {
     height: '56px',
     borderRadius: '50%',
     background: 'rgba(16, 185, 129, 0.15)',
-    color: '#10B981',
+    color: C.success,
     fontSize: '28px',
     fontWeight: '700',
     display: 'flex',
@@ -528,7 +529,7 @@ const styles = {
     padding: '14px 32px',
     fontSize: '15px',
     fontWeight: '600',
-    color: '#06060B',
+    color: C.ink,
     background: 'var(--brand-primary)',
     border: 'none',
     borderRadius: 'var(--radius-sm)',

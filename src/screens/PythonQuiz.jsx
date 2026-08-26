@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { C } from '../theme'
 import { motion, AnimatePresence } from 'framer-motion'
 import { selectQuestions } from '../assessment/questions.js'
 
@@ -101,7 +102,7 @@ function PythonQuiz({ config, onComplete }) {
 
         <div style={{
           ...styles.timer,
-          color: isCriticalTime ? '#EF4444' : isLowTime ? '#F59E0B' : 'var(--brand-primary)',
+          color: isCriticalTime ? C.danger : isLowTime ? C.warning : 'var(--brand-primary)',
           background: isCriticalTime ? 'rgba(239, 68, 68, 0.12)' : isLowTime ? 'rgba(245, 158, 11, 0.12)' : 'rgba(var(--brand-primary-rgb), 0.12)',
           animation: isCriticalTime ? 'pulse 1s ease infinite' : 'none',
         }}>
@@ -186,7 +187,7 @@ function PythonQuiz({ config, onComplete }) {
                       ? 'var(--brand-primary)'
                       : 'var(--surface-elevated)',
                     color: selectedAnswer === i
-                      ? '#06060B'
+                      ? C.ink
                       : 'var(--text-tertiary)',
                   }}>
                     {String.fromCharCode(65 + i)}
@@ -228,7 +229,7 @@ function PythonQuiz({ config, onComplete }) {
             style={{
               ...styles.navBtn,
               background: 'var(--brand-primary)',
-              color: '#06060B',
+              color: C.ink,
               fontWeight: '600',
             }}
           >
@@ -298,7 +299,7 @@ const styles = {
   submitButton: {
     fontSize: '13px',
     fontWeight: '600',
-    color: '#06060B',
+    color: C.ink,
     background: 'var(--brand-primary)',
     border: 'none',
     borderRadius: 'var(--radius-sm)',
