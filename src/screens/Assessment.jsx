@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { C, W, K, tint } from '../theme'
+import { C, W, K, tint, T } from '../theme'
 import { motion } from 'framer-motion'
 import { GeminiLiveAdapter } from '../voice/GeminiLiveAdapter.js'
 import { BlobRenderer } from '../renderer/BlobRenderer.js'
@@ -311,7 +311,7 @@ const styles = {
     position: 'absolute',
     top: 'clamp(16px, 2vh, 32px)',
     left: 'clamp(20px, 2.5vw, 40px)',
-    fontSize: '14px',
+    fontSize: T.md,
     fontWeight: '500',
     color: 'var(--text-secondary)',
     zIndex: 30,
@@ -321,7 +321,7 @@ const styles = {
     position: 'absolute',
     top: 'clamp(16px, 2vh, 32px)',
     right: 'clamp(20px, 2.5vw, 40px)',
-    fontSize: '12px',
+    fontSize: T.sm,
     fontWeight: '500',
     color: 'var(--text-tertiary)',
     background: 'var(--surface-glass)',
@@ -348,13 +348,13 @@ const styles = {
     background: tint(C.ink, 80),
   },
   loadingText: {
-    fontSize: '18px',
+    fontSize: T.h3,
     fontWeight: '400',
     color: 'var(--text-primary)',
     marginBottom: '8px',
   },
   loadingHint: {
-    fontSize: '13px',
+    fontSize: T.base,
     color: 'var(--text-tertiary)',
   },
   statusBar: {
@@ -367,7 +367,7 @@ const styles = {
     gap: '8px',
   },
   statusPill: {
-    fontSize: '12px',
+    fontSize: T.sm,
     fontWeight: '500',
     color: 'var(--brand-primary)',
     background: 'rgba(var(--brand-primary-rgb), 0.12)',
@@ -397,7 +397,7 @@ const styles = {
     borderRadius: '50%',
     background: tint(C.danger, 15),
     color: C.danger,
-    fontSize: '24px',
+    fontSize: T.h2,
     fontWeight: '700',
     display: 'flex',
     alignItems: 'center',
@@ -405,20 +405,20 @@ const styles = {
     margin: '0 auto 16px',
   },
   errorTitle: {
-    fontSize: '18px',
+    fontSize: T.h3,
     fontWeight: '600',
     color: 'var(--text-primary)',
     margin: '0 0 8px',
   },
   errorText: {
-    fontSize: '14px',
+    fontSize: T.md,
     color: 'var(--text-secondary)',
     margin: '0 0 20px',
     lineHeight: 1.5,
   },
   errorButton: {
     padding: '10px 24px',
-    fontSize: '14px',
+    fontSize: T.md,
     fontWeight: '500',
     color: 'var(--text-primary)',
     background: 'var(--surface-elevated)',

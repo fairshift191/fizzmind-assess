@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { C, W, K, tint } from '../theme'
+import { C, W, K, tint, T } from '../theme'
 import { motion } from 'framer-motion'
 import { BUSINESS_QUESTIONS } from '../assessment/business-questions.js'
 
@@ -75,14 +75,14 @@ export default function BusinessTest({ studentName, onComplete }) {
         padding: '12px 24px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
-        <div style={{ fontSize: '13px', color: W[45] }}>
+        <div style={{ fontSize: T.base, color: W[45] }}>
           <span style={{ fontWeight: 600, color: C.warning }}>Business Challenge</span>
           <span style={{ margin: '0 8px' }}>·</span>
           {studentName}
         </div>
 
         <div style={{
-          fontSize: '18px', fontWeight: 700, fontFamily: "'Fira Code', monospace",
+          fontSize: T.h3, fontWeight: 700, fontFamily: "'Fira Code', monospace",
           color: timeLeft <= 30 ? C.danger : timeLeft <= 60 ? C.warning : C.text,
         }}>
           {mm}:{ss}
@@ -95,7 +95,7 @@ export default function BusinessTest({ studentName, onComplete }) {
             padding: '8px 20px', borderRadius: '8px',
             background: Object.keys(answers).length > 0 ? C.warning : C.mute,
             color: Object.keys(answers).length > 0 ? C.ground : C.muteText,
-            fontSize: '13px', fontWeight: 600, border: 'none', cursor: 'pointer',
+            fontSize: T.base, fontWeight: 600, border: 'none', cursor: 'pointer',
           }}
         >
           Submit ({Object.keys(answers).length}/{TOTAL})
@@ -113,7 +113,7 @@ export default function BusinessTest({ studentName, onComplete }) {
             onClick={() => setCurrent(i)}
             style={{
               width: '28px', height: '28px', borderRadius: '6px',
-              fontSize: '11px', fontWeight: 600, border: 'none', cursor: 'pointer',
+              fontSize: T.xs, fontWeight: 600, border: 'none', cursor: 'pointer',
               background: i === current ? C.warning
                 : answers[i] !== undefined ? tint(C.warning, 20)
                 : C.panel,
@@ -133,12 +133,12 @@ export default function BusinessTest({ studentName, onComplete }) {
         maxWidth: '700px', width: '100%', margin: '0 auto',
         padding: '20px 24px 120px',
       }}>
-        <div style={{ fontSize: '12px', color: W[25], marginBottom: '12px' }}>
+        <div style={{ fontSize: T.sm, color: W[25], marginBottom: '12px' }}>
           Question {current + 1} of {TOTAL}
         </div>
 
         <p style={{
-          fontSize: '17px', lineHeight: 1.7, color: C.text,
+          fontSize: T.xl, lineHeight: 1.7, color: C.text,
           fontWeight: 500, marginBottom: '28px',
         }}>
           {q.question}
@@ -156,14 +156,14 @@ export default function BusinessTest({ studentName, onComplete }) {
                   padding: '14px 16px', borderRadius: '12px',
                   background: isSelected ? tint(C.warning, 10) : C.panel,
                   border: `1.5px solid ${isSelected ? C.warning : C.line}`,
-                  color: C.text, fontSize: '14px', lineHeight: 1.5,
+                  color: C.text, fontSize: T.md, lineHeight: 1.5,
                   textAlign: 'left', cursor: 'pointer', transition: 'all 0.15s',
                 }}
               >
                 <span style={{
                   width: '24px', height: '24px', borderRadius: '50%', flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '12px', fontWeight: 700,
+                  fontSize: T.sm, fontWeight: 700,
                   background: isSelected ? C.warning : W[4],
                   color: isSelected ? C.ground : W[35],
                 }}>
@@ -190,7 +190,7 @@ export default function BusinessTest({ studentName, onComplete }) {
             padding: '10px 24px', borderRadius: '8px',
             background: C.panel, border: `1px solid ${C.line}`,
             color: current === 0 ? C.mute : C.text,
-            fontSize: '13px', fontWeight: 500, cursor: current === 0 ? 'default' : 'pointer',
+            fontSize: T.base, fontWeight: 500, cursor: current === 0 ? 'default' : 'pointer',
           }}
         >
           Previous
@@ -201,7 +201,7 @@ export default function BusinessTest({ studentName, onComplete }) {
             style={{
               padding: '10px 24px', borderRadius: '8px',
               background: C.warning, color: C.ground,
-              fontSize: '13px', fontWeight: 600, border: 'none', cursor: 'pointer',
+              fontSize: T.base, fontWeight: 600, border: 'none', cursor: 'pointer',
             }}
           >
             Next
@@ -212,7 +212,7 @@ export default function BusinessTest({ studentName, onComplete }) {
             style={{
               padding: '10px 24px', borderRadius: '8px',
               background: C.success, color: 'white',
-              fontSize: '13px', fontWeight: 600, border: 'none', cursor: 'pointer',
+              fontSize: T.base, fontWeight: 600, border: 'none', cursor: 'pointer',
             }}
           >
             Finish Test

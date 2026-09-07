@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { C, W, K, tint } from '../theme'
+import { C, W, K, tint, T } from '../theme'
 import { motion, AnimatePresence } from 'framer-motion'
 import { verifyInvite, markInviteUsed } from '../lib/invites.js'
 import { saveTestResults, saveInterviewResults } from '../lib/supabase.js'
@@ -1202,7 +1202,7 @@ const styles = {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '8px',
-    fontSize: '11px',
+    fontSize: T.xs,
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: '0.12em',
@@ -1212,20 +1212,20 @@ const styles = {
     marginBottom: '24px',
   },
   iconLarge: {
-    fontSize: '56px',
+    fontSize: T.d3,
     marginBottom: '20px',
     lineHeight: 1,
   },
   title: {
     fontFamily: "'Space Grotesk', sans-serif",
-    fontSize: '28px',
+    fontSize: T.h1,
     fontWeight: '700',
     color: C.white,
     margin: '0 0 10px',
     letterSpacing: '-0.02em',
   },
   subtitle: {
-    fontSize: '16px',
+    fontSize: T.xl,
     color: W[60],
     lineHeight: 1.6,
     margin: '0 0 24px',
@@ -1238,7 +1238,7 @@ const styles = {
     textAlign: 'left',
   },
   infoText: {
-    fontSize: '14px',
+    fontSize: T.md,
     color: W[60],
     lineHeight: 1.6,
     margin: 0,
@@ -1254,7 +1254,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '10px',
-    fontSize: '13px',
+    fontSize: T.base,
     color: W[60],
   },
   ruleDot: {
@@ -1269,7 +1269,7 @@ const styles = {
     padding: '14px 32px',
     borderRadius: '99px',
     border: 'none',
-    fontSize: '15px',
+    fontSize: T.lg,
     fontWeight: '700',
     cursor: 'pointer',
     letterSpacing: '0.01em',
@@ -1277,7 +1277,7 @@ const styles = {
     marginBottom: '24px',
   },
   footerNote: {
-    fontSize: '11px',
+    fontSize: T.xs,
     color: W[15],
     margin: 0,
   },
@@ -1302,24 +1302,24 @@ const styles = {
     marginBottom: '16px',
   },
   loadingText: {
-    fontSize: '14px',
+    fontSize: T.md,
     color: W[35],
   },
-  errorIcon: { fontSize: '48px', marginBottom: '16px' },
+  errorIcon: { fontSize: T.d2, marginBottom: '16px' },
   errorTitle: {
     fontFamily: "'Space Grotesk', sans-serif",
-    fontSize: '24px',
+    fontSize: T.h2,
     fontWeight: '700',
     color: C.white,
     margin: '0 0 12px',
   },
   errorMsg: {
-    fontSize: '16px',
+    fontSize: T.xl,
     color: W[60],
     margin: '0 0 12px',
   },
   errorHint: {
-    fontSize: '13px',
+    fontSize: T.base,
     color: W[35],
     maxWidth: '400px',
     lineHeight: 1.6,
@@ -1333,7 +1333,7 @@ const styles = {
     background: W[4],
     color: W[60],
     border: `1px solid ${W[8]}`,
-    fontSize: '14px',
+    fontSize: T.md,
     fontWeight: '500',
     textDecoration: 'none',
   },

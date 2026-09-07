@@ -87,24 +87,36 @@ hand-picked per component.
 
 ## Type
 
-Eight steps, closed, in `T` from `src/theme.js`.
+Twelve steps, closed, in `T` from `src/theme.js`. Zero literal font sizes remain
+in `src/screens` or `src/components`.
 
 | Token | Size | Use |
 |---|---|---|
 | `T.xs` | 11px | Labels, meta |
-| `T.sm` | 12px | Captions, rules under a heading |
+| `T.sm` | 12px | Captions |
 | `T.base` | 13px | Secondary body |
 | `T.md` | 14px | Default interface text |
 | `T.lg` | 15px | Lead copy |
 | `T.xl` | 16px | Section intros |
-| `T.h2` | 18px | Card headings |
-| `T.h1` | 24px | Screen titles |
+| `T.h3` | 18px | Card headings |
+| `T.h2` | 24px | Screen titles |
+| `T.h1` | 28px | Display |
+| `T.d1` | 32px | Display, large |
+| `T.d2` | 48px | Hero |
+| `T.d3` | 56px | Hero, largest |
+
+112 literal sizes were snapped onto this ramp. Nothing moved more than 2px.
 
 ## Rules
 
 - **No new literal colours, in any form.** Not hex, not shorthand hex, not
   `rgba()`, not inside a longer string like `1px solid …`. If a value has a
   token, use the token.
+
+- **Count every kind of value, not just colours.** The colour pass here was
+  finished and declared clean while 112 literal font sizes sat untouched in the
+  same files, because the audit had been framed as "the colour problem". A ramp
+  you defined and never applied is a document, not a system.
 
 - **Count every form, not the one you are picturing.** This is the rule that
   cost the most to learn. The first pass here found 128 six-digit hex values and

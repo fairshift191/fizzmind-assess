@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { C, W, K, tint } from '../theme'
+import { C, W, K, tint, T } from '../theme'
 import { motion } from 'framer-motion'
 import { CAMPS, TRACKS } from '../assessment/dimensions.js'
 
@@ -250,7 +250,7 @@ const styles = {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '8px',
-    fontSize: '11px',
+    fontSize: T.xs,
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: '0.14em',
@@ -303,7 +303,7 @@ const styles = {
     marginBottom: 'clamp(16px, 2vh, 28px)',
   },
   ribbonItem: {
-    fontSize: '12px',
+    fontSize: T.sm,
     fontWeight: '500',
     color: 'var(--text-secondary)',
     background: W[4],
@@ -328,7 +328,7 @@ const styles = {
   input: {
     width: '100%',
     padding: '10px 14px',
-    fontSize: '13px',
+    fontSize: T.base,
     fontWeight: '400',
     color: 'var(--text-primary)',
     background: K[30],
@@ -340,7 +340,7 @@ const styles = {
   select: {
     width: '100%',
     padding: '10px 14px',
-    fontSize: '13px',
+    fontSize: T.base,
     fontWeight: '400',
     color: 'var(--text-primary)',
     background: K[30],
@@ -360,7 +360,7 @@ const styles = {
   },
   ctaBtn: {
     padding: '16px 40px',
-    fontSize: '15px',
+    fontSize: T.lg,
     fontWeight: '700',
     letterSpacing: '0.01em',
     borderRadius: 'var(--radius-full)',
@@ -371,7 +371,7 @@ const styles = {
     transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
   },
   ctaHint: {
-    fontSize: '12px',
+    fontSize: T.sm,
     color: 'var(--text-tertiary)',
     margin: 0,
   },
@@ -385,7 +385,7 @@ const styles = {
     marginBottom: 'clamp(18px, 2vh, 28px)',
   },
   trackPill: {
-    fontSize: '11px',
+    fontSize: T.xs,
     fontWeight: '500',
     borderRadius: 'var(--radius-full)',
     padding: '4px 12px',
@@ -418,7 +418,7 @@ const styles = {
     color: 'var(--brand-primary)',
   },
   statLabel: {
-    fontSize: '11px',
+    fontSize: T.xs,
     fontWeight: '500',
     color: 'var(--text-tertiary)',
     whiteSpace: 'nowrap',

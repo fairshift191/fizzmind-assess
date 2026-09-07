@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { C, W, K, tint } from '../theme'
+import { C, W, K, tint, T } from '../theme'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GeminiLiveAdapter } from '../voice/GeminiLiveAdapter.js'
 import { BlobRenderer } from '../renderer/BlobRenderer.js'
@@ -247,7 +247,7 @@ const styles = {
     letterSpacing: '-0.02em',
   },
   subtitle: {
-    fontSize: '14px',
+    fontSize: T.md,
     color: 'var(--text-secondary)',
     fontWeight: '300',
     margin: '0 0 24px',
@@ -268,23 +268,23 @@ const styles = {
     border: `1px solid ${W[4]}`,
   },
   itemIcon: {
-    fontSize: '18px',
+    fontSize: T.h3,
     flexShrink: 0,
     marginTop: '1px',
   },
   itemTitle: {
-    fontSize: '13px',
+    fontSize: T.base,
     fontWeight: '600',
     color: 'var(--text-primary)',
     marginBottom: '2px',
   },
   itemText: {
-    fontSize: '12px',
+    fontSize: T.sm,
     color: 'var(--text-secondary)',
     lineHeight: 1.4,
   },
   voiceNote: {
-    fontSize: '12px',
+    fontSize: T.sm,
     color: 'var(--text-secondary)',
     background: tint(C.trackCode, 10),
     border: `1px solid ${tint(C.trackCode, 15)}`,
@@ -298,7 +298,7 @@ const styles = {
     justifyContent: 'center',
   },
   backBtn: {
-    fontSize: '14px',
+    fontSize: T.md,
     fontWeight: '500',
     color: 'var(--text-secondary)',
     background: W[4],
@@ -309,7 +309,7 @@ const styles = {
     transition: 'all 0.2s ease',
   },
   startBtn: {
-    fontSize: '14px',
+    fontSize: T.md,
     fontWeight: '600',
     color: C.ink,
     background: C.trackCode,

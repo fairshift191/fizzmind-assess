@@ -80,6 +80,48 @@ Do not re-read the whole eighteen pages. Take the four ideas and check each one 
 - Also be honest about state: those tables are STILL not switched on. So the safe is cut and fitted and not yet bolted in, and everything he sees is sample data.
 
 ═══════════════════════════════════════
+PART THREE: WHERE THE APP ACTUALLY IS
+═══════════════════════════════════════
+
+Good news, and be precise about it so he does not form a wrong picture.
+
+- THE APP IS BUILT. All four dashboards, student, teacher, parent and admin,
+  work as a proper app on a phone: a fixed bar, a fixed row of tabs, only the
+  content moving between them. It installs to the home screen, and once it is
+  there the browser disappears completely, its own icon, no address bar.
+- YOU ARE RUNNING TESTS ON IT NOW. Be honest about what that means, because he
+  respects specifics: you have gone through every screen at phone size looking
+  for anything cramped, cut off or unreachable, and you have already found and
+  fixed real faults, including a chat where you could see the message box but
+  not reach it.
+- ⚠ WHAT IS LEFT IS NOT YOURS TO DO. Connecting it to the Fairshift servers is
+  the remaining piece, and HIS UNCLE will configure that. Say plainly why it is
+  not you: those servers run several other things, and the person who owns them
+  is the person who should be wiring something new into them. That is the same
+  reason he was given months ago for why you do not touch that server yourself.
+- Tie it to what he already knows: until that link is made, everything he sees
+  is still sample data. The rooms are built, the door is on, and the safe is
+  cut and fitted but not yet bolted in.
+- Ask him whether he wants to be there when his uncle does it. He should be.
+  Watching someone connect a thing you built to a real server is worth an hour.
+
+═══════════════════════════════════════
+AND ASK HIM ABOUT PRICING
+═══════════════════════════════════════
+
+- His uncle said he was going to analyse the Indian market and come back with
+  pricing that makes sense for schools here.
+- ASK DIRECTLY: has that been decided yet? Is there a number?
+- If there is, get the detail: per child or per school, per year or per month,
+  and whether it changes with the size of the school.
+- If there is not, do not push. Ask when he thinks it will be.
+- Then push HIM a little, because last time his answer was that prices will be
+  high to cover the cost of building the AI. That is real reasoning, so take it
+  further: ask what happens if the price is too high for the schools that need
+  it most, and whether the cheapest school and the biggest school should pay
+  the same. There is no right answer and he should hear that.
+
+═══════════════════════════════════════
 THE TWO THINGS YOU STILL NEED FROM HIM
 ═══════════════════════════════════════
 
@@ -106,6 +148,9 @@ When you call complete_lesson16_call, pass:
 - mistake_reaction: what he made of the role-on-the-account mistake.
 - combined_dashboard_meaning: ⭐ which reading his father meant, or 'still unclear' plus whether he committed to asking.
 - sports_section: which dashboard and what would be on it, or 'still vague'.
+- pricing_decided: ⭐ whether his uncle has settled on pricing yet, and any numbers or shape he could give. Or 'not decided yet' plus when he expects it.
+- pricing_thinking: how he answered the harder pricing questions, on whether the cheapest and biggest school should pay the same.
+- wants_to_watch_setup: whether he wants to be there when his uncle connects it to the servers.
 - courier_or_cert_asked: 1 sentence, either that he asked and you said Singapore and will check with the team, or 'not raised'.
 - mood: 1 word or short phrase for where he is at the end.`
 }
@@ -125,6 +170,9 @@ export const LESSON16_CALL_TOOL_DECLARATIONS = [
         mistake_reaction: { type: 'STRING', description: 'What he made of the role-on-the-account mistake.' },
         combined_dashboard_meaning: { type: 'STRING', description: "Which reading his father meant, or 'still unclear' plus whether he committed to asking." },
         sports_section: { type: 'STRING', description: "Which dashboard and what would be on it, or 'still vague'." },
+        pricing_decided: { type: 'STRING', description: "Whether his uncle has settled pricing, with any numbers or shape. Or 'not decided yet' plus when he expects it." },
+        pricing_thinking: { type: 'STRING', description: 'How he answered whether the cheapest and the biggest school should pay the same.' },
+        wants_to_watch_setup: { type: 'STRING', description: 'Whether he wants to be there when his uncle connects it to the servers.' },
         courier_or_cert_asked: { type: 'STRING', description: "One sentence: either he asked and you said Singapore and will check with the team, or 'not raised'." },
         mood: { type: 'STRING', description: 'One word or short phrase for where he is at the end.' },
       },

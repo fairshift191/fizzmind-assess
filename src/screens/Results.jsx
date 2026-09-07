@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { C, W, K, tint } from '../theme'
+import { C, W, K, tint, T } from '../theme'
 import { useEffect, useRef } from 'react'
 import { CAMPS, TRACKS, DIMENSIONS } from '../assessment/dimensions.js'
 import { saveAssessmentResults } from '../lib/supabase.js'
@@ -276,7 +276,7 @@ const styles = {
     borderRadius: '50%',
     background: tint(C.success, 15),
     color: C.success,
-    fontSize: '28px',
+    fontSize: T.h1,
     fontWeight: '700',
     display: 'flex',
     alignItems: 'center',
@@ -308,7 +308,7 @@ const styles = {
     WebkitBackdropFilter: 'blur(var(--blur-glass))',
   },
   summaryLabel: {
-    fontSize: '12px',
+    fontSize: T.sm,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: '0.08em',
@@ -330,12 +330,12 @@ const styles = {
     borderTop: '1px solid var(--surface-glass-border)',
   },
   overallLabel: {
-    fontSize: '13px',
+    fontSize: T.base,
     fontWeight: '500',
     color: 'var(--text-secondary)',
   },
   overallValue: {
-    fontSize: '24px',
+    fontSize: T.h2,
     fontWeight: '700',
     fontFamily: "'Space Grotesk', sans-serif",
     color: 'var(--brand-primary)',
@@ -357,11 +357,11 @@ const styles = {
     WebkitBackdropFilter: 'blur(var(--blur-glass))',
   },
   recEmoji: {
-    fontSize: '32px',
+    fontSize: T.d1,
     marginBottom: '10px',
   },
   recTag: {
-    fontSize: '11px',
+    fontSize: T.xs,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: '0.08em',
@@ -376,20 +376,20 @@ const styles = {
     marginBottom: '6px',
   },
   recDuration: {
-    fontSize: '12px',
+    fontSize: T.sm,
     fontWeight: '500',
     color: 'var(--brand-primary)',
     marginBottom: '6px',
     letterSpacing: '0.03em',
   },
   recDesc: {
-    fontSize: '13px',
+    fontSize: T.base,
     color: 'var(--text-secondary)',
     lineHeight: 1.5,
     margin: '0 0 8px',
   },
   recReasoning: {
-    fontSize: '12px',
+    fontSize: T.sm,
     color: 'var(--text-tertiary)',
     lineHeight: 1.5,
     fontStyle: 'italic',
@@ -402,7 +402,7 @@ const styles = {
     margin: '0 auto clamp(24px, 3vh, 40px)',
   },
   scoresTitle: {
-    fontSize: '13px',
+    fontSize: T.base,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: '0.08em',
@@ -428,16 +428,16 @@ const styles = {
     marginBottom: '8px',
   },
   scoreIcon: {
-    fontSize: '16px',
+    fontSize: T.xl,
   },
   scoreDimName: {
     flex: 1,
-    fontSize: '14px',
+    fontSize: T.md,
     fontWeight: '500',
     color: 'var(--text-primary)',
   },
   scoreValue: {
-    fontSize: '14px',
+    fontSize: T.md,
     fontWeight: '600',
     fontFamily: "'Space Grotesk', sans-serif",
   },
@@ -453,7 +453,7 @@ const styles = {
     borderRadius: '2px',
   },
   scoreNotes: {
-    fontSize: '12px',
+    fontSize: T.sm,
     color: 'var(--text-tertiary)',
     lineHeight: 1.4,
     margin: '8px 0 0',
@@ -476,14 +476,14 @@ const styles = {
     textAlign: 'center',
   },
   quizStatValue: {
-    fontSize: '22px',
+    fontSize: T.h2,
     fontWeight: '700',
     fontFamily: "'Space Grotesk', sans-serif",
     color: 'var(--brand-primary)',
     marginBottom: '4px',
   },
   quizStatLabel: {
-    fontSize: '11px',
+    fontSize: T.xs,
     fontWeight: '500',
     color: 'var(--text-tertiary)',
     textTransform: 'uppercase',
@@ -503,13 +503,13 @@ const styles = {
     border: '1px solid var(--surface-glass-border)',
   },
   quizQNum: {
-    fontSize: '11px',
+    fontSize: T.xs,
     fontWeight: '600',
     color: 'var(--text-tertiary)',
     flexShrink: 0,
   },
   quizQTopic: {
-    fontSize: '11px',
+    fontSize: T.xs,
     color: 'var(--text-secondary)',
     flex: 1,
     overflow: 'hidden',
@@ -517,7 +517,7 @@ const styles = {
     whiteSpace: 'nowrap',
   },
   quizQResult: {
-    fontSize: '14px',
+    fontSize: T.md,
     fontWeight: '700',
     flexShrink: 0,
   },
@@ -527,7 +527,7 @@ const styles = {
   },
   resetButton: {
     padding: '14px 32px',
-    fontSize: '15px',
+    fontSize: T.lg,
     fontWeight: '600',
     color: C.ink,
     background: 'var(--brand-primary)',

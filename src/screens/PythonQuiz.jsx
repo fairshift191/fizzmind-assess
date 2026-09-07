@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { C, W, K, tint } from '../theme'
+import { C, W, K, tint, T } from '../theme'
 import { motion, AnimatePresence } from 'framer-motion'
 import { selectQuestions } from '../assessment/questions.js'
 
@@ -264,7 +264,7 @@ const styles = {
     gap: '12px',
   },
   badge: {
-    fontSize: '11px',
+    fontSize: T.xs,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: '0.08em',
@@ -275,12 +275,12 @@ const styles = {
     padding: '4px 12px',
   },
   studentName: {
-    fontSize: '14px',
+    fontSize: T.md,
     fontWeight: '500',
     color: 'var(--text-secondary)',
   },
   timer: {
-    fontSize: '24px',
+    fontSize: T.h2,
     fontWeight: '700',
     fontFamily: "'Space Grotesk', sans-serif",
     borderRadius: 'var(--radius-md)',
@@ -293,11 +293,11 @@ const styles = {
     gap: '16px',
   },
   progress: {
-    fontSize: '13px',
+    fontSize: T.base,
     color: 'var(--text-tertiary)',
   },
   submitButton: {
-    fontSize: '13px',
+    fontSize: T.base,
     fontWeight: '600',
     color: C.ink,
     background: 'var(--brand-primary)',
@@ -329,7 +329,7 @@ const styles = {
     height: '32px',
     borderRadius: '8px',
     border: '1px solid var(--surface-glass-border)',
-    fontSize: '11px',
+    fontSize: T.xs,
     fontWeight: '600',
     color: 'var(--text-primary)',
     cursor: 'pointer',
@@ -357,12 +357,12 @@ const styles = {
     marginBottom: '16px',
   },
   questionNumber: {
-    fontSize: '12px',
+    fontSize: T.sm,
     fontWeight: '500',
     color: 'var(--text-tertiary)',
   },
   topicBadge: {
-    fontSize: '11px',
+    fontSize: T.xs,
     fontWeight: '500',
     color: 'var(--text-secondary)',
     background: 'var(--surface-elevated)',
@@ -406,13 +406,13 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: '13px',
+    fontSize: T.base,
     fontWeight: '700',
     flexShrink: 0,
     transition: 'all 0.15s ease',
   },
   optionText: {
-    fontSize: '14px',
+    fontSize: T.md,
     fontWeight: '400',
     lineHeight: 1.4,
     fontFamily: "'Space Grotesk', monospace",
@@ -426,7 +426,7 @@ const styles = {
     flexShrink: 0,
   },
   navBtn: {
-    fontSize: '14px',
+    fontSize: T.md,
     fontWeight: '500',
     color: 'var(--text-primary)',
     background: 'var(--surface-glass)',

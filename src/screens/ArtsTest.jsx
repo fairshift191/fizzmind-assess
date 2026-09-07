@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { C, W, K, tint } from '../theme'
+import { C, W, K, tint, T } from '../theme'
 import { motion } from 'framer-motion'
 import { getRandomArtsPrompt } from '../assessment/arts-prompts.js'
 import { supabase } from '../lib/supabase.js'
@@ -80,7 +80,7 @@ export default function ArtsTest({ studentName, onComplete }) {
           <div style={{
             display: 'inline-block', padding: '4px 14px', borderRadius: '99px',
             background: tint(C.trackArts, 10), border: `1px solid ${tint(C.trackArts, 25)}`,
-            fontSize: '12px', fontWeight: 600, color: C.trackArts,
+            fontSize: T.sm, fontWeight: 600, color: C.trackArts,
             marginBottom: '16px',
           }}>
             Creative Arts Challenge
@@ -92,7 +92,7 @@ export default function ArtsTest({ studentName, onComplete }) {
           }}>
             Hey {studentName}, time to create!
           </h1>
-          <p style={{ fontSize: '14px', color: W[45] }}>
+          <p style={{ fontSize: T.md, color: W[45] }}>
             There are no wrong answers. We want to see how you think, not how "good" your art is.
           </p>
         </div>
@@ -103,7 +103,7 @@ export default function ArtsTest({ studentName, onComplete }) {
           padding: '28px', marginBottom: '28px',
         }}>
           <div style={{
-            fontSize: '11px', fontWeight: 600, textTransform: 'uppercase',
+            fontSize: T.xs, fontWeight: 600, textTransform: 'uppercase',
             letterSpacing: '0.08em', color: C.trackArts, marginBottom: '12px',
           }}>
             Your Prompt
@@ -113,11 +113,11 @@ export default function ArtsTest({ studentName, onComplete }) {
           }}>
             {prompt.title}
           </h2>
-          <p style={{ fontSize: '15px', lineHeight: 1.7, color: W[75], marginBottom: '16px' }}>
+          <p style={{ fontSize: T.lg, lineHeight: 1.7, color: W[75], marginBottom: '16px' }}>
             {prompt.prompt}
           </p>
           <p style={{
-            fontSize: '13px', color: W[35], fontStyle: 'italic',
+            fontSize: T.base, color: W[35], fontStyle: 'italic',
             padding: '12px', background: W[4], borderRadius: '8px',
           }}>
             {prompt.hint}
@@ -130,7 +130,7 @@ export default function ArtsTest({ studentName, onComplete }) {
           padding: '28px', marginBottom: '28px',
         }}>
           <div style={{
-            fontSize: '11px', fontWeight: 600, textTransform: 'uppercase',
+            fontSize: T.xs, fontWeight: 600, textTransform: 'uppercase',
             letterSpacing: '0.08em', color: W[35], marginBottom: '16px',
           }}>
             Upload Your Creation
@@ -150,15 +150,15 @@ export default function ArtsTest({ studentName, onComplete }) {
               style={{
                 width: '100%', padding: '32px', borderRadius: '12px',
                 border: `2px dashed ${W[15]}`, background: W[4],
-                color: W[45], fontSize: '14px', cursor: 'pointer',
+                color: W[45], fontSize: T.md, cursor: 'pointer',
                 transition: 'all 0.2s',
               }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = tint(C.trackArts, 40); e.currentTarget.style.color = C.trackArts }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = W[15]; e.currentTarget.style.color = W[45] }}
             >
-              <div style={{ fontSize: '24px', marginBottom: '8px' }}>+</div>
+              <div style={{ fontSize: T.h2, marginBottom: '8px' }}>+</div>
               Drop your file here or click to browse
-              <div style={{ fontSize: '12px', marginTop: '6px', opacity: 0.6 }}>
+              <div style={{ fontSize: T.sm, marginTop: '6px', opacity: 0.6 }}>
                 Images, video, audio, or PDF — up to 50MB
               </div>
             </button>
@@ -173,10 +173,10 @@ export default function ArtsTest({ studentName, onComplete }) {
                 }} />
               )}
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: C.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div style={{ fontSize: T.base, fontWeight: 600, color: C.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {file.name}
                 </div>
-                <div style={{ fontSize: '12px', color: W[35] }}>
+                <div style={{ fontSize: T.sm, color: W[35] }}>
                   {(file.size / 1024 / 1024).toFixed(1)} MB
                 </div>
               </div>
@@ -185,7 +185,7 @@ export default function ArtsTest({ studentName, onComplete }) {
                 style={{
                   padding: '6px 12px', borderRadius: '6px', background: tint(C.danger, 10),
                   border: `1px solid ${tint(C.danger, 20)}`, color: C.danger,
-                  fontSize: '12px', cursor: 'pointer',
+                  fontSize: T.sm, cursor: 'pointer',
                 }}
               >
                 Remove
@@ -200,7 +200,7 @@ export default function ArtsTest({ studentName, onComplete }) {
           padding: '28px', marginBottom: '28px',
         }}>
           <div style={{
-            fontSize: '11px', fontWeight: 600, textTransform: 'uppercase',
+            fontSize: T.xs, fontWeight: 600, textTransform: 'uppercase',
             letterSpacing: '0.08em', color: W[35], marginBottom: '12px',
           }}>
             Tell us about your piece
@@ -213,11 +213,11 @@ export default function ArtsTest({ studentName, onComplete }) {
             style={{
               width: '100%', minHeight: '140px', padding: '14px',
               background: `${C.ground}`, border: `1px solid ${C.line}`, borderRadius: '10px',
-              color: C.text, fontSize: '14px', lineHeight: 1.6,
+              color: C.text, fontSize: T.md, lineHeight: 1.6,
               resize: 'vertical', outline: 'none', fontFamily: 'inherit',
             }}
           />
-          <div style={{ fontSize: '12px', color: W[25], marginTop: '6px', textAlign: 'right' }}>
+          <div style={{ fontSize: T.sm, color: W[25], marginTop: '6px', textAlign: 'right' }}>
             {description.length} / 2500
           </div>
         </div>
@@ -226,7 +226,7 @@ export default function ArtsTest({ studentName, onComplete }) {
           <div style={{
             padding: '12px 16px', borderRadius: '10px',
             background: tint(C.danger, 10), border: `1px solid ${tint(C.danger, 20)}`,
-            color: C.danger, fontSize: '13px', marginBottom: '20px',
+            color: C.danger, fontSize: T.base, marginBottom: '20px',
           }}>
             {error}
           </div>
@@ -239,7 +239,7 @@ export default function ArtsTest({ studentName, onComplete }) {
           style={{
             width: '100%', padding: '16px', borderRadius: '12px',
             background: uploading ? C.mute : C.trackArts, color: 'white',
-            fontSize: '15px', fontWeight: 600, border: 'none',
+            fontSize: T.lg, fontWeight: 600, border: 'none',
             cursor: uploading ? 'wait' : 'pointer',
             transition: 'all 0.2s',
           }}

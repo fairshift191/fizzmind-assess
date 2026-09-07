@@ -39,10 +39,21 @@ export const C = {
   trackArts:  '#EC4899',
 };
 
-// Type ramp. Eight steps, closed.
+// Type ramp. Twelve steps, closed. Interface at the small end, display at the
+// large end, and nothing between that somebody nudged by eye.
 export const T = {
-  xs: '11px', sm: '12px', base: '13px', md: '14px',
-  lg: '15px', xl: '16px', h2: '18px', h1: '24px',
+  xs:   '11px',  // labels, meta
+  sm:   '12px',  // captions
+  base: '13px',  // secondary body
+  md:   '14px',  // default interface text
+  lg:   '15px',  // lead copy
+  xl:   '16px',  // section intros
+  h3:   '18px',  // card headings
+  h2:   '24px',  // screen titles
+  h1:   '28px',  // display
+  d1:   '32px',  // display, large
+  d2:   '48px',  // hero
+  d3:   '56px',  // hero, largest
 };
 
 

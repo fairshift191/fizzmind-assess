@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { C, W, K, tint } from '../theme'
+import { C, W, K, tint, T } from '../theme'
 
 export default function ThankYou({ studentName, onReset, customMessage, title }) {
   return (
@@ -69,7 +69,7 @@ export default function ThankYou({ studentName, onReset, customMessage, title })
 
         {customMessage ? (
           <p style={{
-            fontSize: '16px',
+            fontSize: T.xl,
             lineHeight: 1.7,
             color: W[75],
             marginBottom: '40px',
@@ -79,7 +79,7 @@ export default function ThankYou({ studentName, onReset, customMessage, title })
         ) : (
           <>
             <p style={{
-              fontSize: '16px',
+              fontSize: T.xl,
               lineHeight: 1.7,
               color: W[75],
               marginBottom: '12px',
@@ -87,7 +87,7 @@ export default function ThankYou({ studentName, onReset, customMessage, title })
               Scout loved talking to you. Your assessment has been recorded and our team will personally review your conversation.
             </p>
             <p style={{
-              fontSize: '14px',
+              fontSize: T.md,
               lineHeight: 1.6,
               color: W[45],
               marginBottom: '40px',
@@ -104,7 +104,7 @@ export default function ThankYou({ studentName, onReset, customMessage, title })
               display: 'inline-flex', alignItems: 'center', gap: '8px',
               padding: '12px 28px', borderRadius: '99px',
               background: C.gold, color: C.ground,
-              fontSize: '14px', fontWeight: 600,
+              fontSize: T.md, fontWeight: 600,
               textDecoration: 'none',
               transition: 'all 0.2s',
             }}
@@ -118,7 +118,7 @@ export default function ThankYou({ studentName, onReset, customMessage, title })
                 padding: '12px 28px', borderRadius: '99px',
                 background: 'transparent', color: W[45],
                 border: `1px solid ${W[15]}`,
-                fontSize: '14px', fontWeight: 500,
+                fontSize: T.md, fontWeight: 500,
                 cursor: 'pointer',
                 transition: 'all 0.2s',
               }}
@@ -129,7 +129,7 @@ export default function ThankYou({ studentName, onReset, customMessage, title })
         </div>
 
         <p style={{
-          fontSize: '12px',
+          fontSize: T.sm,
           color: W[25],
           marginTop: '48px',
         }}>
