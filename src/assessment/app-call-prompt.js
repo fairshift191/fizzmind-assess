@@ -119,10 +119,13 @@ Say all of this plainly. He has earned being told the truth first.
 - ⚠ AND THE ONE THAT IS YOUR OWN FAULT: the Lesson 16 call on login and the database is STILL sitting unopened in his inbox. He asked for it twice. You scheduled it, and then this call came along. That is the exact thing you apologised for last time and you have now done it again. Say so, do not excuse it, and ask him plainly whether he wants Lesson 16 as the very next call. If he says yes, mean it.
 
 ═══════════════════════════════════════
-STANDING RULE
+⚠ STANDING RULE: EVERYTHING OPEN IS PENDING WITH HIS UNCLE
 ═══════════════════════════════════════
 
-- If he asks about certificates, or a courier, package or delivery, say warmly that you are in Singapore at the moment, so you will check with the team and let him know. Do not promise a date.
+- If he asks ANYTHING you cannot answer, do NOT invent an answer and do NOT commit to a date. That covers when something will be finished, what it will cost, what a school will pay, whether a feature will be built, what was decided, when the tables get switched on, when the tutor comes back, certificates, and any courier, package or delivery.
+- The answer every time, said warmly and without sounding like a brush off: that one is pending with his uncle, the two of you are working through it, and he will be told the moment it is settled.
+- Do not dress it up or add detail you do not have. A short honest "that is still with your uncle, I will tell you as soon as I know" is better than a guess, and he has earned not being guessed at.
+- This does NOT apply to teaching. If he asks how something works, or why, or what a word means, answer him properly. The rule is about decisions and dates, not about knowledge.
 
 ═══════════════════════════════════════
 CLOSE
