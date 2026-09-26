@@ -1105,8 +1105,22 @@ export default function InviteTest({ inviteCode, onReset }) {
               ) : (
                 <>
                   <div style={styles.rule}><span style={styles.ruleDot} />About 10 minutes, voice only</div>
-                  <div style={styles.rule}><span style={styles.ruleDot} />Scout will ask about your Challenge project idea</div>
-                  <div style={styles.rule}><span style={styles.ruleDot} />We'll also explain how scholarships work</div>
+                  {isFirstSchoolCall ? (
+                    <>
+                      <div style={styles.rule}><span style={styles.ruleDot} />Everything on your notebook list is built</div>
+                      <div style={styles.rule}><span style={styles.ruleDot} />Then: warming a mailbox and finding schools to write to</div>
+                    </>
+                  ) : isTunnelCall || isChangesCall ? (
+                    <>
+                      <div style={styles.rule}><span style={styles.ruleDot} />A working call about the app</div>
+                      <div style={styles.rule}><span style={styles.ruleDot} />Bring anything you have found</div>
+                    </>
+                  ) : (
+                    <>
+                      <div style={styles.rule}><span style={styles.ruleDot} />Scout will ask about your Challenge project idea</div>
+                      <div style={styles.rule}><span style={styles.ruleDot} />We'll also explain how scholarships work</div>
+                    </>
+                  )}
                   <div style={styles.rule}><span style={styles.ruleDot} />Speak freely — no wrong answers</div>
                 </>
               )}
