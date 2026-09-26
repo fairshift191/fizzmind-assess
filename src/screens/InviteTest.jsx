@@ -102,6 +102,9 @@ export default function InviteTest({ inviteCode, onReset }) {
   const isCodeInterview = invite?.type === 'code_interview'
   const isInterview = isVoiceInterview || isCodeInterview
   const inviteVariant = invite?.metadata?.invite_variant ?? null
+  const isFirstSchoolCall = isVoiceInterview && inviteVariant === 'first_school_call'
+  const isTunnelCall = isVoiceInterview && inviteVariant === 'tunnel_call'
+  const isChangesCall = isVoiceInterview && inviteVariant === 'changes_call'
   const isPostAdmission = isVoiceInterview && inviteVariant === 'post_admission'
   const isPostCounsellor = isVoiceInterview && inviteVariant === 'post_counsellor'
   const isDayOneCheckin = isVoiceInterview && inviteVariant === 'post_day_one'
@@ -457,7 +460,13 @@ export default function InviteTest({ inviteCode, onReset }) {
           : {
               label: 'Top 50 Interview',
               icon: '🎙️',
-              desc: 'A short conversation with Scout — congratulations on reaching the top 50! You\'ll chat about your Challenge project and we\'ll explain scholarships.',
+              desc: isFirstSchoolCall
+                ? 'A working call with Coach Nova. Everything you asked for is built, and the next step is getting one real school to look at it.'
+                : isTunnelCall
+                ? 'A working call with Coach Nova about what was built and what broke.'
+                : isChangesCall
+                ? 'A working call with Coach Nova about your changes to the app, and your exams.'
+                : 'A short conversation with Scout — congratulations on reaching the top 50! You\'ll chat about your Challenge project and we\'ll explain scholarships.',
               color: C.gold,
             }
 
@@ -593,7 +602,7 @@ export default function InviteTest({ inviteCode, onReset }) {
           >
             <div style={{ ...styles.badge, borderColor: `${interviewInfo.color}30`, color: interviewInfo.color, background: `${interviewInfo.color}10` }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: interviewInfo.color, display: 'inline-block' }} />
-              {isCodeInterview ? 'Final Round' : isPostCounsellor ? 'Wrap-up Call' : isPostAdmission ? 'Counsellor Session' : isDayOneCheckin ? 'Day 1 Check-in' : isDayTwoCheckin ? 'Day 2 + 3 Review' : isDayThreeFollowup ? 'Follow-up Call' : isWeekendPlan ? 'Weekend Plan' : isPostCampPushback ? 'Post-Camp Call' : isPostCampWrap ? 'Camp Wrap' : isScopeCall ? 'Scope Call' : isIdeaCheckin ? 'Idea Check-in' : isBuildKickoff ? 'Build Kickoff' : isNamingCall ? 'Naming & Next Steps' : isMarketingCall ? 'Marketing & Website' : isFrustratedCall ? 'Pace Call' : isTensraCall ? 'Website & Build Plan' : isNameserverCall ? 'Domain & Hosting' : isHostingUpdateCall ? 'Site Live & App Next' : isInstallCall ? 'Laptop Setup' : isBuildReviewCall ? 'Build Review' : isModulesReviewCall ? 'Four Modules Review' : isModule5Call ? 'Module 5 Review' : isModule6Call ? 'Module 6 Review' : isFullReviewCall ? 'Full Run-Through' : isChatHistoryCall ? 'Finished Dashboard' : isResumeCall ? 'Quick Reconnect' : isTeacherCall ? 'Teacher Dashboard' : isTeacherFullCall ? 'Whole Teacher Dashboard' : isParentCall ? 'Parent Dashboard' : isAdminBriefCall ? 'Finishing Up' : isAdminCall ? 'Admin Dashboard' : isAdmin2Call ? 'Admin, Part 2' : isAdmin3Call ? 'Build Complete' : isRedesignCall ? 'Redesign & Today' : isRedesign2Call ? 'Picking Back Up' : isLesson15Call ? 'Lesson 15' : isLesson16Call ? 'Login Is Live' : isAppShellCall ? 'The App' : isTabsCall ? 'Your Decision' : isLesson17Call ? 'Lesson 17' : isLesson19Call ? 'Lesson 19' : isResearchCall ? 'Your Turn' : isBusinessCall ? 'The Business' : isL16Call ? 'Lesson 16' : "You're in the top 50"}
+              {isCodeInterview ? 'Final Round' : isPostCounsellor ? 'Wrap-up Call' : isPostAdmission ? 'Counsellor Session' : isDayOneCheckin ? 'Day 1 Check-in' : isDayTwoCheckin ? 'Day 2 + 3 Review' : isDayThreeFollowup ? 'Follow-up Call' : isWeekendPlan ? 'Weekend Plan' : isPostCampPushback ? 'Post-Camp Call' : isPostCampWrap ? 'Camp Wrap' : isScopeCall ? 'Scope Call' : isIdeaCheckin ? 'Idea Check-in' : isBuildKickoff ? 'Build Kickoff' : isNamingCall ? 'Naming & Next Steps' : isMarketingCall ? 'Marketing & Website' : isFrustratedCall ? 'Pace Call' : isTensraCall ? 'Website & Build Plan' : isNameserverCall ? 'Domain & Hosting' : isHostingUpdateCall ? 'Site Live & App Next' : isInstallCall ? 'Laptop Setup' : isBuildReviewCall ? 'Build Review' : isModulesReviewCall ? 'Four Modules Review' : isModule5Call ? 'Module 5 Review' : isModule6Call ? 'Module 6 Review' : isFullReviewCall ? 'Full Run-Through' : isChatHistoryCall ? 'Finished Dashboard' : isResumeCall ? 'Quick Reconnect' : isTeacherCall ? 'Teacher Dashboard' : isTeacherFullCall ? 'Whole Teacher Dashboard' : isParentCall ? 'Parent Dashboard' : isAdminBriefCall ? 'Finishing Up' : isAdminCall ? 'Admin Dashboard' : isAdmin2Call ? 'Admin, Part 2' : isAdmin3Call ? 'Build Complete' : isRedesignCall ? 'Redesign & Today' : isRedesign2Call ? 'Picking Back Up' : isLesson15Call ? 'Lesson 15' : isLesson16Call ? 'Login Is Live' : isAppShellCall ? 'The App' : isTabsCall ? 'Your Decision' : isLesson17Call ? 'Lesson 17' : isLesson19Call ? 'Lesson 19' : isResearchCall ? 'Your Turn' : isBusinessCall ? 'The Business' : isL16Call ? 'Lesson 16' : isFirstSchoolCall ? 'The First School' : isTunnelCall ? 'It Was Not The Tunnel' : isChangesCall ? 'Changes & Exams' : "You're in the top 50"}
             </div>
             <div style={styles.iconLarge}>{interviewInfo.icon}</div>
             <h1 style={styles.title}>
@@ -776,6 +785,12 @@ export default function InviteTest({ inviteCode, onReset }) {
                                   ? <>Every section worked, but it still looked like a template. The whole site has been <strong style={{ color: interviewInfo.color }}>redesigned and made to work on a phone</strong>, and it is live. Have tensra.app open, and your phone next to you.</>
                                   : isAdmin3Call
                                   ? <>Reports, Announcements and Settings are live, so <strong style={{ color: interviewInfo.color }}>all four dashboards are finished</strong>. Coach Nova goes through the last three, and what the final piece really means.</>
+                                  : isFirstSchoolCall
+                                  ? <>Everything on your list is built. Now <strong style={{ color: interviewInfo.color }}>Coach Nova</strong> wants to talk about finding a real school to try it.</>
+                                  : isTunnelCall
+                                  ? <><strong style={{ color: interviewInfo.color }}>Coach Nova</strong> wants to go through what was built, and one bug worth understanding.</>
+                                  : isChangesCall
+                                  ? <><strong style={{ color: interviewInfo.color }}>Coach Nova</strong> wants your changes to the app, and a word about your exams.</>
                                   : <>Your application made it to the <strong style={{ color: interviewInfo.color }}>top 50</strong>. Before the Challenge brief goes out, Scout wants to have a quick chat.</>}
             </p>
             <div style={{ ...styles.infoBox, borderColor: `${interviewInfo.color}20`, background: `${interviewInfo.color}08` }}>
