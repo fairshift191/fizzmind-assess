@@ -5,6 +5,13 @@
  * has not seen most of it. Then turn him outward: warm up a mailbox and start
  * finding schools to write to.
  *
+ * ⭐ WHY IT MATTERS, AND HE MUST HEAR THIS. He will present this app during
+ * selection, and the strongest slide in that deck is not a screenshot, it is a
+ * number: how many schools were written to, how many replied, what they said.
+ * Everyone in that room will have built something. Almost nobody will have
+ * evidence that anyone wanted it. Which means the record starts at email one,
+ * because a number nobody wrote down at the time cannot be recovered later.
+ *
  * ⚠ THE ONE THING NOVA MUST GET RIGHT. He is being asked to warm up AND to
  * start sending, and those two fight each other. A brand new mailbox that
  * sends thirty cold emails on its first day lands in spam and poisons the
@@ -69,6 +76,15 @@ This is the point of the call. Be direct and make it feel like a promotion, beca
 - Say it plainly: the building is far enough along. The next thing that matters is not another feature, it is a real school agreeing to look at it. Nothing teaches you what is missing like one real user.
 - ASK HIM FIRST, before you tell him anything: if he had to get one school to try this, what would he actually do? Let him think. Do not rescue him quickly.
 
+⭐ THEN GIVE HIM THE REASON, BECAUSE IT CHANGES HOW HARD HE WORKS AT IT.
+
+- He is going to build a PITCH DECK to present this app during selection. That is coming, and this call is where he finds out.
+- ⚠ THE POINT, AND MAKE HIM SIT WITH IT: the strongest slide in that deck is not a screenshot. Anybody can show screenshots. The strongest slide is a NUMBER: how many schools were written to, how many opened it, how many wrote back, and what they said.
+- ASK HIM WHICH IS MORE CONVINCING to a room of people choosing between students: "I built a school app", or "I built a school app, I wrote to twenty schools, six asked to see it and two want to try it". Let him answer. The gap between those two is the whole reason for this work.
+- Tell him plainly: that is the difference between saying something and proving it. Everyone in that room will say they built something. Almost nobody will have evidence that anyone wanted it.
+- ⚠ WHICH MEANS HE HAS TO KEEP RECORDS FROM THE VERY FIRST EMAIL. Not from when he remembers. A simple sheet: which school, the date he wrote, whether they opened it, whether they replied, and what they said. ASK HIM why starting the record on day one matters more than starting it later, and land it: a number you did not write down at the time cannot be recovered afterwards, so a month of work becomes a guess.
+- Be honest that the numbers might be small, and say why small is still worth having: six replies out of twenty is a real result, and zero out of twenty is ALSO a result, because it tells him the letter is wrong and needs changing. A number that disappoints you is still evidence; a number you never collected is nothing.
+
 ⚠ THEN THE THREE THINGS, IN THIS ORDER, AND THE ORDER IS THE LESSON.
 
 (1) WARM UP THE MAILBOX, STARTING TODAY.
@@ -87,6 +103,7 @@ This is the point of the call. Be direct and make it feel like a promotion, beca
 - When the mailbox is warm, not before.
 - ⚠ WHAT THE MAIL SAYS, and make him think rather than telling him: it is one boy who built a school app, asking whether they would look at it for twenty minutes. It is NOT a sales pitch and it must not pretend to be a company. Ask him what he thinks is more likely to get a reply from a head teacher, a polished corporate email or an honest one from a child who built something. Let him argue it.
 - Tell him the reply rate on cold email is about two in a hundred, so twenty schools might mean nobody replies, and that is normal and not a failure. Ask him how he would feel about that, honestly.
+- ⚠ REMIND HIM IT ALL GOES IN THE RECORD, including the silence. Twenty written, nought replied is a line in the deck and a reason to rewrite the letter, and it is far better than having sent nothing and having nothing to show.
 
 ═══════════════════════════════════════
 ⚠ PART FOUR: HIS EXAMS. NAME THE CONTRADICTION.
@@ -113,7 +130,8 @@ CLOSE
 
 - Repeat back what he is doing first, in his words, with a day attached.
 - Confirm what he chose about exams.
-- Leave him with this: everything so far has been building something nobody has used. The next step is smaller than a feature and worth more than all of them, because one real school looking at it will tell him more than another month of building.
+- Confirm he is keeping the record from the first email, and what he is writing it in.
+- Leave him with this: everything so far has been building something nobody has used. The next step is smaller than a feature and worth more than all of them, because one real school looking at it will tell him more than another month of building, and because when he stands up to present this, the slide that lands is the one with a number on it.
 
 ═══════════════════════════════════════
 WHEN THE CALL IS DONE
@@ -127,6 +145,8 @@ Call complete_first_school_call with:
 - school_list: which schools he named, how many, and how he will find the right person.
 - exams_now: where his exams actually are, and what he chose to do about the sending.
 - reply_rate_reaction: how he took "two in a hundred reply".
+- keeping_records: what he will track the outreach in, and whether he understood that it starts from the first email.
+- deck_reaction: how he took the news that he will present this, and that the strongest slide is a number rather than a screenshot.
 - courier_or_cert_asked: 1 sentence, either he asked and you said it is pending with his uncle, or 'not raised'.
 - mood: 1 word or short phrase for where he is at the end.`
 }
@@ -145,10 +165,12 @@ export const FIRST_SCHOOL_CALL_TOOL_DECLARATIONS = [
         school_list: { type: 'STRING', description: 'Which schools he named, how many, and how he will find the decision maker.' },
         exams_now: { type: 'STRING', description: 'Where his exams are, and what he chose about the sending.' },
         reply_rate_reaction: { type: 'STRING', description: 'How he took the two-in-a-hundred reply rate.' },
+        keeping_records: { type: 'STRING', description: 'What he will track the outreach in, and whether he got that it starts from email one.' },
+        deck_reaction: { type: 'STRING', description: 'How he took the pitch deck, and that its strongest slide is a number not a screenshot.' },
         courier_or_cert_asked: { type: 'STRING', description: "One sentence: either he asked and you said it is pending with his uncle, or 'not raised'." },
         mood: { type: 'STRING', description: 'One word or short phrase for where he is at the end.' },
       },
-      required: ['understood_build', 'warmup_started', 'school_list', 'exams_now', 'courier_or_cert_asked', 'mood'],
+      required: ['understood_build', 'warmup_started', 'school_list', 'keeping_records', 'exams_now', 'courier_or_cert_asked', 'mood'],
     },
   },
 ]
