@@ -16,7 +16,14 @@ export async function verifyInvite(code) {
     .maybeSingle()
 
   if (error || !invite) return { valid: false, reason: 'Invalid invite code' }
-  if (invite.status !== 'pending') return { valid: false, reason: 'This invite has already been used' }
+  // ⚠ A USED invite is still valid until it expires.
+  //
+  // These are mentoring calls, not one-shot exam tokens. A call that drops in
+  // the first minute used to leave the student locked out with a dead link and
+  // no way back in, which has now happened twice: once when the connection
+  // went before he had spoken, and once when a test click burned a fresh link.
+  // Rejoining a conversation you were already invited to is not a security
+  // boundary; the expiry date is.
   if (new Date(invite.expires_at) < new Date()) return { valid: false, reason: 'This invite has expired' }
 
   return {
@@ -36,10 +43,13 @@ export async function verifyInvite(code) {
  * Mark an invite as used.
  */
 export async function markInviteUsed(code) {
+  // Records the FIRST time it was opened and leaves it alone after, so the
+  // used_at timestamp stays the moment the call actually started.
   const { error } = await supabase
     .from('invites')
     .update({ status: 'used', used_at: new Date().toISOString() })
     .eq('code', code.trim())
+    .is('used_at', null)
 
   if (error) console.error('markInviteUsed error:', error)
   return !error
