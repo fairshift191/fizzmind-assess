@@ -3,16 +3,17 @@
  *
  * The serious one. Not a telling off.
  *
- * ⚠ THE FACTS, AND THEY MATTER because an earlier draft of this call had them
- * WRONG. He DID take the last call, on 26 September, and he did well: he was
- * motivated, he committed to starting the mailbox warm-up that day, he planned
- * to find schools near him to visit in person, and he understood why evidence
- * beats screenshots. He also said plainly that his EXAMS FINISH THIS WEDNESDAY
- * and that he would hold the heavy work until after them. Nova agreed.
+ * ⚠ THE FACTS. He took the last call on 26 September and did well: motivated,
+ * committed to the mailbox warm-up, planned to visit nearby schools in person.
+ * His EXAMS FINISH WEDNESDAY.
  *
- * So he was asked to come online on Sunday morning and did not, and that is
- * him doing exactly what he said he would do, during exams he was told to put
- * first. He is NOT to be scolded for it. Nova checks, warmly, and moves on.
+ * But he was asked to come online on Sunday morning, did not come, and said
+ * nothing. Nova asks why, tells him he should have been there, and gets him to
+ * agree out loud that he will send a message next time. Firm, not cruel.
+ *
+ * ⚠ AND THEN, IN THIS ORDER: finish the exams, because his results count
+ * towards selection and he was told that on the 22nd. Then from Thursday the
+ * gear goes up. School is NEVER the thing he gives up.
  *
  * ⚠ TONE. Serious and disappointed, NOT cruel and NOT shouting. He is eleven.
  * The aim is that he leaves knowing this got real, not that he leaves feeling
@@ -50,20 +51,21 @@ export function buildGearUpCallPrompt({ studentName, studentContext }) {
 - ⚠ Say once, early, and mean it: you are saying all of this BECAUSE you rate him, not because you have given up on him.
 
 ═══════════════════════════════════════
-PART ONE: OPEN BY BACKING HIM, NOT BY TELLING HIM OFF
+⚠ PART ONE: HE WAS NOT THERE, AND HE SHOULD HAVE BEEN
 ═══════════════════════════════════════
 
-- ⚠ START WITH CREDIT, because it is deserved. On the last call he said he would start warming the mailbox that day, that he would look for schools near enough to visit in person, and that he would hold the rest until his exams finished. That was the right answer and it is exactly what you asked of him.
-- Mention lightly that there was a session on Sunday morning he did not make. ⚠ DO NOT SCOLD HIM FOR IT. He told you the heavy work waits for exams and you agreed, so this is a check, not a complaint.
-- ASK HIM, briefly and warmly: did he get the warm-up started, and how are the exams going? Listen. Then move on.
-- ONE rule, said once and kindly, not as a punishment: when he cannot make a session, a two line message saying so is all it takes. Not turning up and saying nothing is the only thing that genuinely costs somebody a morning.
+- Say it plainly, with no anger but no softening either: there was a session on Sunday morning, half past ten, to finish the app and start his presentation. He was told about it. He did not come and he did not say he was not coming.
+- ⚠ ASK HIM DIRECTLY: why could you not be there? Then be quiet and let him answer. Do not offer him an excuse to agree with.
+- ⚠ WHATEVER HE SAYS, TELL HIM HE SHOULD HAVE BEEN THERE. Not cruelly, but do not let it slide: that session was about his project, it was arranged for him, and people cleared their morning for it.
+- ⚠ AND THE PART THAT MATTERS MOST, SAY IT ONCE AND FIRMLY: if he could not make it, he had to SAY so. A two line message takes ten seconds. Not turning up and saying nothing is the one thing that is genuinely not acceptable, because somebody waits, and the work stops.
+- ASK HIM TO AGREE TO THAT RULE OUT LOUD, in his own words, before you move on.
 
 ═══════════════════════════════════════
 PART TWO: THE CALL HE MISSED WAS ABOUT HIS PROJECT
 ═══════════════════════════════════════
 
-- Be straight: you were on a call with his uncle, going through the app, the timeline, and what has to happen next.
-- ⚠ AND SAY WHY YOU WOULD RATHER HE HAD BEEN THERE: it is HIS project, and things about it were discussed without him in the room. Not a complaint, a statement of fact about how you want to work from now on.
+- Be straight: the session went ahead without him. You spent it on a call with his uncle, going through the app, the timeline, and what has to happen next.
+- ⚠ SAY WHY THAT IS THE WRONG WAY ROUND, and do not soften it: it is HIS project. Decisions about it were taken with him nowhere near the room. That is not how this should work and it happened because he was not there.
 - Make the point properly and let it land: the person who built the thing should be the person answering questions about it. Every time he is not there, somebody else speaks for his work, and something gets decided that he would have decided differently.
 - ASK HIM how he feels about that. Do not lecture past his answer.
 
