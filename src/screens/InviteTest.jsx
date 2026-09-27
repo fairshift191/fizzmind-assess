@@ -462,7 +462,7 @@ export default function InviteTest({ inviteCode, onReset }) {
               label: 'Top 50 Interview',
               icon: '🎙️',
               desc: isGearUpCall
-                ? 'A serious call with Coach Nova about the timeline, and what has to change.'
+                ? 'A serious call with Coach Nova. Exams first, then the timeline and what changes after them.'
                 : isFirstSchoolCall
                 ? 'A working call with Coach Nova. Everything you asked for is built, and the next step is getting one real school to look at it.'
                 : isTunnelCall
@@ -789,7 +789,7 @@ export default function InviteTest({ inviteCode, onReset }) {
                                   : isAdmin3Call
                                   ? <>Reports, Announcements and Settings are live, so <strong style={{ color: interviewInfo.color }}>all four dashboards are finished</strong>. Coach Nova goes through the last three, and what the final piece really means.</>
                                   : isGearUpCall
-                                  ? <><strong style={{ color: interviewInfo.color }}>Coach Nova</strong> wants a word about this morning, and about what happens from here.</>
+                                  ? <>Finish your exams first. Then <strong style={{ color: interviewInfo.color }}>Coach Nova</strong> wants to talk about what happens from Thursday.</>
                                   : isFirstSchoolCall
                                   ? <>Everything on your list is built. Now <strong style={{ color: interviewInfo.color }}>Coach Nova</strong> wants to talk about finding a real school to try it.</>
                                   : isTunnelCall
@@ -1112,8 +1112,8 @@ export default function InviteTest({ inviteCode, onReset }) {
                   <div style={styles.rule}><span style={styles.ruleDot} />About 10 minutes, voice only</div>
                   {isGearUpCall ? (
                     <>
-                      <div style={styles.rule}><span style={styles.ruleDot} />About this morning, and the timeline</div>
-                      <div style={styles.rule}><span style={styles.ruleDot} />Bring a day and a time you can commit to</div>
+                      <div style={styles.rule}><span style={styles.ruleDot} />Exams come first, and that has not changed</div>
+                      <div style={styles.rule}><span style={styles.ruleDot} />Bring a day after Wednesday you can commit to</div>
                     </>
                   ) : isFirstSchoolCall ? (
                     <>
