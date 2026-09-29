@@ -21,6 +21,35 @@ const LANG_TO_BCP47 = {
   te: 'te-IN', th: 'th-TH', vi: 'vi-VN', ms: 'ms-MY', bn: 'bn-BD',
 }
 
+/**
+ * ⚠ TAKING TURNS, for every call on this adapter.
+ *
+ * Ganan, 28 Sept: Nova "spoke continuously without waiting for him to speak".
+ * Two causes, both fixed here rather than in thirty call scripts:
+ *  1. Every call's opening trigger carried the WHOLE plan for the call, and the
+ *     model read "say all of this" as its first turn. The trigger now says the
+ *     plan is for the whole call and only the opening is said now.
+ *  2. The microphone re-opened when the SERVER finished the turn, while
+ *     seconds of Nova's voice were still queued in the speakers. Nova heard
+ *     herself, took it for the student, and carried on. The mic now stays shut
+ *     until the speakers have actually finished (see _releaseAfterPlayback).
+ */
+const TURN_TAKING = `
+
+═══════════════════════════════════════
+⚠⚠ HOW YOU TAKE TURNS. THIS OVERRIDES EVERYTHING ABOVE IT.
+═══════════════════════════════════════
+- This is a conversation, not a speech. Say ONE or TWO short sentences, then STOP and let the other person speak.
+- End almost every turn with ONE question, and then wait for the answer. Never ask two questions in one turn.
+- NEVER cover two parts of your plan in one turn. One point, one question, wait.
+- The plan above is for the WHOLE call. Work through it one small step at a time, in reply to what they say.
+- If they are quiet, WAIT. Do not fill the silence with more. If it goes on a long time, ask once, gently, whether they are still there.
+- If they start talking, you have finished. Listen to all of it before you reply.`
+
+const OPENING_ONLY = `
+
+(The instructions above are your plan for the WHOLE call, to be covered one small step at a time. Right now say ONLY your opening: greet them in one or two short sentences and ask ONE question. Then stop and wait for their answer.)`
+
 export class GeminiLiveAdapter {
   constructor() {
     this.ws = null
@@ -54,6 +83,7 @@ export class GeminiLiveAdapter {
     // STT
     this._recognition = null
     this._isSpeakingAI = false
+    this._releaseTimer = null
 
     // State
     this._setupReady = false
@@ -69,7 +99,7 @@ export class GeminiLiveAdapter {
   async connect({ apiKey, model, voiceName, systemPrompt, language, tools, greetingMessage }) {
     this.apiKey = apiKey
     this.model = model || 'gemini-3.1-flash-live-preview'
-    this.systemPrompt = systemPrompt || ''
+    this.systemPrompt = (systemPrompt || '') + TURN_TAKING
     this._language = language || 'en'
     this._tools = tools || []
     this._greetingMessage = greetingMessage || 'A visitor has just approached. Greet them warmly and ask how you can help.'
@@ -238,7 +268,7 @@ export class GeminiLiveAdapter {
     console.log('[GeminiLive] triggerGreeting — sending')
     this.ws.send(JSON.stringify({
       realtimeInput: {
-        text: this._greetingMessage,
+        text: this._greetingMessage + OPENING_ONLY,
       },
     }))
   }
@@ -287,6 +317,7 @@ export class GeminiLiveAdapter {
       const parts = msg.serverContent.modelTurn?.parts || []
       for (const part of parts) {
         if (part.inlineData?.mimeType?.startsWith('audio/')) {
+          clearTimeout(this._releaseTimer)
           this._isSpeakingAI = true
           this._onSpeakingChange?.(true)
           this._playAudioChunk(part.inlineData.data)
@@ -304,14 +335,13 @@ export class GeminiLiveAdapter {
 
       // Turn complete
       if (msg.serverContent.turnComplete) {
-        this._isSpeakingAI = false
-        this._onSpeakingChange?.(false)
         this._onTextResponse?.({ type: 'done', text: '' })
-        setTimeout(() => this._resetPlaybackClock(), 500)
+        this._releaseAfterPlayback()
       }
 
       // Interrupted
       if (msg.serverContent.interrupted) {
+        clearTimeout(this._releaseTimer)
         this._resetPlaybackClock()
         this._isSpeakingAI = false
         this._onSpeakingChange?.(false)
@@ -421,6 +451,28 @@ export class GeminiLiveAdapter {
 
   _resetPlaybackClock() {
     this._nextPlayTime = 0
+  }
+
+  /**
+   * Hand the floor back only when the speakers have gone quiet.
+   *
+   * ⚠ The server says a turn is complete as soon as it has SENT the audio,
+   * which is often several seconds before that audio has finished PLAYING.
+   * Opening the mic at that moment let Nova's own voice back in through the
+   * speakers; the model heard it as the student and kept talking. So: wait for
+   * the queued audio to finish, plus a short tail for the room to go quiet.
+   */
+  _releaseAfterPlayback() {
+    clearTimeout(this._releaseTimer)
+    const ctx = this._outputAudioCtx
+    const left = ctx && ctx.state !== 'closed'
+      ? Math.max(0, this._nextPlayTime - ctx.currentTime) : 0
+    this._releaseTimer = setTimeout(() => {
+      if (this._destroyed) return
+      this._isSpeakingAI = false
+      this._onSpeakingChange?.(false)
+      this._resetPlaybackClock()
+    }, left * 1000 + 400)
   }
 
   // ─── Web Speech (visitor transcription) ───────────────────────────────
