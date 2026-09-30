@@ -12,6 +12,17 @@
  *     └── Web Speech API → parallel visitor STT
  */
 
+/**
+ * ⚠ 30 Sept: 'gemini-3.1-flash-live-preview' spoke its first sentence and then
+ * failed as soon as the student answered, with "1011 Internal error
+ * encountered" (or no reply at all), in three runs out of three. The page then
+ * retried with growing pauses of up to 16 s, restarting the conversation each
+ * time: the "lag after the first sentence" and the dropped call. Measured on
+ * the same key, prompt and tools, 'gemini-3.8-live' started speaking in about
+ * 1.1 s, answered 2.5 s after the student stopped, with no gaps, every time.
+ */
+const LIVE_MODEL = 'gemini-3.8-live'
+
 const GEMINI_WS_BASE = 'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent'
 
 const LANG_TO_BCP47 = {
@@ -81,7 +92,7 @@ export class GeminiLiveAdapter {
   constructor() {
     this.ws = null
     this.apiKey = null
-    this.model = 'gemini-3.1-flash-live-preview'
+    this.model = LIVE_MODEL
     this.systemPrompt = ''
 
     // Callbacks
@@ -141,7 +152,7 @@ export class GeminiLiveAdapter {
 
   async connect({ apiKey, model, voiceName, systemPrompt, language, tools, greetingMessage }) {
     this.apiKey = apiKey
-    this.model = model || 'gemini-3.1-flash-live-preview'
+    this.model = model || LIVE_MODEL
     this.systemPrompt = (systemPrompt || '') + TURN_TAKING
     this._language = language || 'en'
     this._tools = tools || []
