@@ -604,7 +604,7 @@ export default function VoiceInterview({ config, onComplete }) {
             setInterviewResult({
               projectPlan: `CHOICE: ${args.choice}\n\nAlready bought: ${args.already_bought}\nWill tell his dad: ${args.dad_next}`,
               personNote: `Mood: ${args.mood}.`,
-              adminNote: `PENDING WITH UNCLE: ${args.questions_for_uncle}. ⚠ If Nova is setting the tools up, his dad replies to the Fizzmind email for the amount and the bank / LINE Pay details. Nothing was quoted on the call.`,
+              adminNote: `PENDING WITH UNCLE: ${args.questions_for_uncle}. ⚠ Nova PROMISED an email with the details: amount, bank / LINE Pay, and the discount coupons (6 months validity). Nothing was quoted on the call. Send it.`,
             })
           } else if (tool === 'complete_purchase_call') {
             setInterviewResult({

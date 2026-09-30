@@ -55,7 +55,8 @@ const TURN_TAKING = `
 - NEVER cover two parts of your plan in one turn. One point, one question, wait.
 - The plan above is for the WHOLE call. Work through it one small step at a time, in reply to what they say.
 - If they are quiet, WAIT. Do not fill the silence with more. If it goes on a long time, ask once, gently, whether they are still there.
-- If they start talking, you have finished. Listen to all of it before you reply.`
+- If they start talking, you have finished. Listen to all of it before you reply.
+- ⚠ NEVER say, read out or spell out JSON, code, curly brackets, field names or the notes you keep about the call. Everything you say is heard by a person. Your end-of-call notes go ONLY through the completion tool, called silently, and ONLY when the call is really over.`
 
 const OPENING_ONLY = `
 
