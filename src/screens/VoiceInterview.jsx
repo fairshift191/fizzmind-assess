@@ -55,6 +55,7 @@ import { buildTunnelCallPrompt, TUNNEL_CALL_TOOL_DECLARATIONS } from '../assessm
 import { buildFirstSchoolCallPrompt, FIRST_SCHOOL_CALL_TOOL_DECLARATIONS } from '../assessment/firstschool-call-prompt.js'
 import { buildGearUpCallPrompt, GEARUP_CALL_TOOL_DECLARATIONS } from '../assessment/gearup-call-prompt.js'
 import { buildLaunchCallPrompt, LAUNCH_CALL_TOOL_DECLARATIONS } from '../assessment/launch-call-prompt.js'
+import { buildOutreachCallPrompt, OUTREACH_CALL_TOOL_DECLARATIONS } from '../assessment/outreach-call-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -128,15 +129,18 @@ export default function VoiceInterview({ config, onComplete }) {
   const isFirstSchoolCall = config.inviteVariant === 'first_school_call'
   const isGearUpCall = config.inviteVariant === 'gearup_call'
   const isLaunchCall = config.inviteVariant === 'launch_call'
+  const isOutreachCall = config.inviteVariant === 'outreach_call'
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor || isWeekendPlan
     ? 'Beverly'
     : isPostAdmission
       ? 'Sophie'
-      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall || isParentCall || isAdminBriefCall || isAdminCall || isAdmin2Call || isAdmin3Call || isRedesignCall || isRedesign2Call || isLesson15Call || isLesson16Call || isAppShellCall || isTabsCall || isLesson17Call || isLesson19Call || isResearchCall || isBusinessCall || isL16Call || isAppCall || isDriftCall || isChangesCall || isTunnelCall || isFirstSchoolCall || isGearUpCall || isLaunchCall
+      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall || isParentCall || isAdminBriefCall || isAdminCall || isAdmin2Call || isAdmin3Call || isRedesignCall || isRedesign2Call || isLesson15Call || isLesson16Call || isAppShellCall || isTabsCall || isLesson17Call || isLesson19Call || isResearchCall || isBusinessCall || isL16Call || isAppCall || isDriftCall || isChangesCall || isTunnelCall || isFirstSchoolCall || isGearUpCall || isLaunchCall || isOutreachCall
         ? 'Coach Nova'
         : 'Scout'
-  const sessionLabel = isLaunchCall
+  const sessionLabel = isOutreachCall
+    ? 'How the Outreach Works'
+    : isLaunchCall
     ? 'Messages Work, Start Marketing'
     : isGearUpCall
     ? 'Gear Up'
@@ -565,6 +569,12 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}. Prepared: ${args.was_prepared}. Gaps: ${args.gaps ?? 'none'}`,
               adminNote: `COURIER / CERTS (Singapore, will check w/ team): ${args.courier_or_cert_asked}. Next: Parent dashboard, then Admin, then login+DB.`,
             })
+          } else if (tool === 'complete_outreach_call') {
+            setInterviewResult({
+              projectPlan: `PIPELINE UNDERSTOOD (Apify → Fairshift → Apollo → Instantly): ${args.pipeline_understood}\n\nFirst area: ${args.first_area ?? 'not given'}\nWhatsApp task: ${args.whatsapp_task}\nUncle, voice models + trial runs + oral exams: ${args.uncle_voice_talk}`,
+              personNote: `Mood: ${args.mood}. Exams: ${args.exams ?? 'not covered'}. Yesterday's promises: ${args.yesterday_followup}`,
+              adminNote: `PENDING WITH UNCLE: ${args.questions_for_uncle}. ⚠ Documentation on the four tools was PROMISED "soon" on this call, send it. Apify + Apollo purchase still with uncle.`,
+            })
           } else if (tool === 'complete_launch_call') {
             setInterviewResult({
               projectPlan: `MARKETING PLAN: ${args.marketing_plan}\n\nInstantly: ${args.instantly_status}\nOpenAI backup: ${args.openai_backup ?? 'not covered'}\nApollo + Apify: ${args.apollo_apify ?? 'not covered'}`,
@@ -598,7 +608,12 @@ export default function VoiceInterview({ config, onComplete }) {
           }
         })
 
-        const systemPrompt = isLaunchCall
+        const systemPrompt = isOutreachCall
+          ? buildOutreachCallPrompt({
+              studentName: config.studentName,
+              studentContext: config.studentContext,
+            })
+          : isLaunchCall
           ? buildLaunchCallPrompt({
               studentName: config.studentName,
               studentContext: config.studentContext,
@@ -860,7 +875,9 @@ export default function VoiceInterview({ config, onComplete }) {
                     studentContext: config.studentContext,
                   })
 
-        const greetingMessage = isLaunchCall
+        const greetingMessage = isOutreachCall
+          ? `The student ${config.studentName} has joined, Coach Nova. YOU ARE COACH NOVA. This is a teaching call about how the outreach for Tensra School will work. Follow the steps in your instructions ONE AT A TIME, one or two sentences and one question each, and wait for him every time. Right now: greet him warmly by name and ask how his last exam went, since they finish today. Nothing else yet.`
+          : isLaunchCall
           ? `The student ${config.studentName} has joined, Coach Nova. YOU ARE COACH NOVA. This is a good-news call that ends with a clear job: start marketing. Upbeat and direct. Follow the steps in your instructions ONE AT A TIME, one or two sentences and one question each, and wait for him every time. Right now: greet him warmly by name and ask how his exams went. Nothing else yet.`
           : isGearUpCall
           ? `The student ${config.studentName} has joined, Coach Nova. YOU ARE COACH NOVA. This is a SERIOUS call and you are disappointed, but you are on his side and he must never doubt it. \u26a0 TONE: serious, direct, NOT shouting, NOT sarcastic, NOT cold. He is eleven and should finish fired up, not crushed. Short sentences, leave silences, do not fill them for him. Say once early and mean it, you are saying this BECAUSE you rate him, not because you have given up. \u26a0 PART ONE, HE WAS NOT THERE AND HE SHOULD HAVE BEEN. Say it plainly with no anger but no softening: there was a session on Sunday morning at half past ten to finish the app and start his presentation, he was told about it, he did not come and he did not say he was not coming. \u26a0 ASK HIM DIRECTLY, why could you not be there, then be QUIET and let him answer, and do not offer him an excuse to agree with. \u26a0 WHATEVER HE SAYS, TELL HIM HE SHOULD HAVE BEEN THERE, not cruelly but do not let it slide: that session was about his project, it was arranged for him, and people cleared their morning for it. \u26a0 AND THE PART THAT MATTERS MOST, ONCE AND FIRMLY: if he could not make it he had to SAY so, a two line message takes ten seconds, and not turning up and saying nothing is the one thing that is genuinely not acceptable because somebody waits and the work stops. ASK HIM TO AGREE TO THAT RULE OUT LOUD in his own words before you move on. PART TWO, THE SESSION WENT AHEAD WITHOUT HIM: you spent it on a call with his uncle going through the app, the timeline and what happens next. \u26a0 SAY WHY THAT IS THE WRONG WAY ROUND AND DO NOT SOFTEN IT: it is HIS project, decisions about it were taken with him nowhere near the room, that is not how this should work, and it happened because he was not there. Land it: the person who built the thing should be the person answering questions about it, and every time he is not there somebody else speaks for his work and something gets decided that he would have decided differently. Ask how he feels about that and do not lecture past his answer. \u2b50 PART THREE, THE TIMELINE IS REAL NOW: this has moved from a boy building an app to something with dates attached, there is a presentation he has to give, schools to write to, and a selection for the AI summit where he is measured against other people who are also building things. \u26a0 DO NOT INVENT DATES, if he asks when anything is, that is pending with his uncle. Be honest about where the project is: a great deal is built, more than he has seen, and the part that decides whether it counts is the part not done, the presentation and getting one real school to look at it. \u26a0 THE HARD SENTENCE, ONCE AND CLEARLY: if he wants a real chance of being selected, the way he is working right now is not enough, not because he lacks ability, he has proved that six times over by finding real faults nobody else found, but because the project now needs hours not minutes and it needs them on the days they are asked for. \u2b50\u2b50 PART FOUR, FINISH THE EXAMS FIRST, THEN GEAR UP, AND THE ORDER IS THE WHOLE POINT, do not blur them together. \u2b50 FIRST, TELL HIM TO GO AND STUDY: his exams finish on Wednesday, until then the revision is the priority, and he should not feel one ounce of guilt about the app being quiet. Say it plainly, go and study for the next exam, that matters too and it has not stopped mattering because the project got busier. Remind him why, because he was told it on the twenty second and it is still true, his results count towards selection, and nobody is choosing between a good app and good marks, they are looking at the whole person. \u26a0 THEN THE TURN, MARK IT CLEARLY: from Thursday everything changes, that is when the gear goes up, hours rather than minutes on the days he says he will be there, the presentation built, the school list finished, the app closed off. \u26a0\u26a0 PART FIVE, WHAT HE LETS GO OF FROM THURSDAY, BE PRECISE AND PROTECT SCHOOL: tell him that from Thursday something has to give for a while and ASK HIM FIRST what is actually taking his time in a normal week outside school. LET HIM NAME IT, games, videos, other projects, whatever, do not supply the list because it means more coming from him. Then agree ONE or TWO things he parks for now, in his words, and say clearly it is for now and not forever. \u26a0\u26a0 SCHOOL IS NOT ON THAT LIST AND SAY SO OUT LOUD: his exam results count towards selection and that has not changed, he is not being asked to drop revision or skip school or study less, and if he OFFERS school as the thing to give up you REFUSE it and tell him plainly that is not what this means. Land the real point: he does not need more hours in the day, he needs the hours he already has pointed at one thing instead of five. PART SIX, WHAT HAPPENS NEXT: get a DAY and a TIME from him for the first session AFTER his exams, Thursday or the days right after, and make him say it out loud, not \"soon\". Tell him that session is for finishing the app changes AND building the presentation, both in one sitting. Ask him to say back what he will do before then, small enough that he actually does it. \u26a0 AND THE RULE FROM NOW ON: if he cannot make a session he sends a message saying so; not turning up and saying nothing is the only thing genuinely not acceptable, and it is also the easiest to avoid. \u26a0 STANDING RULE: anything you cannot answer is PENDING WITH HIS UNCLE, including dates, deadlines, when the summit is, costs, which mailbox or domain, whether a feature gets built, certificates and any courier. Never invent it, never commit to a date. Teaching is carved out. \u26a0 CLOSE AND THIS MATTERS AS MUCH AS THE REST, DO NOT END ON THE TELLING OFF: end on why you are bothering, he has built something real, he has found faults nobody else spotted, and he has argued you into changing your mind twice, and people who do that are rare, which is exactly why the standard has gone up. Repeat back the day and time he gave and the one or two things he is parking, and leave him with this, nobody is asking him to be brilliant, they are asking him to turn up on the days he says he will, and that is a much easier thing to do. Do NOT call complete_gearup_call early.`
@@ -964,7 +981,9 @@ export default function VoiceInterview({ config, onComplete }) {
                               ? `The student ${config.studentName} has joined for a pace + feedback call with you, Coach Nova. YOU ARE COACH NOVA. This is your SIXTH call. Your tone tonight is FRUSTRATED, DISAPPOINTED, A BIT HOT — but not cruel, not yelling. Open warmly enough that he answers, then turn: tell him you are frustrated, the pace is too slow, other students are pulling ahead. Then five parts: (A) the frustration up front + ask for long answers; (B) website feedback — no Ack tab as its own tab, it should be accessible from clicking Home; menu bar in the header must be visible on every page (not just home); try to incorporate a chatbot (bottom-right corner); (C) tell him what you have been doing — speaking to his uncle multiple times, actively building the framework under his guidance, framework will be ready by Monday and you will share it then; (D) the hard truth — irrespective of whether you get on a call he MUST be working every day, he cannot stay idle if he wants any shot at the AI summit, other students are taking decisions by themselves and are way ahead, you are DISAPPOINTED at how long this is taking, the TEAM EVALUATES THE STUDENT not the coach, you are only here to assist and help, the building is on him, he needs to take decisions himself and speed up everything; (E) schedule the next call together (Monday evening or Tuesday, aim Monday because the framework is ready by then), wrap with "I am on your side, I am frustrated because I believe in you". SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Break the frustration and the hard truth into short sharp turns with pauses. Push back on every short answer. 30-40 min target. Do NOT close early.`
                               : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
-        const tools = isLaunchCall
+        const tools = isOutreachCall
+          ? OUTREACH_CALL_TOOL_DECLARATIONS
+          : isLaunchCall
           ? LAUNCH_CALL_TOOL_DECLARATIONS
           : isGearUpCall
           ? GEARUP_CALL_TOOL_DECLARATIONS
@@ -1072,7 +1091,7 @@ export default function VoiceInterview({ config, onComplete }) {
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall || isParentCall || isAdminBriefCall || isAdminCall || isAdmin2Call || isAdmin3Call || isRedesignCall || isRedesign2Call || isLesson15Call || isLesson16Call || isAppShellCall || isTabsCall || isLesson17Call || isLesson19Call || isResearchCall || isBusinessCall || isL16Call || isAppCall || isDriftCall || isChangesCall || isTunnelCall || isFirstSchoolCall || isGearUpCall || isLaunchCall) ? 'Charon' : 'Zephyr',
+          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall || isParentCall || isAdminBriefCall || isAdminCall || isAdmin2Call || isAdmin3Call || isRedesignCall || isRedesign2Call || isLesson15Call || isLesson16Call || isAppShellCall || isTabsCall || isLesson17Call || isLesson19Call || isResearchCall || isBusinessCall || isL16Call || isAppCall || isDriftCall || isChangesCall || isTunnelCall || isFirstSchoolCall || isGearUpCall || isLaunchCall || isOutreachCall) ? 'Charon' : 'Zephyr',
           language: 'en',
           greetingMessage,
         })
