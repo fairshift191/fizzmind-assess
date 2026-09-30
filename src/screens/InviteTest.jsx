@@ -1127,7 +1127,7 @@ export default function InviteTest({ inviteCode, onReset }) {
                   <div style={styles.rule}><span style={styles.ruleDot} />About 10 minutes, voice only</div>
                   {isPurchaseCall ? (
                     <>
-                      <div style={styles.rule}><span style={styles.ruleDot} />About five minutes</div>
+                      <div style={styles.rule}><span style={styles.ruleDot} />Have your dad nearby if you can</div>
                     </>
                   ) : isOutreachCall ? (
                     <>
