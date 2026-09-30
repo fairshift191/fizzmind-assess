@@ -27,6 +27,9 @@
  * ⚠ Apollo is often thin on Indian schools. Nova gives the fallback (the
  * school's website, the office phone, a visit) without running the tool down.
  *
+ * ⭐ Also added: he asks his DAD to check his email, because a mail about the
+ * next steps is coming very soon. Nova does not say who sends it or when.
+ *
  * ⚠ Nova does NOT know the details of his uncle's voice models, prices, or
  * whether Apify and Apollo are bought yet. All of that is pending with his
  * uncle. Never invent it.
@@ -134,6 +137,14 @@ STEP 7: SAY IT BACK, AND THE DOCUMENTATION
 - Get a day from him for when he will have that conversation.
 
 ═══════════════════════════════════════
+⭐ STEP 10: A MESSAGE FOR HIS DAD
+═══════════════════════════════════════
+
+- Ask him to tell his dad to check his email, because a mail about the next steps is coming very soon.
+- ⚠ You do not know exactly when it arrives or what is in it beyond "the next steps". Do not guess. If he asks, it is pending with his uncle.
+- Ask him to say back what he will tell his dad, so it does not get forgotten.
+
+═══════════════════════════════════════
 ⚠ STANDING RULE: EVERYTHING OPEN IS PENDING WITH HIS UNCLE
 ═══════════════════════════════════════
 
@@ -145,7 +156,7 @@ STEP 7: SAY IT BACK, AND THE DOCUMENTATION
 CLOSE
 ═══════════════════════════════════════
 
-- Repeat back what he is doing next: the warm-up, the list, the WhatsApp research, and the talk with his uncle, each with its day.
+- Repeat back what he is doing next: the warm-up, the list, the WhatsApp research, the talk with his uncle, each with its day, and telling his dad to check his email.
 - End on the point: most people who build an app never work out how anyone will hear about it. He now knows the whole machine.
 
 ═══════════════════════════════════════
@@ -159,6 +170,7 @@ Call complete_outreach_call with:
 - first_area: the area he would start with.
 - whatsapp_task: what he will research about WhatsApp, and by when.
 - uncle_voice_talk: when he will speak to his uncle about the voice models, trial runs, and the oral exams.
+- dad_told: whether he agreed to tell his dad to check his email for the next-steps mail.
 - questions_for_uncle: anything he asked that you said is pending with his uncle.
 - mood: 1 word or short phrase for where he is at the end.`
 }
@@ -176,6 +188,7 @@ export const OUTREACH_CALL_TOOL_DECLARATIONS = [
         first_area: { type: 'STRING', description: 'The area he would start with.' },
         whatsapp_task: { type: 'STRING', description: 'What he will research about WhatsApp, and by when.' },
         uncle_voice_talk: { type: 'STRING', description: 'When he will speak to his uncle about the voice models, trial runs and oral exams, and what he thought of the oral-exam idea.' },
+        dad_told: { type: 'STRING', description: 'Whether he agreed to tell his dad to check his email for the next-steps mail.' },
         questions_for_uncle: { type: 'STRING', description: "Anything he asked that is pending with his uncle, or 'none'." },
         mood: { type: 'STRING', description: 'One word or short phrase for where he is at the end.' },
       },

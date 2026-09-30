@@ -571,7 +571,7 @@ export default function VoiceInterview({ config, onComplete }) {
             })
           } else if (tool === 'complete_outreach_call') {
             setInterviewResult({
-              projectPlan: `PIPELINE UNDERSTOOD (Apify → Fairshift → Apollo → Instantly): ${args.pipeline_understood}\n\nFirst area: ${args.first_area ?? 'not given'}\nWhatsApp task: ${args.whatsapp_task}\nUncle, voice models + trial runs + oral exams: ${args.uncle_voice_talk}`,
+              projectPlan: `PIPELINE UNDERSTOOD (Apify → Fairshift → Apollo → Instantly): ${args.pipeline_understood}\n\nFirst area: ${args.first_area ?? 'not given'}\nWhatsApp task: ${args.whatsapp_task}\nUncle, voice models + trial runs + oral exams: ${args.uncle_voice_talk}\nDad told to check email for the next-steps mail: ${args.dad_told ?? 'not confirmed'}`,
               personNote: `Mood: ${args.mood}. Exams: ${args.exams ?? 'not covered'}. Yesterday's promises: ${args.yesterday_followup}`,
               adminNote: `PENDING WITH UNCLE: ${args.questions_for_uncle}. ⚠ Documentation on the four tools was PROMISED "soon" on this call, send it. Apify + Apollo purchase still with uncle.`,
             })
