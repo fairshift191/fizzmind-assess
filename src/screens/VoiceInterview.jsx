@@ -139,7 +139,7 @@ export default function VoiceInterview({ config, onComplete }) {
         ? 'Coach Nova'
         : 'Scout'
   const sessionLabel = isOutreachCall
-    ? 'How the Outreach Works'
+    ? 'Outreach Call'
     : isLaunchCall
     ? 'Messages Work, Start Marketing'
     : isGearUpCall
