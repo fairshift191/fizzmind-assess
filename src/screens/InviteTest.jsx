@@ -795,7 +795,7 @@ export default function InviteTest({ inviteCode, onReset }) {
                                   : isAdmin3Call
                                   ? <>Reports, Announcements and Settings are live, so <strong style={{ color: interviewInfo.color }}>all four dashboards are finished</strong>. Coach Nova goes through the last three, and what the final piece really means.</>
                                   : isOutreachCall
-                                  ? <>An <strong style={{ color: interviewInfo.color }}>outreach call</strong> with Coach Nova.</>
+                                  ? <>Exams done. Next up: <strong style={{ color: interviewInfo.color }}>Coach Nova</strong>.</>
                                   : isLaunchCall
                                   ? <>The database is in, so <strong style={{ color: interviewInfo.color }}>messages work</strong>. Coach Nova wants to talk about starting your marketing.</>
                                   : isGearUpCall
