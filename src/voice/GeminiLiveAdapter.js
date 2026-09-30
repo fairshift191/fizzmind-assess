@@ -50,6 +50,33 @@ const OPENING_ONLY = `
 
 (The instructions above are your plan for the WHOLE call, to be covered one small step at a time. Right now say ONLY your opening: greet them in one or two short sentences and ask ONE question. Then stop and wait for their answer.)`
 
+/**
+ * Down to 16 kHz by averaging. Good enough for speech, and it cannot fail the
+ * way asking the browser for a 16 kHz AudioContext does.
+ */
+function to16k(input, rate) {
+  if (rate === 16000) return input
+  const ratio = rate / 16000
+  const out = new Float32Array(Math.floor(input.length / ratio))
+  for (let i = 0; i < out.length; i++) {
+    const from = Math.round(i * ratio)
+    const to = Math.min(input.length, Math.round((i + 1) * ratio))
+    let sum = 0
+    for (let j = from; j < to; j++) sum += input[j]
+    out[i] = to > from ? sum / (to - from) : 0
+  }
+  return out
+}
+
+/**
+ * ⚠ Nova cannot speak unless something reaches her. If the student's audio
+ * never arrives, she waits in silence forever and the student hears a dead
+ * line. On 30 Sept Ganan heard one sentence and then nothing. So after a long
+ * silence on the student's turn, the app tells her, and she says so out loud.
+ */
+const DEAD_MIC_CUE = '(System note, not from the student: no sound at all is reaching you from their microphone. In one short sentence, tell them you cannot hear them, and ask them to check the microphone is allowed for this page and not muted. Then wait.)'
+const QUIET_CUE = '(System note, not from the student: they have not answered for a while. In one short sentence, check gently whether they can hear you. Then wait.)'
+
 export class GeminiLiveAdapter {
   constructor() {
     this.ws = null
@@ -84,6 +111,22 @@ export class GeminiLiveAdapter {
     this._recognition = null
     this._isSpeakingAI = false
     this._releaseTimer = null
+
+    // Is the student's microphone actually reaching Nova? Measured, not assumed.
+    this._micState = 'starting'   // starting | live | unavailable
+    this._micRate = null
+    this._micStartedAt = 0
+    this._soundAt = 0             // last time the mic carried any sound at all
+    this._voiceAt = 0             // last time it carried something speech-loud
+    this._micPeak = 0
+    this._micSent = 0
+    this._turnEndedAt = 0         // when the floor passed to the student
+    this._nudged = false
+    this._nudges = 0
+    this._novaTurns = 0
+    this._closes = []
+    this._micProblem = null
+    this._watchTimer = null
 
     // State
     this._setupReady = false
@@ -198,6 +241,7 @@ export class GeminiLiveAdapter {
 
     ws.onclose = (ev) => {
       console.warn('[GeminiLive] WebSocket closed, code:', ev.code, 'reason:', ev.reason)
+      this._closes.push(`${ev.code}${ev.reason ? ' ' + ev.reason : ''}`)
       if (this.ws !== ws) return // a newer ws replaced this one, ignore
       this.ws = null
 
@@ -228,6 +272,8 @@ export class GeminiLiveAdapter {
 
   disconnect() {
     this._destroyed = true
+    clearInterval(this._watchTimer)
+    clearTimeout(this._releaseTimer)
     this._userInitiatedClose = true
     clearTimeout(this._reconnectTimer)
     this._reconnectTimer = null
@@ -248,6 +294,7 @@ export class GeminiLiveAdapter {
     this._onListeningChange = null
     this._onToolCall = null
     this._onConnectionState = null
+    this._onMicProblem = null
   }
 
   // ─── Greeting ─────────────────────────────────────────────────────────
@@ -305,6 +352,7 @@ export class GeminiLiveAdapter {
       console.log('[GeminiLive] setupComplete')
       this._setupReady = true
       this._onConnectionState?.({ state: 'connected' })
+      if (!this._watchTimer) this._watchTimer = setInterval(() => this._watch(), 1000)
       if (!this._greetingTriggered) {
         this._greetingTriggered = true
         this._sendGreetingTrigger()
@@ -318,6 +366,7 @@ export class GeminiLiveAdapter {
       for (const part of parts) {
         if (part.inlineData?.mimeType?.startsWith('audio/')) {
           clearTimeout(this._releaseTimer)
+          this._turnEndedAt = 0
           this._isSpeakingAI = true
           this._onSpeakingChange?.(true)
           this._playAudioChunk(part.inlineData.data)
@@ -335,6 +384,7 @@ export class GeminiLiveAdapter {
 
       // Turn complete
       if (msg.serverContent.turnComplete) {
+        this._novaTurns++
         this._onTextResponse?.({ type: 'done', text: '' })
         this._releaseAfterPlayback()
       }
@@ -374,23 +424,44 @@ export class GeminiLiveAdapter {
 
   async _startMic() {
     try {
+      // ⚠ Capture at the DEVICE's rate and convert to 16 kHz here. Asking the
+      // browser for a 16 kHz AudioContext is refused outright by Firefox and
+      // known to give silence on Safari, which is every browser on an iPhone
+      // or iPad, and the failure was swallowed: the call went on with a mic
+      // that sent nothing.
       this._micStream = await navigator.mediaDevices.getUserMedia({
-        audio: { sampleRate: 16000, channelCount: 1, echoCancellation: true, noiseSuppression: true },
+        audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true },
       })
-      this._audioContext = new AudioContext({ sampleRate: 16000 })
+      this._audioContext = new AudioContext()
+      try { await this._audioContext.resume() } catch {}
+      const rate = this._audioContext.sampleRate
+      this._micRate = rate
       const source = this._audioContext.createMediaStreamSource(this._micStream)
-      this._micProcessor = this._audioContext.createScriptProcessor(2048, 1, 1)
+      this._micProcessor = this._audioContext.createScriptProcessor(4096, 1, 1)
+      this._micState = 'live'
+      this._micStartedAt = Date.now()
 
       this._micProcessor.onaudioprocess = (e) => {
         const outBuf = e.outputBuffer.getChannelData(0)
         outBuf.fill(0)
 
         if (this._destroyed) return
+        const input = e.inputBuffer.getChannelData(0)
+        let peak = 0
+        for (let i = 0; i < input.length; i++) {
+          const v = input[i] < 0 ? -input[i] : input[i]
+          if (v > peak) peak = v
+        }
+        const now = Date.now()
+        if (peak > this._micPeak) this._micPeak = peak
+        if (peak > 0.0005) this._soundAt = now
+        if (peak > 0.02) this._voiceAt = now
+
         if (!this._setupReady) return
         if (this._isSpeakingAI) return
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return
         try {
-          const pcm = e.inputBuffer.getChannelData(0)
+          const pcm = to16k(input, rate)
           const int16 = new Int16Array(pcm.length)
           for (let i = 0; i < pcm.length; i++) {
             int16[i] = Math.max(-32768, Math.min(32767, pcm[i] * 32768))
@@ -407,6 +478,7 @@ export class GeminiLiveAdapter {
               audio: { mimeType: 'audio/pcm;rate=16000', data: base64 },
             },
           }))
+          this._micSent++
         } catch (err) {
           console.warn('[GeminiLive] mic send failed:', err.message)
         }
@@ -419,6 +491,45 @@ export class GeminiLiveAdapter {
       silentGain.connect(this._audioContext.destination)
     } catch (err) {
       console.warn('[GeminiLive] Mic unavailable:', err.message)
+      this._micState = 'unavailable'
+      this._micError = err.name || err.message
+      this._setMicProblem('unavailable')
+    }
+  }
+
+  _setMicProblem(p) {
+    if (p === this._micProblem) return
+    this._micProblem = p
+    this._onMicProblem?.(p)
+  }
+
+  /**
+   * Once a second, on the student's turn: is their microphone reaching Nova,
+   * and has the line gone quiet for too long?
+   */
+  _watch() {
+    if (this._destroyed || !this._setupReady || this._isSpeakingAI) return
+    const now = Date.now()
+    const dead = this._micState === 'unavailable'
+      || (this._micState === 'live' && now - Math.max(this._soundAt, this._micStartedAt) > 6000)
+    this._setMicProblem(this._micState === 'unavailable' ? 'unavailable' : dead ? 'silent' : null)
+
+    if (this._turnEndedAt && !this._nudged && this._nudges < 3
+        && now - this._turnEndedAt > 12000 && now - this._voiceAt > 4000
+        && this.ws?.readyState === WebSocket.OPEN) {
+      this._nudged = true
+      this._nudges++
+      this.ws.send(JSON.stringify({ realtimeInput: { text: dead ? DEAD_MIC_CUE : QUIET_CUE } }))
+    }
+  }
+
+  /** What happened on this call, for the record. */
+  diagnostics() {
+    return {
+      mic: this._micState, micError: this._micError ?? null, micRate: this._micRate,
+      micPeak: Math.round(this._micPeak * 1000) / 1000, micChunksSent: this._micSent,
+      novaTurns: this._novaTurns, nudges: this._nudges,
+      closes: this._closes.slice(-5), reconnects: this._reconnectAttempt,
     }
   }
 
@@ -469,6 +580,8 @@ export class GeminiLiveAdapter {
       ? Math.max(0, this._nextPlayTime - ctx.currentTime) : 0
     this._releaseTimer = setTimeout(() => {
       if (this._destroyed) return
+      this._turnEndedAt = Date.now()
+      this._nudged = false
       this._isSpeakingAI = false
       this._onSpeakingChange?.(false)
       this._resetPlaybackClock()
@@ -521,6 +634,7 @@ export class GeminiLiveAdapter {
   onListeningChange(cb) { this._onListeningChange = cb }
   onToolCall(cb) { this._onToolCall = cb }
   onConnectionState(cb) { this._onConnectionState = cb }
+  onMicProblem(cb) { this._onMicProblem = cb }
 }
 
 export default GeminiLiveAdapter

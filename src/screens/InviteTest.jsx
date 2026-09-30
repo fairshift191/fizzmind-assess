@@ -1176,6 +1176,8 @@ export default function InviteTest({ inviteCode, onReset }) {
               studentContext: invite.metadata?.student_context ?? null,
               interviewType: invite.type,
               inviteVariant: invite.metadata?.invite_variant ?? null,
+              inviteCode,
+              inviteMetadata: invite.metadata ?? null,
             }}
             onComplete={handleInterviewComplete}
           />

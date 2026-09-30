@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { C, W, K, tint, T } from '../theme'
 import { motion } from 'framer-motion'
 import { GeminiLiveAdapter } from '../voice/GeminiLiveAdapter.js'
+import { recordCall } from '../lib/invites.js'
 import { BlobRenderer } from '../renderer/BlobRenderer.js'
 import { buildInterviewPrompt, INTERVIEW_TOOL_DECLARATIONS } from '../assessment/interview-prompt.js'
 import { buildCodeInterviewPrompt, CODE_INTERVIEW_TOOL_DECLARATIONS } from '../assessment/code-interview-prompt.js'
@@ -75,6 +76,23 @@ export default function VoiceInterview({ config, onComplete }) {
   const [ready, setReady] = useState(false)
   const [error, setError] = useState(null)
   const [connectionState, setConnectionState] = useState(null) // { state, attempt?, max?, delayMs? }
+  // ⚠ 'unavailable' | 'silent' | null. "Listening..." comes from a separate
+  // speech recogniser, so it showed even when nothing was reaching Nova.
+  const [micProblem, setMicProblem] = useState(null)
+  const startedAtRef = useRef(Date.now())
+  const lastDiagRef = useRef(null)
+  // The record of this call, kept on the invite (see recordCall).
+  const recordThisCall = (ended) => {
+    const d = voiceAdapterRef.current?.diagnostics?.() ?? lastDiagRef.current
+    if (d) lastDiagRef.current = d
+    recordCall(config.inviteCode, config.inviteMetadata, {
+      at: new Date().toISOString(),
+      seconds: Math.round((Date.now() - startedAtRef.current) / 1000),
+      ended,
+      device: navigator.userAgent.slice(0, 180),
+      ...(d ?? {}),
+    })
+  }
 
   const [interviewResult, setInterviewResult] = useState(null)
   const completedRef = useRef(false)
@@ -249,6 +267,7 @@ export default function VoiceInterview({ config, onComplete }) {
     completedRef.current = true
 
     setTimeout(() => {
+      recordThisCall('completed')
       const adapter = voiceAdapterRef.current
       const renderer = rendererRef.current
       if (adapter) { adapter.disconnect(); voiceAdapterRef.current = null }
@@ -301,7 +320,11 @@ export default function VoiceInterview({ config, onComplete }) {
 
         adapter.onSpeakingChange((s) => { setIsSpeaking(s); renderer.setSpeaking(s) })
         adapter.onListeningChange((l) => { setIsListening(l); renderer.setListening(l) })
-        adapter.onConnectionState((s) => setConnectionState(s))
+        adapter.onConnectionState((s) => {
+          setConnectionState(s)
+          if (s?.state === 'failed') recordThisCall('connection failed')
+        })
+        adapter.onMicProblem((p) => setMicProblem(p))
 
         adapter.onToolCall(({ tool, args }) => {
           console.log('[VoiceInterview] Tool call:', tool, args)
@@ -1098,16 +1121,21 @@ export default function VoiceInterview({ config, onComplete }) {
 
         if (destroyed) return
         setReady(true)
+        startedAtRef.current = Date.now()
+        diagTimer = setInterval(() => recordThisCall('in progress'), 20000)
       } catch (err) {
         console.error('[VoiceInterview] Init failed:', err)
         if (!destroyed) setError(err.message)
       }
     }
 
+    let diagTimer = null
     init()
 
     return () => {
       destroyed = true
+      clearInterval(diagTimer)
+      if (voiceAdapterRef.current && !completedRef.current) recordThisCall('left the page')
       if (voiceAdapterRef.current) { try { voiceAdapterRef.current.disconnect() } catch {} ; voiceAdapterRef.current = null }
       if (rendererRef.current) { try { rendererRef.current.destroy() } catch {} ; rendererRef.current = null }
     }
@@ -1120,6 +1148,7 @@ export default function VoiceInterview({ config, onComplete }) {
   function handleEndEarly() {
     if (completedRef.current) return
     completedRef.current = true
+    recordThisCall('ended by the student')
     const adapter = voiceAdapterRef.current
     const renderer = rendererRef.current
     if (adapter) { adapter.disconnect(); voiceAdapterRef.current = null }
@@ -1183,7 +1212,14 @@ export default function VoiceInterview({ config, onComplete }) {
             {characterName} is speaking...
           </motion.div>
         )}
-        {connectionState?.state !== 'reconnect_pending' && connectionState?.state !== 'reconnecting' && connectionState?.state !== 'failed' && isListening && !isSpeaking && (
+        {micProblem && connectionState?.state !== 'failed' && !isSpeaking && (
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} style={{ ...styles.statusPill, background: tint(C.danger, 20), color: `${C.danger}` }}>
+            {micProblem === 'unavailable'
+              ? `${characterName} can't hear you: the microphone didn't start. Allow the microphone for this page, then reload.`
+              : `${characterName} can't hear you: no sound is coming from your microphone. Check it isn't muted, or choose another microphone.`}
+          </motion.div>
+        )}
+        {!micProblem && connectionState?.state !== 'reconnect_pending' && connectionState?.state !== 'reconnecting' && connectionState?.state !== 'failed' && isListening && !isSpeaking && (
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} style={{ ...styles.statusPill, background: 'rgba(var(--brand-secondary-rgb), 0.15)', color: 'var(--brand-secondary)' }}>
             Listening...
           </motion.div>

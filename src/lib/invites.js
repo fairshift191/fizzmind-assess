@@ -40,6 +40,22 @@ export async function verifyInvite(code) {
 }
 
 /**
+ * What happened on the latest call on this invite: whether the microphone
+ * reached Nova, how often she spoke, and how it ended.
+ * ⚠ On 30 Sept a call "disconnected" and nothing had been recorded, so the
+ * cause could only be guessed. This is kept on the invite, overwritten each
+ * time, so the next one can be read instead of guessed.
+ */
+export async function recordCall(code, metadata, lastCall) {
+  if (!code) return
+  const { error } = await supabase
+    .from('invites')
+    .update({ metadata: { ...(metadata ?? {}), last_call: lastCall } })
+    .eq('code', code.trim())
+  if (error) console.warn('recordCall error:', error.message)
+}
+
+/**
  * Mark an invite as used.
  */
 export async function markInviteUsed(code) {
