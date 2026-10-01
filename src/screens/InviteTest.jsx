@@ -810,7 +810,7 @@ export default function InviteTest({ inviteCode, onReset }) {
                                   : isAdmin3Call
                                   ? <>Reports, Announcements and Settings are live, so <strong style={{ color: interviewInfo.color }}>all four dashboards are finished</strong>. Coach Nova goes through the last three, and what the final piece really means.</>
                                   : isCheckinCall
-                                  ? <>A quick check-in with <strong style={{ color: interviewInfo.color }}>Coach Nova</strong>.</>
+                                  ? <>Before tonight, with <strong style={{ color: interviewInfo.color }}>Coach Nova</strong>.</>
                                   : isPresentationCall
                                   ? <>The next step, with <strong style={{ color: interviewInfo.color }}>Coach Nova</strong>.</>
                                   : isPlaybookCall
