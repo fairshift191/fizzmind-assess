@@ -623,7 +623,7 @@ export default function VoiceInterview({ config, onComplete }) {
           } else if (tool === 'complete_records_call') {
             setInterviewResult({
               projectPlan: `RECORDS (WhatsApp API 260 USD, Apollo 65 USD): ${args.recorded}\nTotal he gave: ${args.total ?? 'not covered'}\n\nNative place: ${args.native_place}\nResearch there: ${args.research_plan ?? 'not covered'}\nCall with uncle for the integration: ${args.uncle_call ?? 'not covered'}`,
-              personNote: `Mood: ${args.mood}. Thanking his uncle: ${args.thank_uncle}`,
+              personNote: `Mood: ${args.mood}. Thanking his uncle: ${args.thank_uncle}. Testing last night: ${args.testing_answer ?? 'not covered'}`,
               adminNote: `PENDING WITH UNCLE: ${args.questions_for_uncle}. He may ask his uncle for a call to learn the marketing integration.`,
             })
           } else if (tool === 'complete_progress_call') {
