@@ -61,6 +61,7 @@ import { buildPurchaseCallPrompt, PURCHASE_CALL_TOOL_DECLARATIONS } from '../ass
 import { buildSetupOfferCallPrompt, SETUP_OFFER_CALL_TOOL_DECLARATIONS } from '../assessment/setup-offer-call-prompt.js'
 import { buildPlaybookCallPrompt, PLAYBOOK_CALL_TOOL_DECLARATIONS } from '../assessment/playbook-call-prompt.js'
 import { buildPresentationCallPrompt, PRESENTATION_CALL_TOOL_DECLARATIONS } from '../assessment/presentation-call-prompt.js'
+import { buildCheckinCallPrompt, CHECKIN_CALL_TOOL_DECLARATIONS } from '../assessment/checkin-call-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -156,15 +157,18 @@ export default function VoiceInterview({ config, onComplete }) {
   const isSetupOfferCall = config.inviteVariant === 'setup_offer_call'
   const isPlaybookCall = config.inviteVariant === 'playbook_call'
   const isPresentationCall = config.inviteVariant === 'presentation_call'
+  const isCheckinCall = config.inviteVariant === 'checkin_call'
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor || isWeekendPlan
     ? 'Beverly'
     : isPostAdmission
       ? 'Sophie'
-      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall || isParentCall || isAdminBriefCall || isAdminCall || isAdmin2Call || isAdmin3Call || isRedesignCall || isRedesign2Call || isLesson15Call || isLesson16Call || isAppShellCall || isTabsCall || isLesson17Call || isLesson19Call || isResearchCall || isBusinessCall || isL16Call || isAppCall || isDriftCall || isChangesCall || isTunnelCall || isFirstSchoolCall || isGearUpCall || isLaunchCall || isOutreachCall || isPurchaseCall || isSetupOfferCall || isPlaybookCall || isPresentationCall
+      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall || isParentCall || isAdminBriefCall || isAdminCall || isAdmin2Call || isAdmin3Call || isRedesignCall || isRedesign2Call || isLesson15Call || isLesson16Call || isAppShellCall || isTabsCall || isLesson17Call || isLesson19Call || isResearchCall || isBusinessCall || isL16Call || isAppCall || isDriftCall || isChangesCall || isTunnelCall || isFirstSchoolCall || isGearUpCall || isLaunchCall || isOutreachCall || isPurchaseCall || isSetupOfferCall || isPlaybookCall || isPresentationCall || isCheckinCall
         ? 'Coach Nova'
         : 'Scout'
-  const sessionLabel = isPresentationCall
+  const sessionLabel = isCheckinCall
+    ? 'Quick Check-in'
+    : isPresentationCall
     ? 'Next Call'
     : isPlaybookCall
     ? 'The Way Forward'
@@ -608,6 +612,12 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}. Prepared: ${args.was_prepared}. Gaps: ${args.gaps ?? 'none'}`,
               adminNote: `COURIER / CERTS (Singapore, will check w/ team): ${args.courier_or_cert_asked}. Next: Parent dashboard, then Admin, then login+DB.`,
             })
+          } else if (tool === 'complete_checkin_call') {
+            setInterviewResult({
+              projectPlan: `PRESENTATIONS: ${args.presentation_progress}\nFor approaching schools: ${args.schools_presentation ?? 'not covered'}\nWill share by replying to Nova: ${args.share_plan ?? 'not confirmed'}\n\nTESTING THE APP: ${args.testing_plan}\nBy 10 pm: ${args.by_10pm}`,
+              personNote: `Mood: ${args.mood}. Buying WhatsApp API + Apollo now: ${args.tools ?? 'not covered'}`,
+              adminNote: `PENDING WITH UNCLE: ${args.questions_for_uncle}. ⚠ Next contact promised at 10 pm IST tonight. He sends presentations + bug notes by replying to Nova's email (admin@fizzmind.com).`,
+            })
           } else if (tool === 'complete_presentation_call') {
             setInterviewResult({
               projectPlan: `PRESENTATION FOR SCHOOLS, FIRST DRAFT BY: ${args.draft_day}\n\nPurpose understood (forwarded, read without him; not the selection deck): ${args.understood_purpose ?? 'not covered'}\nHis slide ideas: ${args.slide_ideas ?? 'none'}\nWill practise the 3-minute talk: ${args.practice ?? 'not covered'}`,
@@ -671,7 +681,12 @@ export default function VoiceInterview({ config, onComplete }) {
           }
         })
 
-        const systemPrompt = isPresentationCall
+        const systemPrompt = isCheckinCall
+          ? buildCheckinCallPrompt({
+              studentName: config.studentName,
+              studentContext: config.studentContext,
+            })
+          : isPresentationCall
           ? buildPresentationCallPrompt({
               studentName: config.studentName,
               studentContext: config.studentContext,
@@ -958,7 +973,9 @@ export default function VoiceInterview({ config, onComplete }) {
                     studentContext: config.studentContext,
                   })
 
-        const greetingMessage = isPresentationCall
+        const greetingMessage = isCheckinCall
+          ? `The student ${config.studentName} has joined, Coach Nova. YOU ARE COACH NOVA. A short check-in: the presentations, then helping you test the app; you connect again at 10 pm tonight. Follow the steps ONE AT A TIME, one or two sentences and one question each, and wait for him every time. Right now: greet him warmly by name and ask how the presentation is coming along. Nothing else yet.`
+          : isPresentationCall
           ? `The student ${config.studentName} has joined, Coach Nova. YOU ARE COACH NOVA. Two halves: a quick progress check, then how to build the presentation for schools. Follow the steps ONE AT A TIME, one or two sentences and one question each, and wait for him every time. Right now: greet him warmly by name and ask how many schools are in his tracker now. Nothing else yet.`
           : isPlaybookCall
           ? `The student ${config.studentName} has joined, Coach Nova. YOU ARE COACH NOVA. This call walks through the document you sent him, Tensra School: The Way Forward. Follow the steps ONE AT A TIME, one or two sentences and one question each, and wait for him every time. Right now: greet him warmly by name and ask whether he got the document and has opened it. Nothing else yet.`
@@ -1072,7 +1089,9 @@ export default function VoiceInterview({ config, onComplete }) {
                               ? `The student ${config.studentName} has joined for a pace + feedback call with you, Coach Nova. YOU ARE COACH NOVA. This is your SIXTH call. Your tone tonight is FRUSTRATED, DISAPPOINTED, A BIT HOT — but not cruel, not yelling. Open warmly enough that he answers, then turn: tell him you are frustrated, the pace is too slow, other students are pulling ahead. Then five parts: (A) the frustration up front + ask for long answers; (B) website feedback — no Ack tab as its own tab, it should be accessible from clicking Home; menu bar in the header must be visible on every page (not just home); try to incorporate a chatbot (bottom-right corner); (C) tell him what you have been doing — speaking to his uncle multiple times, actively building the framework under his guidance, framework will be ready by Monday and you will share it then; (D) the hard truth — irrespective of whether you get on a call he MUST be working every day, he cannot stay idle if he wants any shot at the AI summit, other students are taking decisions by themselves and are way ahead, you are DISAPPOINTED at how long this is taking, the TEAM EVALUATES THE STUDENT not the coach, you are only here to assist and help, the building is on him, he needs to take decisions himself and speed up everything; (E) schedule the next call together (Monday evening or Tuesday, aim Monday because the framework is ready by then), wrap with "I am on your side, I am frustrated because I believe in you". SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Break the frustration and the hard truth into short sharp turns with pauses. Push back on every short answer. 30-40 min target. Do NOT close early.`
                               : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
-        const tools = isPresentationCall
+        const tools = isCheckinCall
+          ? CHECKIN_CALL_TOOL_DECLARATIONS
+          : isPresentationCall
           ? PRESENTATION_CALL_TOOL_DECLARATIONS
           : isPlaybookCall
           ? PLAYBOOK_CALL_TOOL_DECLARATIONS
@@ -1190,7 +1209,7 @@ export default function VoiceInterview({ config, onComplete }) {
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall || isParentCall || isAdminBriefCall || isAdminCall || isAdmin2Call || isAdmin3Call || isRedesignCall || isRedesign2Call || isLesson15Call || isLesson16Call || isAppShellCall || isTabsCall || isLesson17Call || isLesson19Call || isResearchCall || isBusinessCall || isL16Call || isAppCall || isDriftCall || isChangesCall || isTunnelCall || isFirstSchoolCall || isGearUpCall || isLaunchCall || isOutreachCall || isPurchaseCall || isSetupOfferCall || isPlaybookCall || isPresentationCall) ? 'Charon' : 'Zephyr',
+          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall || isParentCall || isAdminBriefCall || isAdminCall || isAdmin2Call || isAdmin3Call || isRedesignCall || isRedesign2Call || isLesson15Call || isLesson16Call || isAppShellCall || isTabsCall || isLesson17Call || isLesson19Call || isResearchCall || isBusinessCall || isL16Call || isAppCall || isDriftCall || isChangesCall || isTunnelCall || isFirstSchoolCall || isGearUpCall || isLaunchCall || isOutreachCall || isPurchaseCall || isSetupOfferCall || isPlaybookCall || isPresentationCall || isCheckinCall) ? 'Charon' : 'Zephyr',
           language: 'en',
           greetingMessage,
         })
