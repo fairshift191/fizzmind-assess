@@ -1152,7 +1152,7 @@ export default function InviteTest({ inviteCode, onReset }) {
                   <div style={styles.rule}><span style={styles.ruleDot} />About 10 minutes, voice only</div>
                   {isProgressCall ? (
                     <>
-                      <div style={styles.rule}><span style={styles.ruleDot} />About five minutes</div>
+                      <div style={styles.rule}><span style={styles.ruleDot} />Have your presentation open, even if it is unfinished</div>
                     </>
                   ) : isCheckinCall ? (
                     <>
