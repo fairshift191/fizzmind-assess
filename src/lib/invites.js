@@ -56,6 +56,25 @@ export async function recordCall(code, metadata, lastCall) {
 }
 
 /**
+ * The same record, sent as the page closes. A normal request is cancelled
+ * when the tab goes away; `keepalive` lets it finish, so a call that ends with
+ * a closed tab still says so.
+ */
+export function recordCallOnClose(code, metadata, lastCall) {
+  if (!code) return
+  const url = import.meta.env.VITE_SUPABASE_URL
+  const key = import.meta.env.VITE_SUPABASE_ANON_KEY
+  try {
+    fetch(`${url}/rest/v1/invites?code=eq.${encodeURIComponent(code.trim())}`, {
+      method: 'PATCH',
+      keepalive: true,
+      headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ metadata: { ...(metadata ?? {}), last_call: lastCall } }),
+    })
+  } catch {}
+}
+
+/**
  * Mark an invite as used.
  */
 export async function markInviteUsed(code) {

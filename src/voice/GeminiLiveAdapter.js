@@ -138,6 +138,11 @@ export class GeminiLiveAdapter {
     this._novaTurns = 0
     this._closes = []
     this._micProblem = null
+    // ⚠ 1 Oct: a call "disconnected" with the line still up and four turns in
+    // three minutes, and nothing said who had gone quiet. The last 40 events,
+    // in seconds from the start, answer that next time.
+    this._t0 = Date.now()
+    this._events = []
     this._watchTimer = null
 
     // State
@@ -254,6 +259,7 @@ export class GeminiLiveAdapter {
     ws.onclose = (ev) => {
       console.warn('[GeminiLive] WebSocket closed, code:', ev.code, 'reason:', ev.reason)
       this._closes.push(`${ev.code}${ev.reason ? ' ' + ev.reason : ''}`)
+      this._ev(`line closed ${ev.code}`)
       if (this.ws !== ws) return // a newer ws replaced this one, ignore
       this.ws = null
 
@@ -379,6 +385,7 @@ export class GeminiLiveAdapter {
         if (part.inlineData?.mimeType?.startsWith('audio/')) {
           clearTimeout(this._releaseTimer)
           this._turnEndedAt = 0
+          if (!this._isSpeakingAI) this._ev('Nova speaks')
           this._isSpeakingAI = true
           this._onSpeakingChange?.(true)
           this._playAudioChunk(part.inlineData.data)
@@ -467,7 +474,10 @@ export class GeminiLiveAdapter {
         const now = Date.now()
         if (peak > this._micPeak) this._micPeak = peak
         if (peak > 0.0005) this._soundAt = now
-        if (peak > 0.02) this._voiceAt = now
+        if (peak > 0.02) {
+          if (now - this._voiceAt > 1500 && !this._isSpeakingAI) this._ev('student speaks')
+          this._voiceAt = now
+        }
 
         if (!this._setupReady) return
         if (this._isSpeakingAI) return
@@ -509,6 +519,11 @@ export class GeminiLiveAdapter {
     }
   }
 
+  _ev(e) {
+    this._events.push(`${Math.round((Date.now() - this._t0) / 1000)}s ${e}`)
+    if (this._events.length > 40) this._events.shift()
+  }
+
   _setMicProblem(p) {
     if (p === this._micProblem) return
     this._micProblem = p
@@ -531,6 +546,7 @@ export class GeminiLiveAdapter {
         && this.ws?.readyState === WebSocket.OPEN) {
       this._nudged = true
       this._nudges++
+      this._ev(dead ? 'cue: no sound from the mic' : 'cue: student quiet')
       this.ws.send(JSON.stringify({ realtimeInput: { text: dead ? DEAD_MIC_CUE : QUIET_CUE } }))
     }
   }
@@ -542,6 +558,7 @@ export class GeminiLiveAdapter {
       micPeak: Math.round(this._micPeak * 1000) / 1000, micChunksSent: this._micSent,
       novaTurns: this._novaTurns, nudges: this._nudges,
       closes: this._closes.slice(-5), reconnects: this._reconnectAttempt,
+      timeline: this._events.slice(),
     }
   }
 
@@ -592,6 +609,7 @@ export class GeminiLiveAdapter {
       ? Math.max(0, this._nextPlayTime - ctx.currentTime) : 0
     this._releaseTimer = setTimeout(() => {
       if (this._destroyed) return
+      this._ev('student\'s turn')
       this._turnEndedAt = Date.now()
       this._nudged = false
       this._isSpeakingAI = false

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { C, W, K, tint, T } from '../theme'
 import { motion } from 'framer-motion'
 import { GeminiLiveAdapter } from '../voice/GeminiLiveAdapter.js'
-import { recordCall } from '../lib/invites.js'
+import { recordCall, recordCallOnClose } from '../lib/invites.js'
 import { BlobRenderer } from '../renderer/BlobRenderer.js'
 import { buildInterviewPrompt, INTERVIEW_TOOL_DECLARATIONS } from '../assessment/interview-prompt.js'
 import { buildCodeInterviewPrompt, CODE_INTERVIEW_TOOL_DECLARATIONS } from '../assessment/code-interview-prompt.js'
@@ -88,10 +88,10 @@ export default function VoiceInterview({ config, onComplete }) {
   const startedAtRef = useRef(Date.now())
   const lastDiagRef = useRef(null)
   // The record of this call, kept on the invite (see recordCall).
-  const recordThisCall = (ended) => {
+  const recordThisCall = (ended, onClose = false) => {
     const d = voiceAdapterRef.current?.diagnostics?.() ?? lastDiagRef.current
     if (d) lastDiagRef.current = d
-    recordCall(config.inviteCode, config.inviteMetadata, {
+    ;(onClose ? recordCallOnClose : recordCall)(config.inviteCode, config.inviteMetadata, {
       at: new Date().toISOString(),
       seconds: Math.round((Date.now() - startedAtRef.current) / 1000),
       ended,
@@ -1246,11 +1246,15 @@ export default function VoiceInterview({ config, onComplete }) {
     }
 
     let diagTimer = null
+    // A closed tab used to leave the record saying "in progress" for ever.
+    const onPageHide = () => { if (!completedRef.current) recordThisCall('closed the page', true) }
+    window.addEventListener('pagehide', onPageHide)
     init()
 
     return () => {
       destroyed = true
       clearInterval(diagTimer)
+      window.removeEventListener('pagehide', onPageHide)
       if (voiceAdapterRef.current && !completedRef.current) recordThisCall('left the page')
       if (voiceAdapterRef.current) { try { voiceAdapterRef.current.disconnect() } catch {} ; voiceAdapterRef.current = null }
       if (rendererRef.current) { try { rendererRef.current.destroy() } catch {} ; rendererRef.current = null }
