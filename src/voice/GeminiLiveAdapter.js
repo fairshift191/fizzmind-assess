@@ -23,6 +23,20 @@
  */
 const LIVE_MODEL = 'gemini-3.8-live'
 
+/**
+ * ⚠ 5 Oct, 19:20 IST: gemini-3.8-live refused EVERY session with "1011
+ * Internal error", even a one-line prompt, while 3.1 and 2.5 answered. Ganan
+ * sat through a call where Nova never spoke. Google's models fail one at a
+ * time, so a call no longer depends on one: on a 1011 it moves to the next
+ * model straight away. 3.1 is fast but has failed mid-call before; 2.5 is the
+ * slow, steady last resort (6 to 7 s to answer).
+ */
+const LIVE_MODELS = [LIVE_MODEL, 'gemini-3.1-flash-live-preview', 'gemini-2.5-flash-native-audio-latest']
+
+/** Said to Nova when the line came back after she had already spoken: she has
+ *  lost the conversation, and should say so rather than start over. */
+const RECONNECT_CUE = '(System note, not from the student: the line dropped and has reconnected, and you have lost the earlier conversation. In one short sentence, say the line dropped for a moment and ask him to say again what he was saying. Then wait.)'
+
 const GEMINI_WS_BASE = 'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent'
 
 const LANG_TO_BCP47 = {
@@ -158,7 +172,9 @@ export class GeminiLiveAdapter {
 
   async connect({ apiKey, model, voiceName, systemPrompt, language, tools, greetingMessage }) {
     this.apiKey = apiKey
-    this.model = model || LIVE_MODEL
+    this._models = model ? [model] : LIVE_MODELS
+    this._modelIdx = 0
+    this.model = this._models[0]
     this.systemPrompt = (systemPrompt || '') + TURN_TAKING
     this._language = language || 'en'
     this._tools = tools || []
@@ -197,6 +213,7 @@ export class GeminiLiveAdapter {
 
   _openWebSocket({ isReconnect }) {
     if (this._destroyed) return
+    this._isReconnect = isReconnect
     if (isReconnect) {
       // On reconnect we are re-establishing setup. Block mic and greeting until setupComplete arrives.
       this._setupReady = false
@@ -265,6 +282,21 @@ export class GeminiLiveAdapter {
 
       if (this._destroyed || this._userInitiatedClose) {
         this._onConnectionState?.({ state: 'closed' })
+        return
+      }
+
+      // The model itself is failing: move to the next one at once, rather than
+      // retrying the same broken model with growing pauses.
+      if (ev.code === 1011 && this._modelIdx < this._models.length - 1) {
+        this._modelIdx += 1
+        this.model = this._models[this._modelIdx]
+        this._ev(`switching to ${this.model}`)
+        this._onConnectionState?.({ state: 'reconnecting', attempt: 1, max: this._maxReconnectAttempts })
+        clearTimeout(this._reconnectTimer)
+        this._reconnectTimer = setTimeout(() => {
+          if (this._destroyed) return
+          this._openWebSocket({ isReconnect: true })
+        }, 300)
         return
       }
 
@@ -374,6 +406,14 @@ export class GeminiLiveAdapter {
       if (!this._greetingTriggered) {
         this._greetingTriggered = true
         this._sendGreetingTrigger()
+      } else if (this._isReconnect) {
+        // ⚠ A reconnected session starts with no memory and waits for input,
+        // so the student heard silence. If Nova never got a word out, start
+        // the call properly; if she had, she says the line dropped.
+        if (this._novaTurns === 0) this._sendGreetingTrigger()
+        else if (this.ws?.readyState === WebSocket.OPEN) {
+          this.ws.send(JSON.stringify({ realtimeInput: { text: RECONNECT_CUE } }))
+        }
       }
       return
     }
@@ -554,6 +594,7 @@ export class GeminiLiveAdapter {
   /** What happened on this call, for the record. */
   diagnostics() {
     return {
+      model: this.model,
       mic: this._micState, micError: this._micError ?? null, micRate: this._micRate,
       micPeak: Math.round(this._micPeak * 1000) / 1000, micChunksSent: this._micSent,
       novaTurns: this._novaTurns, nudges: this._nudges,
