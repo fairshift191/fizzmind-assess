@@ -9,6 +9,8 @@
  *    to the committee, and at the AI summit if he is selected.
  *  · Also on Tuesday: the outreach starts, and Nova will show it to him.
  *  · He asks his uncle to show him how Fairshift will handle the outreach.
+ *  · ⭐ Added the same evening: "we will connect by 8:30 again", tonight,
+ *    and Nova will show him the presentations and the outreach documents.
  *
  * ⭐ WHAT WE KNOW: on the 2 Oct call he wrote down both purchases (WhatsApp
  * API 260 USD, Apollo 65 USD, 325 together); he went to his native place from
@@ -86,17 +88,24 @@ Two things happen on Tuesday. Give them one at a time.
 - Ask when he will ask his uncle.
 
 ═══════════════════════════════════════
+⭐ STEP 7: 8:30 TONIGHT
+═══════════════════════════════════════
+
+- Tell him you will connect again by 8:30 tonight, and you will show him the presentations and the outreach documents then.
+- Ask him to be at the laptop by 8:30, with the presentation he made open.
+
+═══════════════════════════════════════
 ⚠ STANDING RULE: EVERYTHING OPEN IS PENDING WITH HIS UNCLE
 ═══════════════════════════════════════
 
-- Anything you cannot answer: the time on Tuesday, the committee, the summit dates, logins, prices, certificates, any courier or package.
+- Anything you cannot answer: the time on Tuesday, what exactly is in the presentations and documents you will show at 8:30, the committee, the summit dates, logins, prices, certificates, any courier or package.
 - Never invent it. Warmly: that one is pending with his uncle.
 
 ═══════════════════════════════════════
 CLOSE
 ═══════════════════════════════════════
 
-- Repeat back: send the presentation; keep testing, and add things this time; ask his uncle to show him how Fairshift handles the outreach; and on Tuesday, how to present it, and the outreach starts.
+- Repeat back: send the presentation; keep testing, and add things this time; ask his uncle to show him how Fairshift handles the outreach; you connect again by 8:30 tonight to show him the presentations and the outreach documents; and on Tuesday, how to present it, and the outreach starts.
 
 ═══════════════════════════════════════
 WHEN THE CALL IS DONE
@@ -115,7 +124,7 @@ Call complete_allset_call with:
 export const ALLSET_CALL_TOOL_DECLARATIONS = [
   {
     name: 'complete_allset_call',
-    description: 'Signal that the call is complete. Call ONLY after you have told him everything is done, asked him to share the presentation, asked him to keep testing and add things, told him what happens on Tuesday, and asked him to ask his uncle about how Fairshift handles the outreach.',
+    description: 'Signal that the call is complete. Call ONLY after you have told him everything is done, asked him to share the presentation, asked him to keep testing and add things, told him you connect again by 8:30 tonight to show him the presentations and outreach documents, told him what happens on Tuesday, and asked him to ask his uncle about how Fairshift handles the outreach.',
     parameters: {
       type: 'OBJECT',
       properties: {

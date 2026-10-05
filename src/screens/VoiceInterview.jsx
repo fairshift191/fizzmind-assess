@@ -628,7 +628,7 @@ export default function VoiceInterview({ config, onComplete }) {
             setInterviewResult({
               projectPlan: `PRESENTATION: ${args.presentation}\n\nTesting, first thing he will add: ${args.testing_next}\nCommittee vs school (his words): ${args.committee_idea ?? 'not covered'}\nAsks his uncle to show how Fairshift handles the outreach: ${args.uncle_ask}`,
               personNote: `Mood: ${args.mood}. Native place: ${args.native_place ?? 'not covered'}`,
-              adminNote: `PENDING WITH UNCLE: ${args.questions_for_uncle}. ⚠ Promised for TUESDAY 6 Oct: how to present to the committee / AI summit, and the outreach starts (Nova shows him). Check admin@fizzmind.com for the presentation.`,
+              adminNote: `PENDING WITH UNCLE: ${args.questions_for_uncle}. ⚠ Promised: connect again by 8:30 PM TONIGHT (5 Oct) to show him the presentations and the outreach documents; TUESDAY 6 Oct: how to present to the committee / AI summit, and the outreach starts. Check admin@fizzmind.com for the presentation.`,
             })
           } else if (tool === 'complete_records_call') {
             setInterviewResult({
@@ -1019,7 +1019,7 @@ export default function VoiceInterview({ config, onComplete }) {
                   })
 
         const greetingMessage = isAllsetCall
-          ? `The student ${config.studentName} has joined, Coach Nova. YOU ARE COACH NOVA. A short, upbeat call: everything is done, he shares the presentation and keeps testing, and on Tuesday the real work starts. Follow the steps ONE AT A TIME, one or two sentences and one question each, and wait for him every time. Right now: greet him warmly by name, welcome him back from his native place, and ask how it was. Nothing else yet.`
+          ? `The student ${config.studentName} has joined, Coach Nova. YOU ARE COACH NOVA. A short, upbeat call: everything is done, he shares the presentation and keeps testing, you connect again by 8:30 tonight, and on Tuesday the real work starts. Follow the steps ONE AT A TIME, one or two sentences and one question each, and wait for him every time. Right now: greet him warmly by name, welcome him back from his native place, and ask how it was. Nothing else yet.`
           : isRecordsCall
           ? `The student ${config.studentName} has joined, Coach Nova. YOU ARE COACH NOVA. A short call: the tools are bought, he writes them in his records, he thanks his uncle, and he takes his laptop to his native place. Follow the steps ONE AT A TIME, one or two sentences and one question each, and wait for him every time. Right now: greet him warmly by name, give him the good news that the WhatsApp API and Apollo have been bought, and ask if he has something to write on. Nothing else yet.`
           : isProgressCall
