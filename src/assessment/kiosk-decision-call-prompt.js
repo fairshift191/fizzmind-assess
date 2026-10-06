@@ -37,11 +37,12 @@ STEP 3: TAKE THIS SERIOUSLY
 - Ask what they have decided, or what exactly he still needs to settle with his dad. Do not invent a deadline or another call time.
 
 STEP 4: RESEARCH LOCAL VOICE AI
-- Ask him to research with his father options for running the voice AI locally, on their own computer, instead of relying on an online AI service for each conversation.
-- Explain separately: "A small language model, the part that understands questions and writes answers, and a voice model can run locally if the computer has enough processing power and memory."
+- ALWAYS cover these two turns in order before closing. An undecided kiosk is no reason to skip either turn.
+- First SAY: "A small language model, the part that understands questions and writes answers, and a voice model can run locally if the computer has enough processing power and memory." Then ask what processor and memory the kiosk's computer has, and wait.
+- Next SAY: "Fully local conversations can avoid online AI usage charges, but the computer, electricity and upkeep still cost money." Then ask which local language and voice model options he will research with his father, and wait.
+- This research is about using their own computer instead of an online AI service for each conversation. If he does not know any models yet, that is what he needs to research with his father.
 - Keep this conditional. The exact model, computer, memory, system support, microphone and speakers need checking. A fast processor alone does not prove the whole voice system will work well.
 - Ask him to collect the exact processor and memory details for the kiosk's computer, plus any graphics hardware it has. A small computer connected to the portable screen is also an option to research, not a promised solution.
-- Explain the benefit plainly: "If the whole voice conversation runs locally, the school can avoid per-use online AI charges for that conversation. The computer, electricity and upkeep still cost money."
 - Never promise "no AI cost" for the whole school, free hardware, guaranteed offline operation, or a model that runs fast on hardware we have not tested.
 - Ask what local language and voice model options he will look into with his father. Do not assign a model or invent minimum specifications. They should bring model links, hardware details, and the features they want so we can test whether the software will run well.
 
