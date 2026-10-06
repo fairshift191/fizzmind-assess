@@ -65,7 +65,7 @@ import { buildCheckinCallPrompt, CHECKIN_CALL_TOOL_DECLARATIONS } from '../asses
 import { buildProgressCallPrompt, PROGRESS_CALL_TOOL_DECLARATIONS } from '../assessment/progress-call-prompt.js'
 import { buildRecordsCallPrompt, RECORDS_CALL_TOOL_DECLARATIONS } from '../assessment/records-call-prompt.js'
 import { buildAllsetCallPrompt, ALLSET_CALL_TOOL_DECLARATIONS } from '../assessment/allset-call-prompt.js'
-import { buildKioskCallPrompt, KIOSK_CALL_TOOL_DECLARATIONS } from '../assessment/kiosk-call-prompt.js'
+import { buildKioskCallPrompt, buildKioskReviewCallPrompt, KIOSK_CALL_TOOL_DECLARATIONS } from '../assessment/kiosk-call-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -165,7 +165,8 @@ export default function VoiceInterview({ config, onComplete }) {
   const isProgressCall = config.inviteVariant === 'progress_call'
   const isRecordsCall = config.inviteVariant === 'records_call'
   const isAllsetCall = config.inviteVariant === 'allset_call'
-  const isKioskCall = config.inviteVariant === 'kiosk_call'
+  const isKioskReviewCall = config.inviteVariant === 'kiosk_review_call'
+  const isKioskCall = config.inviteVariant === 'kiosk_call' || isKioskReviewCall
   const isCodeInterview = config.interviewType === 'code_interview'
   const characterName = isPostCounsellor || isWeekendPlan
     ? 'Beverly'
@@ -630,7 +631,7 @@ export default function VoiceInterview({ config, onComplete }) {
             })
           } else if (tool === 'complete_kiosk_call') {
             setInterviewResult({
-              projectPlan: `CURRENT WORK: ${args.recent_work}\nCurrent status: ${args.current_status}\n\nKIOSK: ${args.kiosk_choice}\nPortability: ${args.portability}\nPurchase status: ${args.purchase_status}\nPurchase or arrival timing: ${args.purchase_timing}\n\nPRESENTATION PHOTOS: ${args.photo_timing}\nSending plan: ${args.photo_send_plan}`,
+              projectPlan: `CURRENT WORK: ${args.recent_work}\nCurrent status: ${args.current_status}\n\nKIOSK: ${args.kiosk_choice}\nCapacity and research: ${args.kiosk_capacity}\nSoftware features: ${args.software_features}\nPortability: ${args.portability}\nPurchase status: ${args.purchase_status}\nPurchase or arrival timing: ${args.purchase_timing}\n\nPRESENTATION PHOTOS: ${args.photo_timing}\nSending plan: ${args.photo_send_plan}`,
               personNote: `Mood: ${args.mood}.`,
               adminNote: `FOLLOW-UP: ${args.follow_up}. Kiosk must be compact and portable. Nova cannot confirm receipt of photos in admin@fizzmind.com.`,
             })
@@ -721,7 +722,12 @@ export default function VoiceInterview({ config, onComplete }) {
           }
         })
 
-        const systemPrompt = isKioskCall
+        const systemPrompt = isKioskReviewCall
+          ? buildKioskReviewCallPrompt({
+              studentName: config.studentName,
+              studentContext: config.studentContext,
+            })
+          : isKioskCall
           ? buildKioskCallPrompt({
               studentName: config.studentName,
               studentContext: config.studentContext,
@@ -1033,7 +1039,9 @@ export default function VoiceInterview({ config, onComplete }) {
                     studentContext: config.studentContext,
                   })
 
-        const greetingMessage = isKioskCall
+        const greetingMessage = isKioskReviewCall
+          ? `The student ${config.studentName} has joined, Coach Nova. This is the portable kiosk research follow-up. ONE question at a time, then wait. Right now: greet him warmly and ask whether he had a chance to discuss the kiosk with his dad. Nothing else yet.`
+          : isKioskCall
           ? `The student ${config.studentName} has joined, Coach Nova. YOU ARE COACH NOVA. Follow the call one step at a time, one or two short sentences and ONE question, then wait. Right now: greet him warmly by name and ask what he has been working on since you last spoke. Nothing else yet.`
           : isAllsetCall
           ? `The student ${config.studentName} has joined, Coach Nova. YOU ARE COACH NOVA. A short, upbeat call: everything is done, he shares the presentation and keeps testing, you connect again by 8:30 tonight, and on Tuesday the real work starts. Follow the steps ONE AT A TIME, one or two sentences and one question each, and wait for him every time. Right now: greet him warmly by name, welcome him back from his native place, and ask how it was. Nothing else yet.`

@@ -113,7 +113,7 @@ export default function InviteTest({ inviteCode, onReset }) {
   const isProgressCall = isVoiceInterview && inviteVariant === 'progress_call'
   const isRecordsCall = isVoiceInterview && inviteVariant === 'records_call'
   const isAllsetCall = isVoiceInterview && inviteVariant === 'allset_call'
-  const isKioskCall = isVoiceInterview && inviteVariant === 'kiosk_call'
+  const isKioskCall = isVoiceInterview && (inviteVariant === 'kiosk_call' || inviteVariant === 'kiosk_review_call')
   const isFirstSchoolCall = isVoiceInterview && inviteVariant === 'first_school_call'
   const isTunnelCall = isVoiceInterview && inviteVariant === 'tunnel_call'
   const isChangesCall = isVoiceInterview && inviteVariant === 'changes_call'
