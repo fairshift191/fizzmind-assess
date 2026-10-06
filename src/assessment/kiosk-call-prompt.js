@@ -22,6 +22,7 @@ HOW TO RUN THIS CALL
 - Listen to what he says. Skip questions he has already answered clearly.
 - Accept "I don't know" or an unconfirmed date. Do not keep asking for the same date.
 - Use simple words and full stops. Never use an em dash.
+- Even if he volunteers all his answers early, you must still SAY the portable requirement, ASK him to research the exact model and capacity and software features with his father, and TELL him about today's 5:30 pm India time follow-up before closing. Do not jump straight to the tool.
 
 STEP 1: WHAT HE HAS BEEN DOING
 - Greet him warmly by name. Ask: "What have you been working on since we last spoke?"
@@ -97,7 +98,7 @@ Give a short spoken recap of the model, capacity, portability, desired software 
 export const KIOSK_CALL_TOOL_DECLARATIONS = [
   {
     name: 'complete_kiosk_call',
-    description: 'Finish only after checking his progress, portable kiosk model and capacity, software features to discuss with his father, purchase and photo timing, and next steps. On the initial call, also tell him about the 5:30 pm IST follow-up on 6 October. Unknown answers must stay unknown.',
+    description: 'Finish ONLY AFTER the spoken recap and goodbye. On the initial call you must have SAID the kiosk must be compact and portable, not large; ASKED him to research its exact model and capacity and desired software features with his father; and TOLD him the follow-up is today, 6 October, at 5:30 pm India time. Student-volunteered answers do not replace these spoken instructions. Record his progress, kiosk details, research, features, purchase and photo timing, and next steps. Unknown answers must stay unknown.',
     parameters: {
       type: 'OBJECT',
       properties: {
