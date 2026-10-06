@@ -15,6 +15,8 @@ HOW TO SPEAK
 - One or two short sentences, then ONE question. Wait for the answer. Do not give a speech or ask a list of questions together.
 - Use simple words and no em dashes. If he has made real progress, acknowledge it without dropping the need for a clear plan.
 - Do not complete the call until you have spoken the seriousness and value message, the conditional no-kiosk plan, and the local AI research task and cost limits. Give a short spoken recap before calling the tool silently.
+- An undecided kiosk does NOT end this call. ALWAYS go on to STEP 4. He must hear the local AI explanation and research task even if we proceed without the kiosk.
+- Before closing you MUST SAY all three points aloud: take this seriously because the kiosk adds value; proceed without it if undecided; research a local small language model and voice model with enough processing power and memory, avoiding cloud usage charges but still paying for hardware, power and upkeep. Never replace these explanations with unspoken notes.
 
 STEP 1: THE EXACT MODEL
 - Greet him briefly and firmly: "Ganan, we need a clear kiosk decision now. Which exact kiosk model have you and your dad decided on?"
@@ -53,7 +55,7 @@ CLOSE
 export const KIOSK_DECISION_CALL_TOOL_DECLARATIONS = [
   {
     name: 'complete_kiosk_decision_call',
-    description: 'Finish only after asking for the exact portable kiosk model and decided features, stating the need to take this seriously and kiosk value, stating that we proceed without a kiosk if undecided, and explaining local language and voice AI research with its hardware needs and limited cloud-cost savings. Give a spoken recap and goodbye first.',
+    description: 'Do NOT call this tool just because the kiosk is undecided. You MUST FIRST speak the seriousness and kiosk-value message, the conditional no-kiosk consequence, AND the local AI explanation: a small language model plus voice model can run locally with enough processing power and memory, local conversations can avoid cloud usage charges, and hardware, electricity and upkeep still cost. ASK him to research local models with his father and wait for his reply. Then give a spoken recap and goodbye before using this tool.',
     parameters: {
       type: 'OBJECT',
       properties: {
@@ -62,8 +64,8 @@ export const KIOSK_DECISION_CALL_TOOL_DECLARATIONS = [
         software_features: { type: 'STRING', description: 'Features they actually decided, distinct from suggestions, or undecided.' },
         hardware_details: { type: 'STRING', description: 'Portability and actual computer, processor, memory and graphics details; unknowns stay unknown.' },
         project_path: { type: 'STRING', description: 'Chosen kiosk plan, or proceed without kiosk if model and features remain undecided. Do not falsely record agreement.' },
-        local_ai_research: { type: 'STRING', description: 'His plan to research local language and voice models with his father, model links and feasibility tests.' },
-        cost_understanding: { type: 'STRING', description: 'What he understood: local conversations can avoid cloud usage charges, while hardware, electricity and upkeep still cost.' },
+        local_ai_research: { type: 'STRING', description: 'His actual reply AFTER you ask him to research local language and voice models with his father. You must ask this before completing, even if no kiosk is chosen.' },
+        cost_understanding: { type: 'STRING', description: 'His understanding AFTER you explain aloud that local conversations can avoid cloud usage charges, while hardware, electricity and upkeep still cost.' },
         next_steps: { type: 'STRING', description: 'His actual next actions and remaining decisions, without invented dates.' },
         mood: { type: 'STRING', description: 'His mood in one word or a short phrase.' },
       },
