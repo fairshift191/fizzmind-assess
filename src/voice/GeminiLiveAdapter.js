@@ -466,16 +466,16 @@ export class GeminiLiveAdapter {
   // All tools ACK immediately — no backend round-trip needed
   _handleToolCalls(functionCalls) {
     for (const call of functionCalls) {
+      const output = this._onToolCall?.({ tool: call.name, args: call.args || {} }) ?? { ok: true }
       if (this.ws?.readyState === WebSocket.OPEN) {
         this.ws.send(JSON.stringify({
           toolResponse: {
             functionResponses: [{
-              id: call.id, name: call.name, response: { output: { ok: true } },
+              id: call.id, name: call.name, response: { output },
             }],
           },
         }))
       }
-      this._onToolCall?.({ tool: call.name, args: call.args || {} })
     }
   }
 

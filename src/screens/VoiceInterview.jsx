@@ -68,7 +68,7 @@ import { buildAllsetCallPrompt, ALLSET_CALL_TOOL_DECLARATIONS } from '../assessm
 import { buildKioskCallPrompt, buildKioskReviewCallPrompt, KIOSK_CALL_TOOL_DECLARATIONS } from '../assessment/kiosk-call-prompt.js'
 import { buildKioskDecisionCallPrompt, KIOSK_DECISION_CALL_TOOL_DECLARATIONS } from '../assessment/kiosk-decision-call-prompt.js'
 import { buildSchoolApproachCallPrompt, SCHOOL_APPROACH_CALL_TOOL_DECLARATIONS } from '../assessment/school-approach-call-prompt.js'
-import { buildSchoolTrialCallPrompt, SCHOOL_TRIAL_CALL_TOOL_DECLARATIONS } from '../assessment/school-trial-call-prompt.js'
+import { buildSchoolTrialCallPrompt, SCHOOL_TRIAL_CALL_TOOL_DECLARATIONS, schoolTrialCompletionCheck } from '../assessment/school-trial-call-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -344,13 +344,16 @@ export default function VoiceInterview({ config, onComplete }) {
         voiceAdapterRef.current = adapter
 
         let turnBuffer = ''
+        let schoolTrialSpoken = ''
 
         adapter.onTextResponse(({ type, text }) => {
           if (type === 'delta') {
             turnBuffer += text
+            if (isSchoolTrialCall) schoolTrialSpoken += text
             setSubtitleText(turnBuffer)
           } else if (type === 'done') {
             setSubtitleText(turnBuffer)
+            if (isSchoolTrialCall) schoolTrialSpoken += '\n'
             turnBuffer = ''
             setTimeout(() => setSubtitleText(''), 2000)
           } else if (type === 'visitor') {
@@ -636,6 +639,8 @@ export default function VoiceInterview({ config, onComplete }) {
               adminNote: `COURIER / CERTS (Singapore, will check w/ team): ${args.courier_or_cert_asked}. Next: Parent dashboard, then Admin, then login+DB.`,
             })
           } else if (tool === 'complete_school_trial_call') {
+            const completion = schoolTrialCompletionCheck(schoolTrialSpoken)
+            if (!completion.ok) return completion
             setInterviewResult({
               projectPlan: `SCHOOL MEETING: ${args.meeting_summary}\nFeedback: ${args.school_feedback}\n\nTRIAL STATUS: ${args.trial_status}\nScope: ${args.trial_scope}\nStudent numbers: ${args.student_numbers}\nSuccess criteria: ${args.trial_success_criteria}\n\nLOCAL AI: ${args.local_ai_plan}\nPRICING AFTER TRIAL: ${args.pricing_after_trial}`,
               personNote: `Mood: ${args.mood}. Security understanding and research: ${args.data_security_research}`,

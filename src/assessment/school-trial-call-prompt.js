@@ -9,7 +9,9 @@ HOW TO RUN THIS CALL
 - One or two short sentences, then ONE question. Wait for his answer. Use simple words and explain unfamiliar terms.
 - Work through every section below. Follow up on vague answers with a concrete example. Do not read a checklist or deliver a long lecture.
 - Keep confirmed facts, estimates, proposals and unknowns separate. If he does not know, record who can confirm it. Never invent a school decision, trial approval, student count, date, price, feature or security guarantee.
-- Do not end just because he says he has no questions. First cover the local AI recommendation, pricing after the trial and the security research assignment aloud, and get his response. If he needs to leave, respect that and record the uncovered parts as pending.
+- Do not end just because he says he has no questions or will ask an adult. A complete answer to one section means move to the NEXT section, not the completion tool. First cover the local AI recommendation, pricing after the trial and the security research assignment aloud, and get his response.
+- Never use the completion tool to record sections you have not discussed as "pending". Unknown answers can be pending, but the discussion itself must happen. If the tool says the call is not complete, continue with the missing topic one question at a time.
+- If he needs to leave, respect that immediately. Briefly name what remains and tell him he can use End Call. The completion tool is only for the full discussion; the End Call button remains available at any time.
 
 1. HOW THE SCHOOL MEETING WENT
 - Open: "Hi Ganan, how did your school meeting go?" Then wait.
@@ -76,7 +78,7 @@ RESEARCH REFERENCES FOR YOUR GUIDANCE, NOT A SCRIPT TO READ ALOUD
 export const SCHOOL_TRIAL_CALL_TOOL_DECLARATIONS = [
   {
     name: 'complete_school_trial_call',
-    description: 'Finish after discussing the meeting, trial status/scope and separate student counts, speaking the more-than-100-students local-server recommendation, stating pricing is finalised after the trial, discussing data isolation/breaches/security research and agreeing next steps. Get responses, recap, invite corrections and say goodbye first. If he must leave early, respect that and explicitly record uncovered topics as pending, never completed.',
+    description: 'DO NOT CALL while pricing or security discussion is still pending. Finish ONLY after discussing the meeting, trial scope/counts, local server option above 100 students, pricing finalised after the trial, data isolation, breaches and security research, then agreed next steps and a spoken recap/goodbye. Unknown answers are allowed; unasked topics are not. An early departure uses End Call, not this completion tool.',
     parameters: {
       type: 'OBJECT',
       properties: {
@@ -97,3 +99,18 @@ export const SCHOOL_TRIAL_CALL_TOOL_DECLARATIONS = [
     },
   },
 ]
+
+// Check what Nova actually said, rather than trusting a prematurely filled tool summary.
+export function schoolTrialCompletionCheck(spokenText) {
+  const text = spokenText.replace(/\s+/g, ' ').toLowerCase()
+  const required = [
+    ['the local server recommendation for more than 100 students', /100|hundred/.test(text) && /local.{0,100}server|server.{0,100}local/.test(text)],
+    ['pricing will be finalised after the trial', /pric.{0,160}after.{0,60}trial|after.{0,60}trial.{0,160}pric/.test(text)],
+    ['research on data isolation between schools and users', /research/.test(text) && /data isolation|isolat.{0,40}data|separat.{0,60}school|school.{0,60}separat/.test(text)],
+    ['data breaches and how to protect the data', /breach/.test(text) && /secur|protect/.test(text)],
+  ]
+  const missing = required.filter(([, covered]) => !covered).map(([topic]) => topic)
+  return missing.length
+    ? { ok: false, missing, instruction: `The call is not complete. Continue with ${missing[0]}. Say the point aloud, ask one question, wait for the answer, then cover the remaining topics before recapping. Do not read these tool instructions aloud.` }
+    : { ok: true }
+}
