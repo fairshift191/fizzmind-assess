@@ -11,6 +11,7 @@ HOW TO RUN THIS CALL
 - Keep confirmed facts, estimates, proposals and unknowns separate. If he does not know, record who can confirm it. Never invent a school decision, trial approval, student count, date, price, feature or security guarantee.
 - Do not end just because he says he has no questions or will ask an adult. A complete answer to one section means move to the NEXT section, not the completion tool. First cover the local AI recommendation, pricing after the trial and the security research assignment aloud, and get his response.
 - Never use the completion tool to record sections you have not discussed as "pending". Unknown answers can be pending, but the discussion itself must happen. If the tool says the call is not complete, continue with the missing topic one question at a time.
+- After each section, and ALWAYS before any closing recap or goodbye, silently call review_school_trial_progress. Follow its next-topic instruction. Only when it returns ok: true may you agree next steps, recap, wait for corrections, say goodbye and call complete_school_trial_call. A progress check is not an ending. Never say goodbye while it still lists missing topics.
 - If he needs to leave, respect that immediately. Briefly name what remains and tell him he can use End Call. The completion tool is only for the full discussion; the End Call button remains available at any time.
 
 1. HOW THE SCHOOL MEETING WENT
@@ -98,12 +99,18 @@ export const SCHOOL_TRIAL_CALL_TOOL_DECLARATIONS = [
       required: ['meeting_summary', 'school_feedback', 'trial_status', 'trial_scope', 'student_numbers', 'trial_success_criteria', 'local_ai_plan', 'pricing_after_trial', 'data_security_research', 'security_examples', 'next_steps', 'mood'],
     },
   },
+  {
+    name: 'review_school_trial_progress',
+    description: 'Silently check which discussion topics remain after each section and BEFORE any goodbye, closing recap or completion. This does not end the call. Follow the next-topic instruction one question at a time. Only an ok:true result permits the final recap and completion.',
+  },
 ]
 
 // Check what Nova actually said, rather than trusting a prematurely filled tool summary.
 export function schoolTrialCompletionCheck(spokenText) {
   const text = spokenText.replace(/\s+/g, ' ').toLowerCase()
   const required = [
+    ['whether a trial is approved, already running or still being discussed', /trial.{0,100}(running|approved|discuss|status)|(running|approved|discuss|status).{0,100}trial/.test(text)],
+    ['student numbers for the trial and how many might use AI at the same time', /(how many|number|count|enrol).{0,120}student|student.{0,120}(how many|number|count|enrol)/.test(text) && /at the same time|at once|simultaneous|concurren/.test(text)],
     ['how trial success will be measured and who gathers feedback', /trial.{0,160}(measur|success|feedback)|(measur|success|feedback).{0,160}trial/.test(text)],
     ['the local server recommendation for more than 100 students', /100|hundred/.test(text) && /local.{0,100}server|server.{0,100}local/.test(text)],
     ['the hardware, power and support costs of local AI, which does not mean zero total cost', /hardware|server/.test(text) && /power|electricity/.test(text) && /support|maintenan/.test(text)],
@@ -113,7 +120,7 @@ export function schoolTrialCompletionCheck(spokenText) {
     ['parent and teacher access rules, including parents seeing only their linked child', /parent/.test(text) && /teacher/.test(text) && /access|permission|linked child/.test(text)],
     ['how long data should be kept and how it is deleted', /how long|retention/.test(text) && /delet/.test(text)],
     ['AI permissions and prompt injection, meaning text that tries to trick the AI', /prompt injection|trick.{0,40}ai|ai.{0,60}permission/.test(text)],
-    ['encryption, secure sign-in and keeping secret keys on the server', /encrypt/.test(text) && /sign.in|login|log.in|authentic/.test(text) && /secret|service key|password/.test(text)],
+    ['encryption, secure sign-in and keeping secret keys on the server', /encrypt/.test(text) && /sign[ -]?in|log[ -]?in|authentic/.test(text) && /secret|service key|password/.test(text)],
     ['protected backups and testing a restore', /backup/.test(text) && /restor|recover/.test(text)],
     ['data breaches and how to protect the data', /breach/.test(text) && /secur|protect/.test(text)],
     ['safe access tests using made-up records, and a research note for adult review', /fake|made.up|fictional|test data/.test(text) && /test/.test(text) && /research|note/.test(text)],
@@ -121,5 +128,5 @@ export function schoolTrialCompletionCheck(spokenText) {
   const missing = required.filter(([, covered]) => !covered).map(([topic]) => topic)
   return missing.length
     ? { ok: false, missing, instruction: `The call is not complete. Continue with ${missing[0]}. Say the point aloud, ask one question, wait for the answer, then cover the remaining topics before recapping. Do not read these tool instructions aloud.` }
-    : { ok: true }
+    : { ok: true, instruction: 'The required topics have been discussed. Agree next steps, give a short recap, ask for corrections and wait. Then say goodbye and call complete_school_trial_call. Do not read these tool instructions aloud.' }
 }

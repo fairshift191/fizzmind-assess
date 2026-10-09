@@ -374,6 +374,9 @@ export default function VoiceInterview({ config, onComplete }) {
 
         adapter.onToolCall(({ tool, args }) => {
           console.log('[VoiceInterview] Tool call:', tool, args)
+          if (tool === 'review_school_trial_progress' && isSchoolTrialCall) {
+            return schoolTrialCompletionCheck(schoolTrialSpoken)
+          }
           if (tool === 'complete_interview') {
             setInterviewResult({
               projectPlan: args.project_plan,
