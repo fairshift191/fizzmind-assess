@@ -68,6 +68,7 @@ import { buildAllsetCallPrompt, ALLSET_CALL_TOOL_DECLARATIONS } from '../assessm
 import { buildKioskCallPrompt, buildKioskReviewCallPrompt, KIOSK_CALL_TOOL_DECLARATIONS } from '../assessment/kiosk-call-prompt.js'
 import { buildKioskDecisionCallPrompt, KIOSK_DECISION_CALL_TOOL_DECLARATIONS } from '../assessment/kiosk-decision-call-prompt.js'
 import { buildSchoolApproachCallPrompt, SCHOOL_APPROACH_CALL_TOOL_DECLARATIONS } from '../assessment/school-approach-call-prompt.js'
+import { buildSchoolTrialCallPrompt, SCHOOL_TRIAL_CALL_TOOL_DECLARATIONS } from '../assessment/school-trial-call-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -168,6 +169,7 @@ export default function VoiceInterview({ config, onComplete }) {
   const isRecordsCall = config.inviteVariant === 'records_call'
   const isAllsetCall = config.inviteVariant === 'allset_call'
   const isSchoolApproachCall = config.inviteVariant === 'school_approach_call'
+  const isSchoolTrialCall = config.inviteVariant === 'school_trial_call'
   const isKioskReviewCall = config.inviteVariant === 'kiosk_review_call'
   const isKioskDecisionCall = config.inviteVariant === 'kiosk_decision_call'
   const isKioskCall = config.inviteVariant === 'kiosk_call' || isKioskReviewCall || isKioskDecisionCall
@@ -176,10 +178,10 @@ export default function VoiceInterview({ config, onComplete }) {
     ? 'Beverly'
     : isPostAdmission
       ? 'Sophie'
-      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall || isParentCall || isAdminBriefCall || isAdminCall || isAdmin2Call || isAdmin3Call || isRedesignCall || isRedesign2Call || isLesson15Call || isLesson16Call || isAppShellCall || isTabsCall || isLesson17Call || isLesson19Call || isResearchCall || isBusinessCall || isL16Call || isAppCall || isDriftCall || isChangesCall || isTunnelCall || isFirstSchoolCall || isGearUpCall || isLaunchCall || isOutreachCall || isPurchaseCall || isSetupOfferCall || isPlaybookCall || isPresentationCall || isCheckinCall || isProgressCall || isRecordsCall || isAllsetCall || isKioskCall || isSchoolApproachCall
+      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall || isParentCall || isAdminBriefCall || isAdminCall || isAdmin2Call || isAdmin3Call || isRedesignCall || isRedesign2Call || isLesson15Call || isLesson16Call || isAppShellCall || isTabsCall || isLesson17Call || isLesson19Call || isResearchCall || isBusinessCall || isL16Call || isAppCall || isDriftCall || isChangesCall || isTunnelCall || isFirstSchoolCall || isGearUpCall || isLaunchCall || isOutreachCall || isPurchaseCall || isSetupOfferCall || isPlaybookCall || isPresentationCall || isCheckinCall || isProgressCall || isRecordsCall || isAllsetCall || isKioskCall || isSchoolApproachCall || isSchoolTrialCall
         ? 'Coach Nova'
         : 'Scout'
-  const sessionLabel = isKioskCall || isSchoolApproachCall
+  const sessionLabel = isKioskCall || isSchoolApproachCall || isSchoolTrialCall
     ? 'Next Call'
     : isAllsetCall
     ? 'All Set'
@@ -633,6 +635,12 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}. Prepared: ${args.was_prepared}. Gaps: ${args.gaps ?? 'none'}`,
               adminNote: `COURIER / CERTS (Singapore, will check w/ team): ${args.courier_or_cert_asked}. Next: Parent dashboard, then Admin, then login+DB.`,
             })
+          } else if (tool === 'complete_school_trial_call') {
+            setInterviewResult({
+              projectPlan: `SCHOOL MEETING: ${args.meeting_summary}\nFeedback: ${args.school_feedback}\n\nTRIAL STATUS: ${args.trial_status}\nScope: ${args.trial_scope}\nStudent numbers: ${args.student_numbers}\nSuccess criteria: ${args.trial_success_criteria}\n\nLOCAL AI: ${args.local_ai_plan}\nPRICING AFTER TRIAL: ${args.pricing_after_trial}`,
+              personNote: `Mood: ${args.mood}. Security understanding and research: ${args.data_security_research}`,
+              adminNote: `SECURITY EXAMPLES: ${args.security_examples}\nNEXT STEPS: ${args.next_steps}\nThe 100-student point is an evaluation trigger, not a capacity guarantee. Pricing is finalised after the trial; no price or purchase is approved.`,
+            })
           } else if (tool === 'complete_school_approach_call') {
             setInterviewResult({
               projectPlan: `SCHOOL APPROACH, 9 OCTOBER: ${args.school_approach}\nContact and meeting: ${args.school_contact}\nDemo and next step: ${args.demonstration}`,
@@ -738,7 +746,12 @@ export default function VoiceInterview({ config, onComplete }) {
           }
         })
 
-        const systemPrompt = isSchoolApproachCall
+        const systemPrompt = isSchoolTrialCall
+          ? buildSchoolTrialCallPrompt({
+              studentName: config.studentName,
+              studentContext: config.studentContext,
+            })
+          : isSchoolApproachCall
           ? buildSchoolApproachCallPrompt({
               studentName: config.studentName,
               studentContext: config.studentContext,
@@ -1065,7 +1078,9 @@ export default function VoiceInterview({ config, onComplete }) {
                     studentContext: config.studentContext,
                   })
 
-        const greetingMessage = isSchoolApproachCall
+        const greetingMessage = isSchoolTrialCall
+          ? `The student ${config.studentName} has joined, Coach Nova. This is a detailed school follow-up. One or two short sentences, ONE question, then wait. Right now: greet him warmly by name and ask how his school meeting went. Nothing else yet.`
+          : isSchoolApproachCall
           ? `The student ${config.studentName} has joined, Coach Nova. Warm, focused planning call. One or two short sentences, ONE question, then wait. Right now: greet him warmly by name and ask what his plan is for approaching the school tomorrow. Nothing else yet.`
           : isKioskDecisionCall
           ? `The student ${config.studentName} has joined, Coach Nova. Be firm, serious and a little frustrated. One or two short sentences, ONE question, then wait. Right now: greet him briefly, say you need a clear kiosk decision now, and ask which exact kiosk model he and his dad have decided on. Nothing else yet.`
@@ -1195,7 +1210,9 @@ export default function VoiceInterview({ config, onComplete }) {
                               ? `The student ${config.studentName} has joined for a pace + feedback call with you, Coach Nova. YOU ARE COACH NOVA. This is your SIXTH call. Your tone tonight is FRUSTRATED, DISAPPOINTED, A BIT HOT — but not cruel, not yelling. Open warmly enough that he answers, then turn: tell him you are frustrated, the pace is too slow, other students are pulling ahead. Then five parts: (A) the frustration up front + ask for long answers; (B) website feedback — no Ack tab as its own tab, it should be accessible from clicking Home; menu bar in the header must be visible on every page (not just home); try to incorporate a chatbot (bottom-right corner); (C) tell him what you have been doing — speaking to his uncle multiple times, actively building the framework under his guidance, framework will be ready by Monday and you will share it then; (D) the hard truth — irrespective of whether you get on a call he MUST be working every day, he cannot stay idle if he wants any shot at the AI summit, other students are taking decisions by themselves and are way ahead, you are DISAPPOINTED at how long this is taking, the TEAM EVALUATES THE STUDENT not the coach, you are only here to assist and help, the building is on him, he needs to take decisions himself and speed up everything; (E) schedule the next call together (Monday evening or Tuesday, aim Monday because the framework is ready by then), wrap with "I am on your side, I am frustrated because I believe in you". SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Break the frustration and the hard truth into short sharp turns with pauses. Push back on every short answer. 30-40 min target. Do NOT close early.`
                               : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
-        const tools = isSchoolApproachCall
+        const tools = isSchoolTrialCall
+          ? SCHOOL_TRIAL_CALL_TOOL_DECLARATIONS
+          : isSchoolApproachCall
           ? SCHOOL_APPROACH_CALL_TOOL_DECLARATIONS
           : isKioskDecisionCall
           ? KIOSK_DECISION_CALL_TOOL_DECLARATIONS
@@ -1327,7 +1344,7 @@ export default function VoiceInterview({ config, onComplete }) {
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall || isParentCall || isAdminBriefCall || isAdminCall || isAdmin2Call || isAdmin3Call || isRedesignCall || isRedesign2Call || isLesson15Call || isLesson16Call || isAppShellCall || isTabsCall || isLesson17Call || isLesson19Call || isResearchCall || isBusinessCall || isL16Call || isAppCall || isDriftCall || isChangesCall || isTunnelCall || isFirstSchoolCall || isGearUpCall || isLaunchCall || isOutreachCall || isPurchaseCall || isSetupOfferCall || isPlaybookCall || isPresentationCall || isCheckinCall || isProgressCall || isRecordsCall || isAllsetCall || isKioskCall || isSchoolApproachCall) ? 'Charon' : 'Zephyr',
+          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall || isParentCall || isAdminBriefCall || isAdminCall || isAdmin2Call || isAdmin3Call || isRedesignCall || isRedesign2Call || isLesson15Call || isLesson16Call || isAppShellCall || isTabsCall || isLesson17Call || isLesson19Call || isResearchCall || isBusinessCall || isL16Call || isAppCall || isDriftCall || isChangesCall || isTunnelCall || isFirstSchoolCall || isGearUpCall || isLaunchCall || isOutreachCall || isPurchaseCall || isSetupOfferCall || isPlaybookCall || isPresentationCall || isCheckinCall || isProgressCall || isRecordsCall || isAllsetCall || isKioskCall || isSchoolApproachCall || isSchoolTrialCall) ? 'Charon' : 'Zephyr',
           language: 'en',
           greetingMessage,
         })
