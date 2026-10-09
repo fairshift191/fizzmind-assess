@@ -104,10 +104,19 @@ export const SCHOOL_TRIAL_CALL_TOOL_DECLARATIONS = [
 export function schoolTrialCompletionCheck(spokenText) {
   const text = spokenText.replace(/\s+/g, ' ').toLowerCase()
   const required = [
+    ['how trial success will be measured and who gathers feedback', /trial.{0,160}(measur|success|feedback)|(measur|success|feedback).{0,160}trial/.test(text)],
     ['the local server recommendation for more than 100 students', /100|hundred/.test(text) && /local.{0,100}server|server.{0,100}local/.test(text)],
+    ['the hardware, power and support costs of local AI, which does not mean zero total cost', /hardware|server/.test(text) && /power|electricity/.test(text) && /support|maintenan/.test(text)],
     ['pricing will be finalised after the trial', /pric.{0,160}after.{0,60}trial|after.{0,60}trial.{0,160}pric/.test(text)],
     ['research on data isolation between schools and users', /research/.test(text) && /data isolation|isolat.{0,40}data|separat.{0,60}school|school.{0,60}separat/.test(text)],
+    ['a data map showing what is collected and where it is stored', /data.{0,100}(map|collect|stor)|(map|collect|stor).{0,100}data/.test(text)],
+    ['parent and teacher access rules, including parents seeing only their linked child', /parent/.test(text) && /teacher/.test(text) && /access|permission|linked child/.test(text)],
+    ['how long data should be kept and how it is deleted', /how long|retention/.test(text) && /delet/.test(text)],
+    ['AI permissions and prompt injection, meaning text that tries to trick the AI', /prompt injection|trick.{0,40}ai|ai.{0,60}permission/.test(text)],
+    ['encryption, secure sign-in and keeping secret keys on the server', /encrypt/.test(text) && /sign.in|login|log.in|authentic/.test(text) && /secret|service key|password/.test(text)],
+    ['protected backups and testing a restore', /backup/.test(text) && /restor|recover/.test(text)],
     ['data breaches and how to protect the data', /breach/.test(text) && /secur|protect/.test(text)],
+    ['safe access tests using made-up records, and a research note for adult review', /fake|made.up|fictional|test data/.test(text) && /test/.test(text) && /research|note/.test(text)],
   ]
   const missing = required.filter(([, covered]) => !covered).map(([topic]) => topic)
   return missing.length
