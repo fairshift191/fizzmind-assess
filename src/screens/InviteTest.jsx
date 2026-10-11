@@ -652,7 +652,7 @@ export default function InviteTest({ inviteCode, onReset }) {
             </div>
             <div style={styles.iconLarge}>{interviewInfo.icon}</div>
             <h1 style={styles.title}>
-              {(isKioskCall || isSchoolApproachCall || isSchoolTrialCall || isStorePublishingCall)
+              {(isKioskCall || isSchoolApproachCall || isSchoolTrialCall || isStorePublishingCall || isClassesRestartCall)
                 ? `Hi ${student.first_name}, your next call is ready.`
                 : isCodeInterview
                 ? `Hey ${student.first_name}!`
@@ -835,7 +835,7 @@ export default function InviteTest({ inviteCode, onReset }) {
                                   ? <>Every section worked, but it still looked like a template. The whole site has been <strong style={{ color: interviewInfo.color }}>redesigned and made to work on a phone</strong>, and it is live. Have tensra.app open, and your phone next to you.</>
                                   : isAdmin3Call
                                   ? <>Reports, Announcements and Settings are live, so <strong style={{ color: interviewInfo.color }}>all four dashboards are finished</strong>. Coach Nova goes through the last three, and what the final piece really means.</>
-                                  : (isKioskCall || isSchoolApproachCall || isSchoolTrialCall || isStorePublishingCall)
+                                  : (isKioskCall || isSchoolApproachCall || isSchoolTrialCall || isStorePublishingCall || isClassesRestartCall)
                                   ? <>Your next call with <strong style={{ color: interviewInfo.color }}>Coach Nova</strong>.</>
                                   : isAllsetCall
                                   ? <>Good news from <strong style={{ color: interviewInfo.color }}>Coach Nova</strong>.</>
