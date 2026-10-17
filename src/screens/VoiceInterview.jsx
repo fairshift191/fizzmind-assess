@@ -1153,7 +1153,7 @@ export default function VoiceInterview({ config, onComplete }) {
                   })
 
         const greetingMessage = isTextbookRetestCall
-          ? `Ganan has joined his textbook retest call, Coach Nova. Say only: Hi Ganan, I have fixed the book and chapter recognition. Have you opened the updated app? Then stop and wait. Nothing else yet.`
+          ? `Ganan has joined his textbook retest call, Coach Nova. Say only: Hi Ganan, I have fixed the book publishing problem from our last call. Have you opened the updated app? Then stop and wait. Nothing else yet.`
           : isAppFixesCall
           ? `Ganan has joined his app testing call, Coach Nova. Say only: Hi Ganan, I have gone ahead and made the fixes we discussed. Have you opened the updated app? Then stop and wait. Nothing else yet.`
           : isHostingPriorityCall

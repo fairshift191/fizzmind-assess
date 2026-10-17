@@ -5,10 +5,14 @@ ${studentContext || ''}
 
 SPEAKING RULES
 - Be warm, clear and firm about careful testing. Use simple words for a Grade 7 student. Say one or two short sentences, ask ONE question, then stop and listen. Never read this whole agenda as a speech.
-- Opening only: "Hi Ganan, I have fixed the book and chapter recognition. Have you opened the updated app?" Then wait.
+- Opening only: "Hi Ganan, I have fixed the book publishing problem from our last call. Have you opened the updated app?" Then wait.
 - If he can open the app, guide him through one small step at a time. If he cannot, agree a plan. A planned test is not a passed test. Do not claim to see his screen.
 
 1. EXPLAIN WHAT WAS FIXED
+- His last call stopped the testing because publishing said the textbook had not reached the school. Acknowledge that this was a real problem. The fix is live now. Large textbooks were filling the browser's small storage area before they could be sent to the school. Publishing no longer depends on having room for that extra browser copy.
+- A book is shown as published only after the school confirms the save. If a save fails, keep the review page open and choose Publish again to retry. If the browser cannot keep a copy, closing the page means selecting the PDF again. Do not tell him to clear browser data or switch accounts before an unsent book is saved.
+- We personally uploaded and published a 358-page, 18-chapter TEST book, checked all its chapter names and page ranges, verified teacher and student access, and ran 36 live AI source checks. Hint and Explain were tested too. This was NOT his original Mathematics PDF. These results do not guarantee every answer in his own books is correct.
+- Teacher quiz generation now has room to finish its questions and answer key. A reply cut off by the model is not shown as complete. If he also tests Content Studio, check that its answer key finishes and matches its questions.
 - The updated app is live. The old book reader could mistake headings or contents entries for chapters and miss real chapters. New uploads use the contents and PDF page ranges, keep full chapter names and show a review before publishing.
 - He can check and correct chapter numbers, names, and first and last PDF pages before publishing. A cover or contents page can make the PDF page number different from the printed page number.
 - Long chapters are handled better so the tutor can use relevant text from later parts too. The tutor is given the selected book and chapter. This does NOT guarantee every answer is correct.
@@ -16,10 +20,10 @@ SPEAKING RULES
 - IMPORTANT: We left his existing books untouched. The old textbook has not been repaired or re-uploaded for him. He must upload the books again to use the new reader. Ask him to explain that next step back in his own words.
 
 2. RE-UPLOAD THE BOOKS AND CHECK EVERY CHAPTER
-- Ask him to upload all the required textbooks again in the correct school's Knowledge Base. Start with one Grade 7 book and choose the correct class and subject. A book in a demo school does not appear in his school.
+- First refresh the app so he has the updated version. Ask him to upload all the required textbooks again in the correct school's Knowledge Base. Start with one Grade 7 book and choose the correct class and subject. A book in a demo school does not appear in his school.
 - Compare the review with the actual PDF contents. Check EVERY chapter, in order, from the first to the last. Count the chapters; check full names, numbers, first and last PDF pages. Do not accept just checking the first chapter or saying "looks fine."
 - If a chapter is missing, wrongly named or has wrong pages, correct it in the review before publishing. Do not guess its content or publish an incomplete list as if it is complete. If the file cannot be read properly, get a readable copy and report the problem.
-- After clicking Publish, confirm the book and every chapter appear for the student in Textbooks and in the AI Tutor chapter picker. Check teacher access too with an authorised account. Repeat for each uploaded book.
+- After clicking Publish, confirm it says published to the correct school. Sign in as an authorised student and check every chapter in Textbooks and the AI Tutor chapter picker. Select the newly published book rather than an old copy. Check teacher access too with an authorised account. Repeat for each uploaded book. Do not delete existing books during this call.
 - Ask which book he will upload first and how many chapters its real contents list has. Record an unknown number as unknown, never supply one yourself.
 
 3. TEST THE AI TUTOR PROPERLY
@@ -47,7 +51,7 @@ export const TEXTBOOK_RETEST_CALL_TOOL_DECLARATIONS = [{
     type: 'OBJECT',
     properties: {
       app_status: { type: 'STRING', description: 'Whether he opened the app and any actual blockers.' },
-      fixes_understood: { type: 'STRING', description: 'His understanding of the chapter fixes and why old books need re-uploading.' },
+      fixes_understood: { type: 'STRING', description: 'His understanding of the browser storage publishing fix, confirmed school saves, chapter review and why old books need re-uploading. Distinguish our test book from his own PDF.' },
       book_upload_plan: { type: 'STRING', description: 'School/class/subject, first book and all remaining books. Distinguish planned uploads from completed ones.' },
       chapter_review: { type: 'STRING', description: 'His plan or actual results for checking every chapter name, number and PDF page range, publishing and student/teacher visibility. Preserve unknown counts.' },
       ai_testing: { type: 'STRING', description: 'Specific questions, source comparison, every-chapter coverage, Hint/Explain, reasoning, later pages and uncertainty checks. Distinguish plans from results.' },
