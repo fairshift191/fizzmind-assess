@@ -75,6 +75,7 @@ import { buildBrandingGuideCallPrompt, BRANDING_GUIDE_CALL_TOOL_DECLARATIONS } f
 import { buildHostingPriorityCallPrompt, HOSTING_PRIORITY_CALL_TOOL_DECLARATIONS } from '../assessment/hosting-priority-call-prompt.js'
 import { buildAppFixesCallPrompt, APP_FIXES_CALL_TOOL_DECLARATIONS } from '../assessment/app-fixes-call-prompt.js'
 import { buildTextbookRetestCallPrompt, TEXTBOOK_RETEST_CALL_TOOL_DECLARATIONS } from '../assessment/textbook-retest-call-prompt.js'
+import { buildReportRetestCallPrompt, REPORT_RETEST_CALL_TOOL_DECLARATIONS } from '../assessment/report-retest-call-prompt.js'
 import SubtitleBar from '../ui/SubtitleBar.jsx'
 
 /**
@@ -180,7 +181,8 @@ export default function VoiceInterview({ config, onComplete }) {
   const isClassesRestartCall = config.inviteVariant === 'classes_restart_call'
   const isBrandingGuideCall = config.inviteVariant === 'branding_guide_call'
   const isTextbookRetestCall = config.inviteVariant === 'textbook_retest_call'
-  const isAppFixesCall = config.inviteVariant === 'app_fixes_call' || isTextbookRetestCall
+  const isReportRetestCall = config.inviteVariant === 'report_retest_call'
+  const isAppFixesCall = config.inviteVariant === 'app_fixes_call' || isTextbookRetestCall || isReportRetestCall
   const isHostingPriorityCall = config.inviteVariant === 'hosting_priority_call'
   const isKioskReviewCall = config.inviteVariant === 'kiosk_review_call'
   const isKioskDecisionCall = config.inviteVariant === 'kiosk_decision_call'
@@ -659,6 +661,12 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Mood: ${args.mood}. Payment and tax understanding: ${args.payment_tax_check}`,
               adminNote: `NEXT STEPS: ${args.next_steps}\nSupplied agency quote: US$100 per app per store. Official accreditation and inclusions are unconfirmed. A US bank card does not automatically remove taxes. Adult approval is required for accounts and payments.`,
             })
+          } else if (tool === 'complete_report_retest_call') {
+            setInterviewResult({
+              projectPlan: `CURRENT STATUS: ${args.current_status}\nREPORT: ${args.report_status}\nFIXES UNDERSTOOD: ${args.fixes_understood}\nBOOK UPLOADS: ${args.book_uploads}\nEVERY CHAPTER: ${args.every_chapter_review}\nTUTOR TESTS: ${args.tutor_tests}\nCONTENT AND OTHER FLOWS: ${args.content_and_other_flows}`,
+              personNote: `Issues found: ${args.issues_found}`,
+              adminNote: `REMAINING GAPS: ${args.remaining_gaps}\nREPORTING PLAN: ${args.reporting_plan}\nDEFERRED TOPICS: ${args.deferred_topics}\nAudit evidence is dated 18 October 2026. Original books were preserved, not declared repaired. Self-reported tests, plans and independently verified results are separate. AI drafts need review.`,
+            })
           } else if (tool === 'complete_textbook_retest_call') {
             setInterviewResult({
               projectPlan: `APP STATUS: ${args.app_status}\nFIXES UNDERSTOOD: ${args.fixes_understood}\nBOOK UPLOADS: ${args.book_upload_plan}\nEVERY CHAPTER: ${args.chapter_review}\nAI TESTING: ${args.ai_testing}`,
@@ -802,7 +810,9 @@ export default function VoiceInterview({ config, onComplete }) {
           }
         })
 
-        const systemPrompt = isTextbookRetestCall
+        const systemPrompt = isReportRetestCall
+          ? buildReportRetestCallPrompt({ studentName: config.studentName, studentContext: config.studentContext })
+          : isTextbookRetestCall
           ? buildTextbookRetestCallPrompt({ studentName: config.studentName, studentContext: config.studentContext })
           : isAppFixesCall
           ? buildAppFixesCallPrompt({ studentName: config.studentName, studentContext: config.studentContext })
@@ -1152,7 +1162,9 @@ export default function VoiceInterview({ config, onComplete }) {
                     studentContext: config.studentContext,
                   })
 
-        const greetingMessage = isTextbookRetestCall
+        const greetingMessage = isReportRetestCall
+          ? `Ganan has joined his audit report and app retest call, Coach Nova. Say only: Hi Ganan, the latest fixes and test report are ready. Have you opened the report I emailed? Then stop and wait. Nothing else yet.`
+          : isTextbookRetestCall
           ? `Ganan has joined his textbook retest call, Coach Nova. Say only: Hi Ganan, I have fixed the book publishing problem from our last call. Have you opened the updated app? Then stop and wait. Nothing else yet.`
           : isAppFixesCall
           ? `Ganan has joined his app testing call, Coach Nova. Say only: Hi Ganan, I have gone ahead and made the fixes we discussed. Have you opened the updated app? Then stop and wait. Nothing else yet.`
@@ -1296,7 +1308,9 @@ export default function VoiceInterview({ config, onComplete }) {
                               ? `The student ${config.studentName} has joined for a pace + feedback call with you, Coach Nova. YOU ARE COACH NOVA. This is your SIXTH call. Your tone tonight is FRUSTRATED, DISAPPOINTED, A BIT HOT — but not cruel, not yelling. Open warmly enough that he answers, then turn: tell him you are frustrated, the pace is too slow, other students are pulling ahead. Then five parts: (A) the frustration up front + ask for long answers; (B) website feedback — no Ack tab as its own tab, it should be accessible from clicking Home; menu bar in the header must be visible on every page (not just home); try to incorporate a chatbot (bottom-right corner); (C) tell him what you have been doing — speaking to his uncle multiple times, actively building the framework under his guidance, framework will be ready by Monday and you will share it then; (D) the hard truth — irrespective of whether you get on a call he MUST be working every day, he cannot stay idle if he wants any shot at the AI summit, other students are taking decisions by themselves and are way ahead, you are DISAPPOINTED at how long this is taking, the TEAM EVALUATES THE STUDENT not the coach, you are only here to assist and help, the building is on him, he needs to take decisions himself and speed up everything; (E) schedule the next call together (Monday evening or Tuesday, aim Monday because the framework is ready by then), wrap with "I am on your side, I am frustrated because I believe in you". SPEAK IN SHORT SENTENCES ONLY. One short question at a time. Break the frustration and the hard truth into short sharp turns with pauses. Push back on every short answer. 30-40 min target. Do NOT close early.`
                               : `The student ${config.studentName} has joined for their top-50 interview. Greet them warmly by name, congratulate them on reaching the top 50 out of all applicants, and begin the conversation as directed in the system prompt.`
 
-        const tools = isTextbookRetestCall
+        const tools = isReportRetestCall
+          ? REPORT_RETEST_CALL_TOOL_DECLARATIONS
+          : isTextbookRetestCall
           ? TEXTBOOK_RETEST_CALL_TOOL_DECLARATIONS
           : isAppFixesCall
           ? APP_FIXES_CALL_TOOL_DECLARATIONS

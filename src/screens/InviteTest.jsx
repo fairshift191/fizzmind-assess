@@ -118,7 +118,7 @@ export default function InviteTest({ inviteCode, onReset }) {
   const isStorePublishingCall = isVoiceInterview && inviteVariant === 'store_publishing_call'
   const isClassesRestartCall = isVoiceInterview && inviteVariant === 'classes_restart_call'
   const isBrandingGuideCall = isVoiceInterview && inviteVariant === 'branding_guide_call'
-  const isAppFixesCall = isVoiceInterview && ['app_fixes_call', 'textbook_retest_call'].includes(inviteVariant)
+  const isAppFixesCall = isVoiceInterview && ['app_fixes_call', 'textbook_retest_call', 'report_retest_call'].includes(inviteVariant)
   const isHostingPriorityCall = isVoiceInterview && inviteVariant === 'hosting_priority_call'
   const isKioskCall = isVoiceInterview && (inviteVariant === 'kiosk_call' || inviteVariant === 'kiosk_review_call' || inviteVariant === 'kiosk_decision_call')
   const isFirstSchoolCall = isVoiceInterview && inviteVariant === 'first_school_call'
