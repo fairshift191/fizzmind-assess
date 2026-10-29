@@ -75,6 +75,7 @@ import { buildBrandingGuideCallPrompt, BRANDING_GUIDE_CALL_TOOL_DECLARATIONS } f
 import { buildHostingPriorityCallPrompt, HOSTING_PRIORITY_CALL_TOOL_DECLARATIONS } from '../assessment/hosting-priority-call-prompt.js'
 import { buildReturnPublishingCallPrompt, RETURN_PUBLISHING_CALL_TOOL_DECLARATIONS } from '../assessment/return-publishing-call-prompt.js'
 import { buildExpensesLaunchCallPrompt, EXPENSES_LAUNCH_CALL_TOOL_DECLARATIONS } from '../assessment/expenses-launch-call-prompt.js'
+import { buildBooksKioskCallPrompt, BOOKS_KIOSK_CALL_TOOL_DECLARATIONS } from '../assessment/books-kiosk-call-prompt.js'
 import { buildAppFixesCallPrompt, APP_FIXES_CALL_TOOL_DECLARATIONS } from '../assessment/app-fixes-call-prompt.js'
 import { buildTextbookRetestCallPrompt, TEXTBOOK_RETEST_CALL_TOOL_DECLARATIONS } from '../assessment/textbook-retest-call-prompt.js'
 import { buildReportRetestCallPrompt, REPORT_RETEST_CALL_TOOL_DECLARATIONS } from '../assessment/report-retest-call-prompt.js'
@@ -188,6 +189,7 @@ export default function VoiceInterview({ config, onComplete }) {
   const isHostingPriorityCall = config.inviteVariant === 'hosting_priority_call'
   const isReturnPublishingCall = config.inviteVariant === 'return_publishing_call'
   const isExpensesLaunchCall = config.inviteVariant === 'expenses_launch_call'
+  const isBooksKioskCall = config.inviteVariant === 'books_kiosk_call'
   const isKioskReviewCall = config.inviteVariant === 'kiosk_review_call'
   const isKioskDecisionCall = config.inviteVariant === 'kiosk_decision_call'
   const isKioskCall = config.inviteVariant === 'kiosk_call' || isKioskReviewCall || isKioskDecisionCall
@@ -196,10 +198,10 @@ export default function VoiceInterview({ config, onComplete }) {
     ? 'Beverly'
     : isPostAdmission
       ? 'Sophie'
-      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall || isParentCall || isAdminBriefCall || isAdminCall || isAdmin2Call || isAdmin3Call || isRedesignCall || isRedesign2Call || isLesson15Call || isLesson16Call || isAppShellCall || isTabsCall || isLesson17Call || isLesson19Call || isResearchCall || isBusinessCall || isL16Call || isAppCall || isDriftCall || isChangesCall || isTunnelCall || isFirstSchoolCall || isGearUpCall || isLaunchCall || isOutreachCall || isPurchaseCall || isSetupOfferCall || isPlaybookCall || isPresentationCall || isCheckinCall || isProgressCall || isRecordsCall || isAllsetCall || isKioskCall || isSchoolApproachCall || isSchoolTrialCall || isStorePublishingCall || isClassesRestartCall || isBrandingGuideCall || isHostingPriorityCall || isReturnPublishingCall || isExpensesLaunchCall || isAppFixesCall
+      : isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall || isParentCall || isAdminBriefCall || isAdminCall || isAdmin2Call || isAdmin3Call || isRedesignCall || isRedesign2Call || isLesson15Call || isLesson16Call || isAppShellCall || isTabsCall || isLesson17Call || isLesson19Call || isResearchCall || isBusinessCall || isL16Call || isAppCall || isDriftCall || isChangesCall || isTunnelCall || isFirstSchoolCall || isGearUpCall || isLaunchCall || isOutreachCall || isPurchaseCall || isSetupOfferCall || isPlaybookCall || isPresentationCall || isCheckinCall || isProgressCall || isRecordsCall || isAllsetCall || isKioskCall || isSchoolApproachCall || isSchoolTrialCall || isStorePublishingCall || isClassesRestartCall || isBrandingGuideCall || isHostingPriorityCall || isReturnPublishingCall || isExpensesLaunchCall || isBooksKioskCall || isAppFixesCall
         ? 'Coach Nova'
         : 'Scout'
-  const sessionLabel = isKioskCall || isSchoolApproachCall || isSchoolTrialCall || isStorePublishingCall || isClassesRestartCall || isBrandingGuideCall || isHostingPriorityCall || isReturnPublishingCall || isExpensesLaunchCall || isAppFixesCall
+  const sessionLabel = isKioskCall || isSchoolApproachCall || isSchoolTrialCall || isStorePublishingCall || isClassesRestartCall || isBrandingGuideCall || isHostingPriorityCall || isReturnPublishingCall || isExpensesLaunchCall || isBooksKioskCall || isAppFixesCall
     ? 'Next Call'
     : isAllsetCall
     ? 'All Set'
@@ -683,6 +685,12 @@ export default function VoiceInterview({ config, onComplete }) {
               personNote: `Call notes: ${args.mood}. Issues found: ${args.issues_found}`,
               adminNote: `TESTING PLAN: ${args.testing_plan}\nQUESTIONS FOR UNCLE: ${args.questions_for_uncle}\nTesting plans are not completed tests. AI answer accuracy must be checked against the source.`,
             })
+          } else if (tool === 'complete_books_kiosk_call') {
+            setInterviewResult({
+              projectPlan: `GUIDE ACCESS: ${args.guide_access}\nCHANGES UNDERSTOOD: ${args.changes_understood}\nFOUR-ROLE TESTING: ${args.testing_plan}\nSCHOOL FEEDBACK: ${args.school_feedback}`,
+              personNote: `KIOSK USE CASE: ${args.kiosk_use_case}\nPORTABLE HARDWARE: ${args.kiosk_hardware}\nDEPLOYMENT PLAN: ${args.deployment_plan}`,
+              adminNote: `COSTS AND APPROVALS: ${args.costs_and_approvals}\nWRITTEN ACTIONS: ${args.written_actions}\nDEFERRED TOPICS: ${args.deferred_topics}\nPlans and Ganan's reports are not independently verified completion or school approval. Oral kiosk is a pilot. Broad paid AI and physical-device acceptance remain pending. No purchase or zero-cost promise was made.`,
+            })
           } else if (tool === 'complete_expenses_launch_call') {
             setInterviewResult({
               projectPlan: `EXPENSE RECORDS: ${args.expense_records}\nRECORD TASKS: ${args.expense_next_steps}\nAPP PROGRESS: ${args.app_progress}\nPLAY STORE: ${args.play_store_status}\nPUBLISHING PLAN: ${args.publishing_plan}`,
@@ -832,6 +840,8 @@ export default function VoiceInterview({ config, onComplete }) {
           ? buildTextbookRetestCallPrompt({ studentName: config.studentName, studentContext: config.studentContext })
           : isAppFixesCall
           ? buildAppFixesCallPrompt({ studentName: config.studentName, studentContext: config.studentContext })
+          : isBooksKioskCall
+          ? buildBooksKioskCallPrompt({ studentName: config.studentName, studentContext: config.studentContext })
           : isExpensesLaunchCall
           ? buildExpensesLaunchCallPrompt({ studentName: config.studentName, studentContext: config.studentContext })
           : isReturnPublishingCall
@@ -1188,6 +1198,8 @@ export default function VoiceInterview({ config, onComplete }) {
           ? `Ganan has joined his textbook retest call, Coach Nova. Say only: Hi Ganan, I have fixed the book publishing problem from our last call. Have you opened the updated app? Then stop and wait. Nothing else yet.`
           : isAppFixesCall
           ? `Ganan has joined his app testing call, Coach Nova. Say only: Hi Ganan, I have gone ahead and made the fixes we discussed. Have you opened the updated app? Then stop and wait. Nothing else yet.`
+          : isBooksKioskCall
+          ? `Ganan has joined his school-app update call. Say only: Hi Ganan. Please keep the feature guide and your project notes ready. Have you opened the guide? Then stop and wait. Nothing else yet.`
           : isExpensesLaunchCall
           ? `Ganan has joined his expense records and school progress call. Say only: Hi Ganan. Please get your project notes and a pen. Do you have them with you? Then stop and wait. Nothing else yet.`
           : isReturnPublishingCall
@@ -1338,6 +1350,8 @@ export default function VoiceInterview({ config, onComplete }) {
           ? TEXTBOOK_RETEST_CALL_TOOL_DECLARATIONS
           : isAppFixesCall
           ? APP_FIXES_CALL_TOOL_DECLARATIONS
+          : isBooksKioskCall
+          ? BOOKS_KIOSK_CALL_TOOL_DECLARATIONS
           : isExpensesLaunchCall
           ? EXPENSES_LAUNCH_CALL_TOOL_DECLARATIONS
           : isReturnPublishingCall
@@ -1484,7 +1498,7 @@ export default function VoiceInterview({ config, onComplete }) {
           apiKey: config.apiKey,
           systemPrompt,
           tools,
-          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall || isParentCall || isAdminBriefCall || isAdminCall || isAdmin2Call || isAdmin3Call || isRedesignCall || isRedesign2Call || isLesson15Call || isLesson16Call || isAppShellCall || isTabsCall || isLesson17Call || isLesson19Call || isResearchCall || isBusinessCall || isL16Call || isAppCall || isDriftCall || isChangesCall || isTunnelCall || isFirstSchoolCall || isGearUpCall || isLaunchCall || isOutreachCall || isPurchaseCall || isSetupOfferCall || isPlaybookCall || isPresentationCall || isCheckinCall || isProgressCall || isRecordsCall || isAllsetCall || isKioskCall || isSchoolApproachCall || isSchoolTrialCall || isStorePublishingCall || isClassesRestartCall || isBrandingGuideCall || isHostingPriorityCall || isReturnPublishingCall || isExpensesLaunchCall || isAppFixesCall) ? 'Charon' : 'Zephyr',
+          voiceName: (isDayTwoCheckin || isDayThreeFollowup || isPostCampPushback || isPostCampWrap || isScopeCall || isIdeaCheckin || isBuildKickoff || isNamingCall || isMarketingCall || isFrustratedCall || isTensraCall || isNameserverCall || isHostingUpdateCall || isInstallCall || isBuildReviewCall || isModulesReviewCall || isModule5Call || isModule6Call || isFullReviewCall || isChatHistoryCall || isResumeCall || isTeacherCall || isTeacherFullCall || isParentCall || isAdminBriefCall || isAdminCall || isAdmin2Call || isAdmin3Call || isRedesignCall || isRedesign2Call || isLesson15Call || isLesson16Call || isAppShellCall || isTabsCall || isLesson17Call || isLesson19Call || isResearchCall || isBusinessCall || isL16Call || isAppCall || isDriftCall || isChangesCall || isTunnelCall || isFirstSchoolCall || isGearUpCall || isLaunchCall || isOutreachCall || isPurchaseCall || isSetupOfferCall || isPlaybookCall || isPresentationCall || isCheckinCall || isProgressCall || isRecordsCall || isAllsetCall || isKioskCall || isSchoolApproachCall || isSchoolTrialCall || isStorePublishingCall || isClassesRestartCall || isBrandingGuideCall || isHostingPriorityCall || isReturnPublishingCall || isExpensesLaunchCall || isBooksKioskCall || isAppFixesCall) ? 'Charon' : 'Zephyr',
           language: 'en',
           greetingMessage,
         })
